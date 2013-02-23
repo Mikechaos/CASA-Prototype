@@ -23,3 +23,10 @@
 	%body{id:@action}
 		%h1#title= @title
 		#content= yield
+		%script(type="text/javascript" src="/lib/angular/angular.js")
+		%script(type="text/javascript" src="/js/app.js?v=#{File.mtime('public/js/app.js').to_i}")
+		%script(type="text/javascript" src="/js/services.js=#{File.mtime('public/js/services.js').to_i}")
+		%script(type="text/javascript" src="/js/controllers.js=#{File.mtime('public/js/controllers.js').to_i}")
+		%script(type="text/javascript" src="/js/filters.js=#{File.mtime('public/js/filters.js').to_i}")
+		%script(type="text/javascript" src="/js/directives.js=#{File.mtime('public/js/directives.js').to_i}")
+
