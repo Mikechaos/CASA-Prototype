@@ -21,9 +21,19 @@
 			- settings.js_files.each do |js|
 				%script(type="text/javascript" src="/js/#{js}")
 	%body{id:@action}
-		%h1#title= @title
-		#content= yield
-		%script(type="text/javascript" src="/lib/angular/angular.js")
+		.navbar
+			.navbar-inner
+				%a.brand{:href => "/"}= @title
+				%ul.nav 
+					%li
+						%a{:href => "/"}= "TEST"
+		.container
+			.row
+				.span12
+					= yield
+		%script(type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js")
+		%script(type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js")
+		%script(type="text/javascript" src="/js/bootstrap.min.js?v=#{File.mtime('public/js/bootstrap.min.js').to_i}")
 		%script(type="text/javascript" src="/js/app.js?v=#{File.mtime('public/js/app.js').to_i}")
 		%script(type="text/javascript" src="/js/services.js?v=#{File.mtime('public/js/services.js').to_i}")
 		%script(type="text/javascript" src="/js/controllers.js?v=#{File.mtime('public/js/controllers.js').to_i}")
