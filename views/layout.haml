@@ -25,8 +25,13 @@
 			.navbar-inner
 				%a.brand{:href => "/"}= @title
 				%ul.nav 
-					%li
-						%a{:href => "/"}= "TEST"
+					%li.dropdown
+						%a{:href => "#", :class => "dropdown-toggle", "data-toggle" => "dropdown"}
+							Réglages
+							%b.caret
+						%ul.dropdown-menu
+							%li 
+								%a{:href => "/employees"}= "Employés" 
 		.container
 			.row
 				.span12

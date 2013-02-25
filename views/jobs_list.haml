@@ -1,0 +1,19 @@
+%table.table.table-striped.table-bordered
+	%thead
+		%tr 
+			%th= "Nom"
+			%th= "Téléphone"
+			%th= "Note"
+			%th= "Action"
+	- @jobs.each do |job|
+		%tr 
+			%td= job.name
+			%td= job.phone
+			%td= job.note
+			%td.reglages
+				%form{:action => "/jobs/#{job.id}", :method => "post"}
+					%input{:type => "hidden", :name => "_method", :value => "delete"}/
+					%button{:type => "submit", :class => "btn btn-danger btn-mini"}
+						%i.icon-trash.icon-white
+				%a{:href => "/jobs/#{job.id}", :class => "btn btn-danger btn-mini"}
+					%i.icon-edit.icon-white
