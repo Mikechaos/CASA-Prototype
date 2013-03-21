@@ -10,7 +10,7 @@
     {
 	this.scope = $scope;
 	
-	this.scope.root = '/app/index.html#/';
+	this.scope.root = '/#/';
 	return (this);
 	
     }
