@@ -1,0 +1,47 @@
+<h2>DISPATCH</h2>
+<div class="row-fluid span12 date_selecter" style="margin-left:185px;">
+  <div class="date_selection span7">
+    <div class="input-append span10 date-control">
+      <label style="float:left;"> En date du : </label>
+      <input type="text" class="datepicker date-input" value="2013-02-28" style="padding-left:15px;">
+      <a href="" ng-click="fire();" class="btn-success btn">Ajourd'hui</a>
+    </div>
+    <div class="span2">
+      <input type="submit" ng-click="affectation = false;" value="Sélectionner" class="btn btn-info small radius success change_date">
+
+    </div>
+  </div>
+  <div style="margin: 30px; margin-right:32%; float:right;">
+    <a href="" ng-click="affectation=true;" class="btn btn-success">Ajouter</a>
+  </div>
+</div>
+<div class="row-fluid span8">
+  <div class="affectation" ng-show="affectation">
+
+    <form>
+      <fieldset>
+	<div class="span4">
+	  <label>Jobs :</label>
+	  <select ng-model="job" ng-options="job.name for job in jobs"></select>
+	  <label>Superviseur : </label>
+	  <select ng-model="emp" ng-options="emp.name for emp in emps"></select>
+	</div>
+	<div class="span8">
+	  <label>Notes : </label>
+	  <textarea style="width: 92%; height: 100%;" cols="12" rows="5"></textarea>
+	</div>
+      </fieldset>
+    </form>
+  </div>
+</div>
+
+
+<!-- width: 650px; -->
+<!-- height: 125px; -->
+<!-- margin: 20px 10px 10px 20px; -->
+<!-- background-color: rgb(85, 85, 85); -->
+<!-- padding: 20px 20px 20px 20px; -->
+<!-- border-radius: 25px; -->
+<!-- border-color: rgba(179, 179, 179, 0.98); -->
+<!-- border-width: 4px; -->
+<!-- border-style: groove; -->
