@@ -143,5 +143,5 @@ Date.compare = function (fst, snd) {
 
 Date.days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
 
-Date.month = ["Janvier", "Février" , "Mars",  "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"];
+Date.month = ["Janvier", "FÃ©vrier" , "Mars",  "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "DÃ©cembre"];
 
