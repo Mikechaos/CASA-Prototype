@@ -7,11 +7,11 @@
 	- @employees.each do |employee|
 		%tr 
 			%td= employee.name
-			%td= employee.position
+			%td= employee.employee_type.type
 			%td.reglages
+				%a{:href => "/employees/#{employee.id}", :class => "btn btn-danger btn-mini"}
+					%i.icon-edit.icon-white
 				%form{:action => "/employees/#{employee.id}", :method => "post"}
 					%input{:type => "hidden", :name => "_method", :value => "delete"}/
 					%button{:type => "submit", :class => "btn btn-danger btn-mini"}
 						%i.icon-trash.icon-white
-				%a{:href => "/employees/#{employee.id}", :class => "btn btn-danger btn-mini"}
-					%i.icon-edit.icon-white

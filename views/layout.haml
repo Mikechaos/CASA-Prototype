@@ -21,17 +21,7 @@
 			- settings.js_files.each do |js|
 				%script(type="text/javascript" src="/js/#{js}")
 	%body{id:@action}
-		.navbar
-			.navbar-inner
-				%a.brand{:href => "/"}= @title
-				%ul.nav 
-					%li.dropdown
-						%a{:href => "#", :class => "dropdown-toggle", "data-toggle" => "dropdown"}
-							Réglages
-							%b.caret
-						%ul.dropdown-menu
-							%li 
-								%a{:href => "/employees"}= "Employés" 
+		=haml :navbar
 		.container
 			.row
 				.span12

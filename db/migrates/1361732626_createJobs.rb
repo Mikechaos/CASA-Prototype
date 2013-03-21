@@ -1,6 +1,6 @@
 class CreateJobsTable < Sequel::Migration
 	def up
-		create_table(:jobs) do
+		create_table(:Jobs) do
 			primary_key :id
 			String :name
 			String :phone
@@ -8,6 +8,6 @@ class CreateJobsTable < Sequel::Migration
 		end
 	end
 	def down
-		drop_table(:jobs)
+		drop_table(:Jobs)
 	end
 end

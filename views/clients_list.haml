@@ -2,18 +2,20 @@
 	%thead
 		%tr 
 			%th= "Nom"
+			%th= "Adresse"
 			%th= "Téléphone"
 			%th= "Note"
 			%th= "Action"
-	- @jobs.each do |job|
+	- @clients.each do |client|
 		%tr 
-			%td= job.name
-			%td= job.phone
-			%td= job.note
+			%td= client.name
+			%td= client.address
+			%td= client.phone
+			%td= client.note
 			%td.reglages
-				%a{:href => "/jobs/#{job.id}", :class => "btn btn-danger btn-mini"}
+				%a{:href => "/clients/#{client.id}", :class => "btn btn-danger btn-mini"}
 					%i.icon-edit.icon-white
-				%form{:action => "/jobs/#{job.id}", :method => "post"}
+				%form{:action => "/clients/#{client.id}", :method => "post"}
 					%input{:type => "hidden", :name => "_method", :value => "delete"}/
 					%button{:type => "submit", :class => "btn btn-danger btn-mini"}
 						%i.icon-trash.icon-white
