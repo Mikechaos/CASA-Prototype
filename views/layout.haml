@@ -21,12 +21,7 @@
 			- settings.js_files.each do |js|
 				%script(type="text/javascript" src="/js/#{js}")
 	%body{id:@action}
-		.navbar
-			.navbar-inner
-				%a.brand{:href => "/"}= @title
-				%ul.nav 
-					%li
-						%a{:href => "/"}= "TEST"
+		=haml :navbar
 		.container
 			.row
 				.span12

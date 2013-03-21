@@ -1,0 +1,12 @@
+%form{:action => "#{@form_action}", :method => "post"}
+	- if params[:id] 
+		%input{:type => "hidden", :name => "_method", :value => "put"}/
+	%label{:for => "name"}= "Nom"
+	%input{:type => "text", :id => "name", :name => "name", :value => "#{@employee.name}"}/
+	%br/
+	%label{:for => "supervisor"} 
+		- if @employee.supervisor?
+			%input{:type => "checkbox", :id => "supervisor", :name => "supervisor", :checked => "checked"}= "Superviseur"
+		- else
+			%input{:type => "checkbox", :id => "supervisor", :name => "supervisor"}= " Superviseur"
+	%input{:type => "submit", :class => 'btn'}

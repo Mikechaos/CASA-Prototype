@@ -1,0 +1,15 @@
+.navbar
+	.navbar-inner
+		%a.brand{:href => "/"}= @title
+		%ul.nav.pull-right 
+			%li.dropdown
+				%a{:href => "#", :class => "dropdown-toggle", "data-toggle" => "dropdown"}
+					Réglages
+					%b.caret
+				%ul.dropdown-menu
+					%li 
+						%a{:href => "/employees"}= "Employés"
+					%li 
+						%a{:href => "/jobs"}= "Jobs"
+					%li 
+						%a{:href => "/clients"}= "Clients" 

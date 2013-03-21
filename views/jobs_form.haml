@@ -1,0 +1,11 @@
+%form{:action => "#{@form_action}", :method => "post"}
+	- if params[:id] 
+		%input{:type => "hidden", :name => "_method", :value => "put"}/
+	%label{:for => "name"}= "Nom"
+	%input{:type => "text", :id => "name", :name => "name", :value => "#{@job.name}"}/
+	%br/
+	%label{:for => "phone"}= "Téléphone"
+	%input{:type => "text", :id => "phone", :name => "phone", :value => "#{@job.phone}"}/ 
+	%label{:for => "note"}= "Note"
+	%textarea{:name => "note", :cols => "30", :rows => "10"}= "#{@job.note}"
+	%input{:type => "submit", :class => 'btn'}

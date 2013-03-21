@@ -1,0 +1,15 @@
+%form{:action => "#{@form_action}", :method => "post"}
+	- if params[:id] 
+		%input{:type => "hidden", :name => "_method", :value => "put"}/
+	%label{:for => "name"}= "Nom"
+	%input{:type => "text", :id => "name", :name => "client[name]", :value => "#{@client.name}"}/
+	%br/
+	%label{:for => "address"}= "Adresse"
+	%br/ 
+	%textarea{:name => "client[address]", :cols => "30", :rows => "10"}= "#{@client.address}"
+	%label{:for => "phone"}= "Téléphone"
+	%input{:type => "text", :value => "#{@client.phone}", :name => "client[phone]"}/  
+	%label{:for => "note"}= "Note"
+	%textarea{:name => "client[note]", :cols => "30", :rows => "10"}= "#{@client.note}"
+	%br/ 
+	%input{:type => "submit", :class => 'btn'}
