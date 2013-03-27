@@ -214,3 +214,9 @@
     
 }
 .pane .btn-group > .btn.active { z-index:1;}
+
+.forms {
+    border: solid rgb(231, 231, 231) 4px;
+    padding: 4px;
+    border-radius: 10px;
+}
