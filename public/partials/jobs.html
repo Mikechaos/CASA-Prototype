@@ -1,3 +1,19 @@
-<h2>JOBS</h2>
+<div ng-controller="JobsCtrl">
+  <h2a>JOBS</h2>
 
-En construction. Juste pour vous!
+  <div class="span6 forms">
+    <legend> Ajouter une Job</legend>
+    <form>
+      <label>Nom :</label>
+      <input type="text" ng-model="newElem.name">
+      <label>Client : </label>
+      <select ng-model="newElem.client_id" ng-options="client.id as client.name for client in clients"></select>
+      <label>Type :</label>
+      <select ng-model="newElem.type" ng-options="type.id as type.name for type in jobTypes"></select>
+      <label>Notes :</label>
+      <textarea ng-model="newElem.note" rows="3" cols="8"></textarea>
+      <label></label>
+      <button class="btn btn-success" ng-click="submit()">Ajouter</button>
+    </form>
+  </div>
+</div>

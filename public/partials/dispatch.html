@@ -86,11 +86,12 @@
 	    <div class="span12" style="margin-left:0px;">
 	      <div class="span3">
 		<label>Jobs :</label>
-		<select ng-model="newAffectation.job" ng-options="job.name for job in jobs"></select>
+		<select ng-model="newAffectation.job" ng-options="job.name for job in elements | elems:'Job'"></select>
+		{{newAffectation.job}}
 	      </div>
 	      <div class="span3">
 		<label>Client :</label>
-		<input type="text" ng-model="newAffectation.job.client" disabled style="background-color: rgb(192, 192, 192);">
+		<input type="text" ng-model="newAffectation.job.client.name" disabled style="background-color: rgb(192, 192, 192);">
 		<!-- <label>Superviseur : </label> -->
 		<!-- <select ng-model="supervisor"  ng-options="supervisor.name for supervisor in (emps | subset_emp:true)"></select> -->
 	      </div>

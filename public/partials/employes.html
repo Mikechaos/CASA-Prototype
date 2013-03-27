@@ -1,3 +1,8 @@
 <h2>EMPLOYÉS</h2>
 
-En construction! Ça s'en vient.
+<form>
+  <label>Nom</label>
+  <input type="text" ngModel="newEmployee.name">
+  <label>Type</label>
+  <select ng-model="newEmployee.type" ng-options="employeeTypes.id for types in employeeTypes"></select>
+</form>

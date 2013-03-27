@@ -7,17 +7,19 @@
 // Abstract interface for underlying elements
 function Element (elem) {
     this.strElem = this.constructor.name;
-
+    this.db_name = this.strElem + "s";
     if (typeof elem !== "undefined") {
 	this.id = elem.id;
 	this.name = elem.name;
 	this.type = elem.type;
 	this.state = elem.state;
+	this.notes = elem.notes;
     } else {
 	this.id = 0;
 	this.name = "";
-	this.type = "";
-	this.state = 4
+	this.type = 1;
+	this.state = 4;
+	this.notes = "";
     }
     this.selected=false;
 }
@@ -55,8 +57,9 @@ function Employee (emp) {
     } else {
 	this.empClass = 20 // employee_type_id
     }
+    this.route = "/employees";
 }
-Element.render = function (count) {
+Employee.render = function (count) {
     return "Employee" + "s : " + count;
 };
 
@@ -69,14 +72,36 @@ Employee.prototype = {
 
 function Supervisor (sup) {
     Employee.call(this, sup);
+    this.route = "/employees";
 }
 
 function Truck (truck) {
     Element.call(this, truck);
+    // this.db_name = "";
+    this.route = "/trucks";
 }
 
 function Box (box) {
     Element.call(this, box);
+    this.route = "/boxes";
+}
+
+function Job (job) {
+    Element.call(this, job);
+    job = job || {};
+    this.client_id = job.client_id;
+    this.route = "/jobs"
+}
+
+Job.prototype = {
+    get_client: function () {
+	return App.elems.get(App.elems.search_index({id: this.client, strElem: 'Client'}, "by_id"));
+    },
+};
+
+function Client (client) {
+    Element.call(this, client);
+    this.route = "/clients";
 }
 
 
@@ -211,6 +236,10 @@ function ListClass () {
 }
 
 ListClass.prototype = {
+    get: function (index) {
+	return this.list[index];
+    },
+    
     add_many: function (xs) {
 	if (typeof xs !== 'undefined') {
 	    if (typeof xs.push === "undefined") {
@@ -239,14 +268,19 @@ ListClass.prototype = {
     // Compares e against each element, makes sure they avec same type
     // returns index
     is_include: function (needle, predicate) {
-	// predicate = predicate || this.eql_predicate // Will be usefull if want to pass other predicate than default class
-	return search_index(this.list, needle, this.eql_predicate);
+	predicate = predicate || this.eql_predicate // Will be usefull if want to pass other predicate than default class
+	if (typeof predicate === "string") predicate = this[predicate];
+	return search_index(this.list, needle, predicate);
     },
-    
+
+    search_index: function (elem, predicate) {
+	return this.is_include(elem, predicate);
+    },
+
     eql_predicate: function (needle, elem) {
 	return needle === elem;
     },
-
+    
     sort_predicate: function (is_smaller, elem) {
 	return (is_smaller < elem) ? true : false
     },
@@ -283,6 +317,10 @@ ElementList.prototype = {
 
     eql_predicate: function (e, elem) {
 	return e.eql(elem);
+    },
+
+    by_id: function (obj, elem) {
+	return obj.id === elem.id && obj.strElem === elem.strElem;
     },
 
     filter_elements: function (strClass, predicate) {
@@ -367,7 +405,7 @@ function ElemAffected(elem, job) {
 // ** Looks like it is fix. Will check that further down. Had done a mistake in Inherits.extend **
 // ** Confirmation, it is fix **
 
-Inherits.extend_multiple([["Employee"], ["Truck"], ["Box"], ["Supervisor", "Employee"]], "Element");
+Inherits.extend_multiple([["Employee"], ["Truck"], ["Box"], ["Job"], ["Client"], ["Supervisor", "Employee"]], "Element");
 Inherits.extend_multiple([["AffectationList"], ["ElementList"], ["AffectedList", "ElementList"]], "ListClass");
 
 // === Initialization === //

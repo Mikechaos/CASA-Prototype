@@ -6,15 +6,23 @@
 // Demonstrate how to register services
 // In this case it is a simple value service.
 angular.module('casaApp.services', [])
+    .factory('client_data', function () {
+	return Element.createFromList("Client", [
+	    {id: 1, name: 'Client1', notes:''},
+	    {id: 2, name: 'Client2', notes:''},
+	    {id: 3, name: 'Client3', notes:''},
+	    {id: 4, name: 'Client4', notes:''},
+	    {id: 5, name: 'Client5', notes:''}
+	]);
+    })
     .factory('job_data', function () {
-	var jobs = [
-	    {id: 1, name: 'Job1', client: 'Client1'},
-	    {id: 2,name: 'Job2', client: 'Client2'},
-	    {id: 3,name: 'Job3', client: 'Client3'},
-	    {id: 4,name: 'Job4', client: 'Client4'},
-	    {id: 5,name: 'Job5', client: 'Client5'}
-	];
-	return jobs;
+	return Element.createFromList("Job", [
+	    {id: 1, name: 'Job1', client: 1, notes:''},
+	    {id: 2, name: 'Job2', client: 2, notes:''},
+	    {id: 3, name: 'Job3', client: 3, notes:''},
+	    {id: 4, name: 'Job4', client: 4, notes:''},
+	    {id: 5, name: 'Job5', client: 5, notes:''}
+	]);
     })
     .factory('employes_data', function () {
 	return Element.createFromList("Employee", [

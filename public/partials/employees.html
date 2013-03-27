@@ -1,0 +1,17 @@
+<div ng-controller="EmployeesCtrl">
+  <h2>EMPLOYÉS</h2>
+
+  <div class="span6 forms">
+    <legend> Ajouter un nouvel employé</legend>
+    <form>
+      <label>Nom :</label>
+      <input type="text" ng-model="newElem.name">
+      <label>Type :</label>
+      <select ng-model="newElem.type" ng-options="type.id as type.name for type in employeeTypes"></select>
+      <label>Notes :</label>
+      <textarea ng-model="newElem.notes" rows="3" cols="8"></textarea>
+      <label></label>
+      <button class="btn btn-success" ng-click="submit()">Ajouter</button>
+    </form>
+  </div>
+</div>

@@ -47,11 +47,20 @@ Inherits = {
     // Abstract function to inherit easily hierarchy
     // Instead of writing each line : Inheritance_Manager.extend(xxx, Element);
     extend_multiple: function (classes, defaultc) {
+	console.log(classes);
 	forEach(classes, function (c) {
 	    if (c.length === 1) c.push(defaultc);
 	    Inherits.extend(Global[c[0]], Global[c[1]]);
 	});
     },
+
+    multiple: function (classes, parent) {
+	forEach (classes, function (c) {
+	    if (c.length === 1) c.push(parent);
+	    Inherits.extend(c[0], c[1]);
+	});
+    },
+
 };
 
 // Found somewhere in the internets

@@ -3,7 +3,7 @@
 /* Controllers */
 
 
-(function (ng, app, job_data, employes_data, truck_data, box_data) {
+(function (ng, app, $http, client_data, job_data, employes_data, truck_data, box_data) {
 
     // CASA CONTROLLER
     function CasaCtrl($scope)
@@ -24,7 +24,7 @@
 
     // DISPATCH CONTROLLER
     // Will need to refactor usage of services here
-    function DispatchCtrl($scope, job_data, employes_data, truck_data, box_data) {
+    function DispatchCtrl($scope, client_data, job_data, employes_data, truck_data, box_data) {
 
 	$scope.elems = [];
 	$scope.jobs = job_data;
@@ -227,14 +227,69 @@
 	
     }
 
+    function AddElems ($scope, $http) {
+
+	//console.log($http.post('/nimporrteou', 'test'));
+	$scope.submit = ng.bind(this, this.submit($scope, $http));
+	this.scope = $scope;
+    }
+
+    AddElems.prototype = { 
+	submit: function ($scope, $http) {
+	    return function () {
+		for (var i = 0; i < 500; ++i) {
+		    $http({method: 'POST',  url: this.scope.newElem.route, params: this.scope.newElem, headers: "application/x-www-form-urlencoded"});
+			// success(function (data, status) {console.log(data)}).
+			// error(function () {console.log('error')});
+		}
+	    }
+	},
+
+    };
+
+    function EmployeesCtrl ($scope, $http) {
+	AddElems.call(this, $scope, $http);
+	$scope.newElem = new Employee;
+
+	$scope.employeeTypes = [
+	    {name: "Superviseur", id: 0},
+	    {name: "Senior", id: 1},
+	    {name: "Junior", id: 2},
+	];
+
+	this.scope = $scope;
+    }
+
+    EmployeesCtrl.prototype = {
+    };
+
+    function JobsCtrl ($scope, $http, client_data, job_data) {
+	AddElems.call(this, $scope, $http);
+	$scope.newElem = new Job;
+	$scope.clients = App.elems.filter_elements("Client");
+	console.log(this);
+    }
+
+    JobsCtrl.prototype = {};
+			  
+			   
+    function ClientsCtrl ($scope, $http) {
+	AddElems.call(this, $scope, $http);
+	$scope.newElem = new Client;
+    }
+
+    Inherits.multiple([[EmployeesCtrl], [JobsCtrl], [ClientsCtrl]], AddElems);
+
     ng.module('casaApp.controllers', [])
 	.controller('CasaCtrl', CasaCtrl)
 	.controller('DispatchCtrl', DispatchCtrl)
 	.controller('ElementsSelectionCtrl', ElementsSelectionCtrl)
 	.controller('DateSelecterCtrl', DateSelecterCtrl)
 	.controller('RenderCtrl', RenderCtrl)
-	.controller('JobsCtrl', function(){})
-	.controller('EmployesCtrl', function(){})
+	.controller('AddElems', AddElems)
+	.controller('ClientsCtrl', ClientsCtrl)
+	.controller('JobsCtrl', JobsCtrl)
+	.controller('EmployeesCtrl', EmployeesCtrl)
 	.controller('UsersCtrl', function(){});
     
 }(angular, casaApp));

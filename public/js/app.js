@@ -1,3 +1,4 @@
+
 'use strict';
 
 
@@ -6,9 +7,10 @@ var casaApp = angular.module('casaApp', ['casaApp.filters', 'casaApp.services', 
 					 'ui.directives', '$strap.directives', 'ui.bootstrap']).
     config(['$routeProvider', function($routeProvider) {
 	$routeProvider.when('/dispatch', {templateUrl: 'partials/dispatch.html', controller: 'DispatchCtrl'})
-	    .when('/jobs', {templateUrl: 'partials/jobs.html', controller: 'JobsCtrl'})
-	    .when('/employes', {templateUrl: 'partials/employes.html', controller: 'EmployesCtrl'})
-	    .when('/utilisateurs', {templateUrl: 'partials/user.html', controller: 'UsersCtrl'})
+	    .when('/clients', {templateUrl: 'partials/clients.html', controller: 'AddElems'})
+	    .when('/jobs', {templateUrl: 'partials/jobs.html', controller: 'AddElems'})
+	    .when('/employees', {templateUrl: 'partials/employees.html', controller: 'AddElems'})
+	    .when('/utilisateurs', {templateUrl: 'partials/user.html', controller: 'AddElems'})
 	    .otherwise({redirectTo: '/dispatch'});
 
     }]);

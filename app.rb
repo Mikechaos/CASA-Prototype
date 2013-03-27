@@ -24,12 +24,14 @@ class MyApp < Sinatra::Application
     alias_method :h, :escape_html
   end
   
+  # set :haml, :format => :html5
+  # get "/" do
+  #   haml :employees_form
+  #   # File.read(File.join('public', 'index.html'))
+  # end
+
   get "/" do
     File.read(File.join('public', 'index.html'))
-  end
-
-  get '/public/index.html' do
-    
   end
 
 end
