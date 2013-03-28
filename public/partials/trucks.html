@@ -1,0 +1,29 @@
+<div ng-controller="TrucksCtrl">
+  <legend><h2>Camions</h2></legend>
+
+  <div class="span6 forms">
+    <legend> Ajouter un nouveau camion</legend>
+    <form>
+      <label>Nom :</label>
+      <input type="text" ng-model="newElem.name">
+      <label>Notes :</label>
+      <textarea ng-model="newElem.notes" rows="3" cols="8"></textarea>
+      <label></label>
+      <!-- <button class="btn btn-success" disabled>En construction</button> -->
+      <button class="btn btn-success" ng-click="submit()">Ajouter</button>
+    </form>
+  </div>
+
+  <div class="span6" ng-show="(elements | elems:'Truck').length > 0">
+    <table class="table table-striped table-bordered">
+      <tr>
+	<th>Nom</th>
+	<th>Notes</th>
+      </tr>
+
+      <tr ng-repeat="truck in elements | elems:'Truck'">
+	<td>{{truck.name}}</td>
+	<td>{{truck.notes}}</td>
+      </tr>
+  </div>
+</div>
