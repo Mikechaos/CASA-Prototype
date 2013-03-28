@@ -1,4 +1,16 @@
 # encoding: utf-8
+
+class Sequel::Dataset
+  def to_json
+    naked.all.to_json
+  end
+end
+class Sequel::Model
+  def self.to_json
+    dataset.to_json
+  end
+end
+
 class MyApp < Sinatra::Application
   get "/employees" do
     @title = "Tous les employés"
@@ -6,7 +18,8 @@ class MyApp < Sinatra::Application
     @employee = Employee.new
     @employees = Employee.all
     @route_name = "employees"
-    haml :reglages	
+    @employees.to_json
+    # haml :reglages	
   end
 
   get "/employees/:id" do |id|
@@ -19,7 +32,7 @@ class MyApp < Sinatra::Application
   end
 
   post "/employees" do
-    Employee.create(:name => params[:name], :supervisor => (params[:type] == "0"), :employees_type_id => params[:type], :notes => params[:notes])
+    Employee.create(:name => params[:name], :supervisor => (params[:employees_type_id] == "0"), :employees_type_id => params[:employees_type_id], :notes => params[:notes])
     @employee = Employee.new
     @employees = Employee.all
     @route_name = 'employees'

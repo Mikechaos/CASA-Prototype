@@ -8,6 +8,7 @@
     // CASA CONTROLLER
     function CasaCtrl($scope)
     {
+	$scope.elements = App.elems;
 	this.scope = $scope;
 	
 	this.scope.root = '/#/';
@@ -39,7 +40,6 @@
 				{name: "Truck", screen: "Camions"},
 				{name: "Box", screen: "Coffres"}];
 	$scope.date.sndDate = new Date($scope.date.today.getFullYear(), $scope.date.today.getMonth(), $scope.date.today.getDate() + 7),
-	$scope.elements = App.elems;
 	$scope.newAffectation = new Affectation();
 	$scope.save_affectation = ng.bind(this, this.save_affectation);
 	$scope.affected_elems = App.affected_today
@@ -237,15 +237,21 @@
     AddElems.prototype = { 
 	submit: function ($scope, $http) {
 	    return function () {
-		$http({method: 'POST',  url: this.scope.newElem.route, params: this.scope.newElem, headers: "application/x-www-form-urlencoded"});
-		// success(function (data, status) {console.log(data)}).
-		// error(function () {console.log('error')});
+		var self = this;
+		$http({method: 'POST',  url: this.scope.newElem.route, params: this.scope.newElem, headers: "application/x-www-form-urlencoded"})
+		    .success(function (data, status) {console.log(data); self.save();})
+		    .error(function () {console.log('error')});
 	    }
+	},
+
+	save: function () {
+	    App.elems.push(this.scope.newElem);
+	    this.scope.newElem = new Global[this.scope.newElem.strElem];
 	},
 
     };
 
-    function EmployeesCtrl ($scope, $http) {
+    function EmployeesCtrl ($scope, $http, employes_data) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new Employee;
 
@@ -259,16 +265,25 @@
     }
 
     EmployeesCtrl.prototype = {
+	save: function () {
+	    App.elems.push(this.scope.newElem.type === 0 ? new Supervisor(this.scope.newElem) : this.scope.newElem);
+	    this.scope.newElem = new Employee;
+	},
+	// submit: function () {
+	//     this.superClass.submit.call(this)
+	//     this.scope.newElem = new Employee;
+	// },
     };
 
     function JobsCtrl ($scope, $http, client_data, job_data) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new Job;
 	$scope.clients = App.elems.filter_elements("Client");
-	console.log(this);
     }
 
-    JobsCtrl.prototype = {};
+    JobsCtrl.prototype = {
+
+    };
 			  
 			   
     function ClientsCtrl ($scope, $http) {

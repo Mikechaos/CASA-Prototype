@@ -17,30 +17,41 @@ angular.module('casaApp.services', [])
     })
     .factory('job_data', function () {
 	return Element.createFromList("Job", [
-	    {id: 1, name: 'Job1', client: 1, notes:''},
-	    {id: 2, name: 'Job2', client: 2, notes:''},
-	    {id: 3, name: 'Job3', client: 3, notes:''},
-	    {id: 4, name: 'Job4', client: 4, notes:''},
-	    {id: 5, name: 'Job5', client: 5, notes:''}
+	    {id: 1, name: 'Job1', client_id: 1, notes:'I\'m job number 1'},
+	    {id: 2, name: 'Job2', client_id: 2, notes:'Ironically, I\'m job number 2'},
+	    {id: 3, name: 'Job3', client_id: 3, notes:'Me three'},
+	    {id: 4, name: 'Job4', client_id: 4, notes:'You four. Meh. You, me. Life is so dramatic'},
+	    {id: 5, name: 'Job5', client_id: 5, notes:'RAINBOW 5'}
 	]);
     })
-    .factory('employes_data', function () {
-	return Element.createFromList("Employee", [
-	    {id: 1, name: 'Superviseur1', type: 'Contre-Maître', empClass: 1, state: 1},
-	    {id: 2, name: 'Junior1', type: 'Junior', empClass : 4, state: 1},
-	    {id: 3, name: 'Senior1', type: 'Senior', empClass : 3, state: 1},
-	    {id: 4, name: 'André Leslondes', type: 'Contre-Maître', empClass : 1, state: 1},
-	    {id: 5, name: 'Employés 1', type: 'Senior', empClass : 2, state: 1},
-	    {id: 6, name: 'Employés 2', type: 'Junior', empClass : 4, state: 1},
-	    {id: 7, name: 'Superviseur2', type: 'Contre-Maître', empClass: 1, state: 1},
-	    {id: 8, name: 'Jean-Baptiste', type: 'Junior', empClass : 4, state: 1},
-	    {id: 9, name: 'Franky', type: 'Senior', empClass : 3, state: 1},
-	    {id: 10, name: 'Andréa Leslondes (la jumelle)', type: 'Contre-Maître', empClass : 1, state: 1},
-	    {id: 11, name: 'Renaldo', type: 'Senior', empClass : 2, state: 1},
-	    {id: 12, name: 'Big Stud', type: 'Junior', empClass : 4, state: 1},
-	]);
+    .factory('employes_data', ['$http', function (http) {
+	var emps = [];
+	http({method: 'GET',  url: '/employees', headers: "application/x-www-form-urlencoded"})
+	    .success(function (employees, status) {
+		console.log(employees);
+		forEach(employees, function (e) {
+		    emps.push({id: e.id, name: e.name, employees_type_id: e.employees_type_id, state: e.state, notes: e.notes});
+		});
+		emps = Element.createFromList("Employee", emps);
+		console.log(emps);
+	    });
+	return emps;
+	// Element.createFromList("Employee", emps);
+	//     {id: 1, name: 'Superviseur1', type: 'Contre-Maître', empClass: 1, state: 1},
+	//     {id: 2, name: 'Junior1', type: 'Junior', empClass : 4, state: 1},
+	//     {id: 3, name: 'Senior1', type: 'Senior', empClass : 3, state: 1},
+	//     {id: 4, name: 'André Leslondes', type: 'Contre-Maître', empClass : 1, state: 1},
+	//     {id: 5, name: 'Employés 1', type: 'Senior', empClass : 2, state: 1},
+	//     {id: 6, name: 'Employés 2', type: 'Junior', empClass : 4, state: 1},
+	//     {id: 7, name: 'Superviseur2', type: 'Contre-Maître', empClass: 1, state: 1},
+	//     {id: 8, name: 'Jean-Baptiste', type: 'Junior', empClass : 4, state: 1},
+	//     {id: 9, name: 'Franky', type: 'Senior', empClass : 3, state: 1},
+	//     {id: 10, name: 'Andréa Leslondes (la jumelle)', type: 'Contre-Maître', empClass : 1, state: 1},
+	//     {id: 11, name: 'Renaldo', type: 'Senior', empClass : 2, state: 1},
+	//     {id: 12, name: 'Big Stud', type: 'Junior', empClass : 4, state: 1},
+	// ]);
 
-    })
+    }])
     .factory("user_data", function () {
 	return User.createFromList([
 	    {id: 1, full_name: "Mike"},

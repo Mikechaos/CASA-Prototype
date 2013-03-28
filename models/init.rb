@@ -13,6 +13,8 @@ DB = Sequel.postgres('d563rs3agl1jk7', :user=>'itvnbulwdbqpbc',
        :max_connections=>10)
 # DB << "SET CLIENT_ENCODING TO 'UTF8';"
 
+Sequel::Model.plugin :json_serializer
+
 require_relative 'employee'
 require_relative 'employees_type'
 require_relative 'job'

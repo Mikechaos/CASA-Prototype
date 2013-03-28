@@ -37,7 +37,7 @@ Element.createFromList = function (classStr, list) {
     forEach(list, function (e) {
 	// Little hack. Poor style, but benenifts in the situation
 	// ** Added static inheritance so it will be fix **
-	c_str = e.empClass < 3 ? "Supervisor" : classStr;
+	c_str = e.employees_type_id == 0 ? "Supervisor" : classStr;
 	App.elems.push(new Global[c_str](e))
     });
 };
@@ -53,9 +53,9 @@ Element.render = function (count) {
 function Employee (emp) {
     Element.call(this, emp);
     if (typeof emp !== "undefined") {
-	this.empClass = emp.empClass;
+	this.employees_type_id = emp.employees_type_id;
     } else {
-	this.empClass = 20 // employee_type_id
+	this.employees_type_id = 20 // employee_type_id
     }
     this.route = "/employees";
 }
@@ -72,6 +72,7 @@ Employee.prototype = {
 
 function Supervisor (sup) {
     Employee.call(this, sup);
+    this.employees_type_id = 0;
     this.route = "/employees";
 }
 
