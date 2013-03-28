@@ -63,7 +63,7 @@ Inherits = {
 
 };
 
-// Found somewhere in the internets
+3// Found somewhere in the internets
 // Actually is there only for comparative and study purpose
 function createSpec(child, parent){
     var parentPrototype;
@@ -103,8 +103,8 @@ function search_index (list, elem, predicate) {
     var index = false;
     forEach(list, function (e, i) {
 	// If predicate is true, will result in return false => end of loop
-	// && second part (found = i) will be evaluate so found holds the index where it was found
-	// Else predicate is false, second part is not evaluate and returns true => equiv to continue);
+	// && second part (found = i) will be evaluate
+	// Else second part is not evaluate and returns true => equiv to continue);
 	return !(predicate(e, elem) && (index = i));
     });
     return index;

@@ -268,8 +268,9 @@
 	$scope.newElem = new Employee;
 	$scope.employeesTypes = {};
 
-	employees_type_data.success(function () {
+	employees_data.success(function () {
 	    $scope.employeesTypes = $scope.elements.filter_elements("EmployeesType");
+
 	});
 
 	$scope.refresh_employees = function () {
@@ -277,6 +278,13 @@
 	    $scope.safeApply();
 	};
 
+	$scope.get_employee_type = function (type_id) {
+	    // console.log(search_index($scope.employeesTypes, type_id, function (e, type_id) { return e.id === type_id }));
+	    // return App.elems.get(search_index($scope.employeesTypes, type_id, function (type_id, e) { e.id === type_id }));
+	    // console.log(App.elems.search_index(type_id, function (e, type_id) { return console.log(type_id, e); e.strElem === "EmployeesType" && e.id === type_id;}));
+	    // return App.elems.get(App.elems.search_index(type_id, function (type_id, e) { return e.strElem === "EmployeesType" && e.id === type_id;}));
+	};
+	
 	// $scope.$watch(App.elems, function () {
 	//     $scope.employeesTypes = $scope.elements.filter_elements("EmployeesType");
 	//     console.log('triggered');
@@ -298,7 +306,7 @@
     };
     
 
-    function EmployeesTypesCtrl ($scope, $http, employees_type_data) {
+    function EmployeesTypesCtrl ($scope, $http, employees_data) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new EmployeesType;
 	this.scope = $scope;

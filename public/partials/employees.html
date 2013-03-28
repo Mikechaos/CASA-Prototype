@@ -31,13 +31,14 @@
 
 	    <tr ng-repeat="sup in elements | elems:'Supervisor'">
 	      <td>{{sup.name}}</td>
-	      <td>{{sup.employees_type_id}}</td>
+	      <td>{{sup.type}}</td>
 	      <td>{{sup.notes}}</td>
 	    </tr>
 
 	    <tr ng-repeat="emp in elements | elems:'Employee'">
 	      <td>{{emp.name}}</td>
-	      <td>{{emp.get_employee_type}}</td>
+	      <td>{{emp.type}}</td>
+	      <!-- <td>{{get_employee_type(emp.employees_type_id)}}</td> -->
 	      <td>{{emp.notes}}</td>
 	    </tr>
 	  </table>

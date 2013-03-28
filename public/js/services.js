@@ -28,15 +28,12 @@ angular.module('casaApp.services', [])
 	]);
     })
     .factory('job_data', ['$http', 'fetch_data', function (http, fetch) {
-	fetch(new Job, function (j) {
+	return fetch(new Job, function (j) {
 	    return {id: j.id, name: j.name, client_id: j.client_id, state: j.state, notes: j.notes};
 	});
-	return [];
     }])
-    .factory('employees_data', ['$http', 'fetch_data', function (http, fetch) {
-	fetch(new Employee, function (e) {
-	    return {id: e.id, name: e.name, employees_type_id: e.employees_type_id, state: e.state, notes: e.notes};
-	});
+    .factory('employees_type_data', ['$http', 'fetch_data', function (http, fetch) {
+	
 	return [];
 
 	// Element.createFromList("Employee", emps);
@@ -55,10 +52,14 @@ angular.module('casaApp.services', [])
 	// ]);
 
     }])
-    .factory('employees_type_data', ['$http', 'fetch_data', function (http, fetch) {
-	return fetch(new EmployeesType, function (e) {
+    .factory('employees_data', ['$http', 'fetch_data', function (http, fetch) {
+	return (fetch(new EmployeesType, function (e) {
 	    return {id: e.id, type: e.type};
-	});
+	}).success(function () {
+	    fetch(new Employee, function (e) {
+		return {id: e.id, name: e.name, employees_type_id: e.employees_type_id, state: e.state, notes: e.notes};
+	    });
+	}));
     }])
     .factory("truck_data", ['$http', 'fetch_data', function (http, fetch) {
 	return fetch(new Truck, function (e) {

@@ -54,6 +54,8 @@ function Employee (emp) {
     Element.call(this, emp);
     if (typeof emp !== "undefined") {
 	this.employees_type_id = emp.employees_type_id;
+	// this.type = App.elems.get(search_index(App.elems.filter_elements("EmployeesType", this.employees_type_id, function (e, type_id) { return e.id === type_id }))).type;
+	this.type = App.elems.get(search_index(App.elems.filter_elements("EmployeesType"), this.employees_type_id, function (e, type_id) { return e.id === type_id })).type;
     } else {
 	this.employees_type_id = 20 // employee_type_id
     }
