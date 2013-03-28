@@ -110,6 +110,14 @@ Job.prototype = {
 
 function Client (client) {
     Element.call(this, client);
+    client = client || {};
+    this.ref_number = client.ref_number;
+    this.contact = client.contact;
+    this.city = client.city;
+    this.postal_code = client.postal_code;
+    this.casa_salesman = client.casa_salesman;
+    this.address = client.address;
+    this.phone = client.phone;
     this.route = "/clients";
 }
 
