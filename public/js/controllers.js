@@ -3,7 +3,7 @@
 /* Controllers */
 
 
-(function (ng, app, $http, client_data, job_data, employes_data, truck_data, box_data) {
+(function (ng, app, $http, client_data, job_data, employees_data, truck_data, box_data) {
 
     // CASA CONTROLLER
     function CasaCtrl($scope)
@@ -11,6 +11,17 @@
 	$scope.elements = App.elems;
 	this.scope = $scope;
 	
+
+	$scope.safeApply = function(fn) {
+	    var phase = this.$root.$$phase;
+	    if(phase == '$apply' || phase == '$digest') {
+		if(fn && (typeof(fn) === 'function')) {
+		    fn();
+		}
+	    } else {
+		this.$apply(fn);
+	    }
+	};
 	this.scope.root = '/#/';
 	return (this);
 	
@@ -25,7 +36,7 @@
 
     // DISPATCH CONTROLLER
     // Will need to refactor usage of services here
-    function DispatchCtrl($scope, client_data, job_data, employes_data, truck_data, box_data) {
+    function DispatchCtrl($scope, client_data, job_data, employees_data, truck_data, box_data) {
 
 	$scope.elems = [];
 	$scope.jobs = job_data;
@@ -247,20 +258,31 @@
 	save: function () {
 	    App.elems.push(this.scope.newElem);
 	    this.scope.newElem = new Global[this.scope.newElem.strElem];
+	    console.log("superClass called");
 	},
 
     };
 
-    function EmployeesCtrl ($scope, $http, employes_data) {
+    function EmployeesCtrl ($scope, $http, employees_data, employees_type_data) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new Employee;
+	$scope.employeesTypes = {};
 
-	$scope.employeeTypes = [
-	    {name: "Superviseur", id: 0},
-	    {name: "Senior", id: 1},
-	    {name: "Junior", id: 2},
-	];
+	employees_type_data.success(function () {
+	    $scope.employeesTypes = $scope.elements.filter_elements("EmployeesType");
+	});
 
+	$scope.refresh_employees = function () {
+	    $scope.employeesTypes = App.elems.filter_elements("EmployeesType");
+	    $scope.safeApply();
+	};
+
+	// $scope.$watch(App.elems, function () {
+	//     $scope.employeesTypes = $scope.elements.filter_elements("EmployeesType");
+	//     console.log('triggered');
+	//     $scope.safeApply();
+	// });
+	
 	this.scope = $scope;
     }
 
@@ -274,6 +296,26 @@
 	//     this.scope.newElem = new Employee;
 	// },
     };
+    
+
+    function EmployeesTypesCtrl ($scope, $http, employees_type_data) {
+	AddElems.call(this, $scope, $http);
+	$scope.newElem = new EmployeesType;
+	this.scope = $scope;
+    }
+
+    EmployeesTypesCtrl.prototype = {
+	save: function () {
+	    this.constructor.superClass.save.call(this);
+	    this.scope.refresh_employees();
+	    // this.scope.employeesTypes = App.elems.filter_elements("EmployeesType");
+	    // console.log(this.scope.employeesTypes);
+	    // var $scope = this.scope;
+	    // setTimeout(function () {
+	    // 	$scope.safeApply();
+	    // }, 1000);
+	}
+    };
 
     function JobsCtrl ($scope, $http, client_data, job_data) {
 	AddElems.call(this, $scope, $http);
@@ -284,14 +326,36 @@
     JobsCtrl.prototype = {
 
     };
-			  
-			   
+	
+				   
     function ClientsCtrl ($scope, $http) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new Client;
     }
+    
+    ClientsCtrl.prototype = {
+ 
+    };
 
-    Inherits.multiple([[EmployeesCtrl], [JobsCtrl], [ClientsCtrl]], AddElems);
+    function TrucksCtrl ($scope, $http, truck_data) {
+	AddElems.call(this, $scope, $http);
+	$scope.newElem = new Truck;
+    }
+
+    TrucksCtrl.prototype = {
+
+    };
+	
+    function BoxesCtrl ($scope, $http, box_data) {
+	AddElems.call(this, $scope, $http);
+	$scope.newElem = new Box;
+    }
+
+    BoxesCtrl.prototype = {
+
+    };
+
+    Inherits.multiple([[EmployeesCtrl], [EmployeesTypesCtrl], [JobsCtrl], [ClientsCtrl], [TrucksCtrl], [BoxesCtrl]], AddElems);
 
     ng.module('casaApp.controllers', [])
 	.controller('CasaCtrl', CasaCtrl)
@@ -302,7 +366,10 @@
 	.controller('AddElems', AddElems)
 	.controller('ClientsCtrl', ClientsCtrl)
 	.controller('JobsCtrl', JobsCtrl)
+	.controller('TrucksCtrl', TrucksCtrl)
+	.controller('BoxesCtrl', BoxesCtrl)
 	.controller('EmployeesCtrl', EmployeesCtrl)
+	.controller('EmployeesTypesCtrl', EmployeesTypesCtrl)
 	.controller('UsersCtrl', function(){});
     
 }(angular, casaApp));

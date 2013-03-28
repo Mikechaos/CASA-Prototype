@@ -10,6 +10,8 @@ var casaApp = angular.module('casaApp', ['casaApp.filters', 'casaApp.services', 
 	    .when('/clients', {templateUrl: 'partials/clients.html', controller: 'AddElems'})
 	    .when('/jobs', {templateUrl: 'partials/jobs.html', controller: 'AddElems'})
 	    .when('/employees', {templateUrl: 'partials/employees.html', controller: 'AddElems'})
+	    .when('/trucks', {templateUrl: 'partials/trucks.html', controller: 'AddElems'})
+	    .when('/boxes', {templateUrl: 'partials/boxes.html', controller: 'AddElems'})
 	    .when('/utilisateurs', {templateUrl: 'partials/user.html', controller: 'AddElems'})
 	    .otherwise({redirectTo: '/dispatch'});
 

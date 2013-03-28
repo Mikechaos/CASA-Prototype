@@ -1,5 +1,5 @@
 <div ng-controller="ClientsCtrl">
-  <h2>Clients</h2>
+  <legend><h2>Clients</h2></legend>
 
   <div class="span6 forms">
     <legend> Ajouter un Client</legend>
@@ -9,7 +9,8 @@
       <label>Notes :</label>
       <textarea ng-model="newElem.notes" rows="3" cols="8"></textarea>
       <label></label>
-      <button class="btn btn-success" ng-click="submit()">Ajouter</button>
+      <button class="btn btn-success" disabled>En construction</button>
+      <!-- <button class="btn btn-success" ng-click="submit()">Ajouter</button> -->
     </form>
   </div>
 </div>

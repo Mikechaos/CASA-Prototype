@@ -63,7 +63,6 @@ Employee.render = function (count) {
     return "Employee" + "s : " + count;
 };
 
-
 // EMPLOYEE BEHAVIOR
 
 Employee.prototype = {
@@ -75,6 +74,13 @@ function Supervisor (sup) {
     this.employees_type_id = 0;
     this.route = "/employees";
 }
+
+function EmployeesType (emp_type) {
+    Element.call(this, emp_type);
+    if (typeof emp_type === "undefined") this.type = ""; // Hack. Type is used as name property here
+    this.route = "/employees_types";
+}
+
 
 function Truck (truck) {
     Element.call(this, truck);

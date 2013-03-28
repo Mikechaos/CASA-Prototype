@@ -6,7 +6,8 @@ class MyApp < Sinatra::Application
     @job = Job.new
     @jobs = Job.all	
     @route_name = "jobs"
-    haml :reglages	
+    @jobs.to_json
+    # haml :reglages	
   end
 
   get "/jobs/:id" do |id|
@@ -15,7 +16,7 @@ class MyApp < Sinatra::Application
     @title = "Fiche de #{@job.name}"
     @form_action = "/jobs/#{@job.id}"
     @route_name = "jobs"
-    haml :reglages
+    # haml :reglages
   end
 
   post "/jobs" do
