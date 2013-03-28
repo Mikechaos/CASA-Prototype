@@ -250,7 +250,7 @@
 	    return function () {
 		var self = this;
 		$http({method: 'POST',  url: this.scope.newElem.route, params: this.scope.newElem, headers: "application/x-www-form-urlencoded"})
-		    .success(function (data, status) {console.log(data); self.save();})
+		    .success(function (data, status) {self.save();})
 		    .error(function () {console.log('error')});
 	    }
 	},
@@ -258,7 +258,7 @@
 	save: function () {
 	    App.elems.push(this.scope.newElem);
 	    this.scope.newElem = new Global[this.scope.newElem.strElem];
-	    console.log("superClass called");
+	    // console.log("superClass called");
 	},
 
     };
@@ -336,7 +336,7 @@
     };
 	
 				   
-    function ClientsCtrl ($scope, $http) {
+    function ClientsCtrl ($scope, $http, client_data) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new Client;
     }

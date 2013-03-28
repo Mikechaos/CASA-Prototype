@@ -18,15 +18,13 @@ angular.module('casaApp.services', [])
 		});
 	}
     }])
-    .factory('client_data', function () {
-	return Element.createFromList("Client", [
-	    {id: 1, name: 'Client1', notes:''},
-	    {id: 2, name: 'Client2', notes:''},
-	    {id: 3, name: 'Client3', notes:''},
-	    {id: 4, name: 'Client4', notes:''},
-	    {id: 5, name: 'Client5', notes:''}
-	]);
-    })
+    .factory('client_data', ['fetch_data', function (fetch) {
+	return fetch(new Client, function (c) {
+	    return {id: c.id, name: c.name, contact: c.contact, ref_number: c.ref_number, city: c.city,
+		    address: c.address, phone: c.phone, casa_salesman: c.casa_salesman,
+		    state: c.state, notes: c.notes};
+	});
+    }])
     .factory('job_data', ['$http', 'fetch_data', function (http, fetch) {
 	return fetch(new Job, function (j) {
 	    return {id: j.id, name: j.name, client_id: j.client_id, state: j.state, notes: j.notes};
