@@ -237,11 +237,9 @@
     AddElems.prototype = { 
 	submit: function ($scope, $http) {
 	    return function () {
-		for (var i = 0; i < 500; ++i) {
-		    $http({method: 'POST',  url: this.scope.newElem.route, params: this.scope.newElem, headers: "application/x-www-form-urlencoded"});
-			// success(function (data, status) {console.log(data)}).
-			// error(function () {console.log('error')});
-		}
+		$http({method: 'POST',  url: this.scope.newElem.route, params: this.scope.newElem, headers: "application/x-www-form-urlencoded"});
+		// success(function (data, status) {console.log(data)}).
+		// error(function () {console.log('error')});
 	    }
 	},
 

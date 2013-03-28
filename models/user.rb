@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'bcrypt'
 
-class User < Sequel::Model
+class User < Sequel::Model(:Users)
 	
 	def self.authentificate (params)
 		user = self.find( :name => params[:name] )

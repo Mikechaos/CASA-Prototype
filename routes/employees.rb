@@ -23,7 +23,6 @@ class MyApp < Sinatra::Application
     @employee = Employee.new
     @employees = Employee.all
     @route_name = 'employees'
-    params[:type] == "0"
     # haml :reglages
   end
 

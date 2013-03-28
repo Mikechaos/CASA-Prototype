@@ -11,7 +11,7 @@
       <label>Type :</label>
       <select ng-model="newElem.type" ng-options="type.id as type.name for type in jobTypes"></select>
       <label>Notes :</label>
-      <textarea ng-model="newElem.note" rows="3" cols="8"></textarea>
+      <textarea ng-model="newElem.notes" rows="3" cols="8"></textarea>
       <label></label>
       <button class="btn btn-success" ng-click="submit()">Ajouter</button>
     </form>

@@ -1,6 +1,6 @@
 # encoding: utf-8
-class Employee < Sequel::Model
-	many_to_one :employees_type
+class Employee < Sequel::Model(:Employees)
+	many_to_one :Employees_types
 	def position
 		if self.supervisor
 			"Superviseur"

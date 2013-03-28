@@ -1,4 +1,4 @@
 # encoding: utf-8
-class Job < Sequel::Model
+class Job < Sequel::Model(:Jobs)
 	
 end
