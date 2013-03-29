@@ -24,15 +24,15 @@ angular.module('casaApp.services', [])
 	    return deferred.promise;
 	}
     }])
-    .factory('fetch_all', ['$q', 'fetch_elems', 'fetch_data', function ($q, fetch, fetch_data) {
+    .factory('fetch_all', ['$q', 'fetch_data', function ($q, fetch) {
 	var deferred = $q.defer();
 	$q.all([
-	    fetch_data(new EmployeesType),
-	    fetch_data(new Employee),
-	    fetch_data(new Client),
-	    fetch_data(new Truck),
-	    fetch_data(new Box),
-	    fetch_data({route: '/affectations', strElem: 'Affectation'}),
+	    fetch(new EmployeesType),
+	    fetch(new Employee),
+	    fetch(new Client),
+	    fetch(new Truck),
+	    fetch(new Box),
+	    fetch({route: '/affectations', strElem: 'Affectation'}),
 	]).then(function (array) {
 	    forEach(array, function (obj) {
 		if (obj.strElem !== "Affectation")
