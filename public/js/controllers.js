@@ -23,9 +23,6 @@
 	    }
 	};
 	this.scope.root = '/#/';
-	fetch_all.then(function () {
-	    console.log('fetch all: ', App.elems);
-	});
 	this.scope.fetched_all = fetch_all;
 	this.scope.showingDayDetails = false;
 	// this.scope.data_promise = fetch_all_data;
@@ -366,7 +363,7 @@
     Inherits.multiple([[EmployeesCtrl], [EmployeesTypesCtrl], [JobsCtrl], [ClientsCtrl], [TrucksCtrl], [BoxesCtrl]], AddElems);
 
     function DayDetailsCtrl ($scope) {
-	console.log($scope);
+
 	$scope.$parent.showingDayDetails = true;
 	$scope.day_affectations = [];
 	$scope.fetched_all.then(function () { $scope.safeApply(function () { $scope.day_affectations = App.affectations.get_todays()})});

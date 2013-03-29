@@ -220,3 +220,23 @@
     padding: 4px;
     border-radius: 10px;
 }
+
+.details-cell {
+    border: 2px rgb(223, 223, 223) solid;
+    border-radius:4px;
+    margin-left: 0px;
+    margin-right: 0px;
+    padding: 10px;
+}
+
+.table_legend {
+    margin-left: 10%;
+    width: 15%;
+}
+
+.affect_report {
+    border: 4px rgb(240, 240, 240) solid;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 20px;
+}

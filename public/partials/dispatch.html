@@ -1,6 +1,7 @@
 <legend class="row"><h2 style="float:left;">DISPATCH</h2>
   <button class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" ng-show="!attribute_elem_screen" ng-click="attribute_elem_screen=true">Éléments Attribués</button>
   <button class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" ng-show="attribute_elem_screen" ng-click="attribute_elem_screen=false">Dispatch</button>
+  <a class="btn btn-warning btn-large" style="margin-left:4%; margin-bottom:-1%;" href="#/day_details" target="blank" style="font-size:16px">Rapports de la journée</a>
 </legend>
 
 <!-- *** Dispatch screen *** -->
@@ -17,7 +18,7 @@
 	  <input type="text" ui-date="{ dateFormat: 'd MM, yy'}"  ng-show="affectation" ng_model="newAffectation.date" style="padding-left:15px; width:135px;"></input>
 	  <a href="" ng-click="today();" class="btn-success btn">Aujourd'hui</a>
 	</div>
-
+	
 	<!-- Add mode -->
 	<div class="span2 offset1" ng-show="affectation">
 	  <label for="start_time_affect_id"> Heure de départ :</label>

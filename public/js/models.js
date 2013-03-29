@@ -34,16 +34,15 @@ Element.prototype = {
 // And a list of objects and returns a list of
 // instantiated Element (Employee, Truck, etc.)
 Element.createFromList = function (classStr, list, deferred) {
-    console.log("Started " + classStr, (new Date).getSeconds(), App.elems);
+    // console.log("Started " + classStr, (new Date).getSeconds(), App.elems);
     forEach(list, function (e) {
 	// Little hack. Poor style, but benenifts in the situation
 	// ** Added static inheritance so it will be fix **
 	c_str = e.employees_type_id == 0 ? "Supervisor" : classStr;
 	App.elems.push(new Global[c_str](e))
     });
-    console.log("Done " + classStr, (new Date).getSeconds(), App.elems);
+    // console.log("Done " + classStr, (new Date).getSeconds(), App.elems);
     //deferred.resolve();
-    console.log(classStr, "1");
     //return deferred.resolve();
 };
 
@@ -59,9 +58,7 @@ function Employee (emp) {
     Element.call(this, emp);
     if (typeof emp !== "undefined") {
 	this.employees_type_id = emp.employees_type_id;
-	// this.type = App.elems.get(search_index(App.elems.filter_elements("EmployeesType", this.employees_type_id, function (e, type_id) { return e.id === type_id }))).type;
 	this.set_string_type();
-	console.log(this.type);
     } else {
 	this.employees_type_id = ""; // employee_type_id
     }
@@ -147,7 +144,7 @@ function Affectation () {
 }
 
 Affectation.createFromList = function (data_base_affectations) {
-    console.log("Started affectations", (new Date).getSeconds(), App.elems);
+    // console.log("Started affectations", (new Date).getSeconds(), App.elems);
     forEach (data_base_affectations, function (dba) {
 	a = new Affectation;
 	a.id = dba.id
@@ -164,13 +161,12 @@ Affectation.createFromList = function (data_base_affectations) {
 	a.affectation_type = dba.affectation_type;
 	a.notes = dba.notes;
 	dba.elements = eval(dba.elements);
-	console.log(App.elems);
 	forEach(dba.elements, function (e) {
-	    a.elems.push(App.elems.get(App.elems.search_index(e, function (elem, e) {console.log (e.id, e.strElem); return e.id === elem.id && e.strElem === elem.strElem})));
+	    a.elems.push(App.elems.get(App.elems.search_index(e, function (elem, e) {return e.id === elem.id && e.strElem === elem.strElem})));
 	});
 	App.affectations.push(a);
     });
-    console.log("Done affectations", (new Date).getSeconds());
+    // console.log("Done affectations", (new Date).getSeconds());
 };
 
 Affectation.prototype = {
@@ -246,6 +242,10 @@ Affectation.prototype = {
 	var today = new Date;
 	return this.is_between_dates(today, today)
     },
+
+    get_client: function() {
+	return App.elems.get(search_index(App.elems.list, this.client_id, function (e, client_id) { return e.id === client_id && e.strElem === "Client";}));
+    }
 
 };
 
@@ -510,7 +510,6 @@ var App = {
 	var affected = this.affected_today;
 	App.affectations.get_todays().forEach(function (a) {
 	    a.elems.forEach(function (e) {
-		console.log(e);
 		affected.push(new ElemAffected(e, a.name))
 	    });
 	});

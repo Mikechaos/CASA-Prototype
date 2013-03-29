@@ -1,0 +1,95 @@
+<div class="span12 affect_report" style="margin-top:-40px;" ng-repeat="affect in day_affectations">
+  <legend><h3>{{affect.name}}</h3></legend>
+  <table class="table">
+    <tr>
+      <th>Date</th>
+      <th>Heure de début</th>
+      <th>Bon de service</th>
+    </tr>
+    
+    <tr>
+      <td>{{affect.date_format}}</td>
+      <td>{{affect.start_time.time}}</td>
+      <td>{{affect.link_number}}</td>
+    </tr>
+  </table>
+  <legend></legend>
+  <h4>Client</h4>
+  <table class="table">
+      <tr>
+	<th>Nom</th>
+	<th>Numero de référence</th>
+	<th>Téléphone</th>
+	<th>Ville</th>
+	<th class="span4">Adresse</th>
+	<th>Notes</th>
+      </tr>
+
+      <tr>
+	<td>{{affect.get_client().name}}</td>
+	<td>{{affect.get_client().ref_number}}</td>
+	<td>{{affect.get_client().phone}}</td>
+	<td>{{affect.get_client().city}}</td>
+	<td>{{affect.get_client().address}}</td>
+	<td>{{affect.get_client().notes}}</td>
+      </tr>
+  </table>
+  <legend></legend>
+  <div class="row">
+    <div class="span4" style="margin-left: 85px;">
+      <h4>Superviseur(s)</h4>
+      <table class="table">
+	<tr>
+	  <th>Nom</th>
+	</tr>
+
+	<tr ng-repeat="elem in affect.elems | elems:'Supervisor'">
+	  <td>{{elem.name}}</td>
+	</tr>
+
+      </table>
+    </div>
+    <div class="span4" style="margin-left: 130px;">
+      <h4>Employé(s)</h4>
+      <table class="table">
+	<tr>
+	  <th>Nom</th>
+	</tr>
+
+	<tr ng-repeat="elem in affect.elems | elems:'Employee'">
+	  <td>{{elem.name}}</td>
+	</tr>
+
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="span4" style="margin-left: 85px;">
+      <h4>Camion(s)</h4>
+      <table class="table">
+	<tr>
+	  <th>Nom</th>
+	</tr>
+
+	<tr ng-repeat="elem in affect.elems | elems:'Truck'">
+	  <td>{{elem.name}}</td>
+	</tr>
+
+      </table>
+    </div>
+    <div class="span4" style="margin-left: 130px;">
+      <h4>Coffre(s)</h4>
+      <table class="table">
+	<tr>
+	  <th>Nom</th>
+	</tr>
+
+	<tr ng-repeat="elem in affect.elems | elems:'Box'">
+	  <td>{{elem.name}}</td>
+	</tr>
+
+      </table>
+    </div>
+  </div>
+
+</div>
