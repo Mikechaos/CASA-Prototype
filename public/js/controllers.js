@@ -3,10 +3,10 @@
 /* Controllers */
 
 
-(function (ng, app, $http, fetch_all_data, affectation_data) {
+(function (ng, app, $http, fetch_all) {
 
     // CASA CONTROLLER
-    function CasaCtrl($scope, fetch_all_data, affectation_data)
+    function CasaCtrl($scope, fetch_all)
     {
 	$scope.elements = App.elems;
 	this.scope = $scope;
@@ -23,9 +23,14 @@
 	    }
 	};
 	this.scope.root = '/#/';
-	this.scope.data_promise = fetch_all_data;
-	console.log(this.scope.data_promise);
-	//fetch_all_data.then(function () { console.log("hmm"); affectation_data().success(function () {console.log('wooh!')})});
+	fetch_all.then(function () {
+	    console.log('fetch all: ', App.elems);
+	});
+	this.scope.fetched_all = fetch_all;
+	this.scope.showingDayDetails = false;
+	// this.scope.data_promise = fetch_all_data;
+	// console.log(this.scope.data_promise);
+	// fetch_all_data.then(function () { console.log("hmm"); affectation_data().success(function () {console.log('wooh!')})});
 	return (this);
 	
     }
@@ -276,13 +281,13 @@
 
     };
 
-    function EmployeesCtrl ($scope, $http, fetch_all_data) {
+    function EmployeesCtrl ($scope, $http) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new Employee;
 	$scope.employeesTypes = {};
 	// $scope.employeesTypes
-	fetch_all_data.then(function (app) {
-	    $scope.employeesTypes = app.elems.filter_elements("EmployeesType");
+	$scope.fetched_all.then(function () {
+	    $scope.employeesTypes = App.elems.filter_elements("EmployeesType");
 	    $scope.safeApply();	    
 	});
 
@@ -291,24 +296,12 @@
 	    $scope.safeApply();
 	};
 
-	$scope.get_employee_type = function (type_id) {
-	    // console.log(search_index($scope.employeesTypes, type_id, function (e, type_id) { return e.id === type_id }));
-	    // return App.elems.get(search_index($scope.employeesTypes, type_id, function (type_id, e) { e.id === type_id }));
-	    // console.log(App.elems.search_index(type_id, function (e, type_id) { return console.log(type_id, e); e.strElem === "EmployeesType" && e.id === type_id;}));
-	    // return App.elems.get(App.elems.search_index(type_id, function (type_id, e) { return e.strElem === "EmployeesType" && e.id === type_id;}));
-	};
-	
-	// $scope.$watch(App.elems, function () {
-	//     $scope.employeesTypes = $scope.elements.filter_elements("EmployeesType");
-	//     console.log('triggered');
-	//     $scope.safeApply();
-	// });
-	
 	this.scope = $scope;
     }
 
     EmployeesCtrl.prototype = {
 	save: function () {
+	    this.scope.newElem.set_string_type();
 	    App.elems.push(this.scope.newElem.type === 0 ? new Supervisor(this.scope.newElem) : this.scope.newElem);
 	    this.scope.newElem = new Employee;
 	},
@@ -319,7 +312,7 @@
     };
     
 
-    function EmployeesTypesCtrl ($scope, $http, employees_data) {
+    function EmployeesTypesCtrl ($scope, $http) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new EmployeesType;
 	this.scope = $scope;
@@ -329,16 +322,10 @@
 	save: function () {
 	    this.constructor.superClass.save.call(this);
 	    this.scope.refresh_employees();
-	    // this.scope.employeesTypes = App.elems.filter_elements("EmployeesType");
-	    // console.log(this.scope.employeesTypes);
-	    // var $scope = this.scope;
-	    // setTimeout(function () {
-	    // 	$scope.safeApply();
-	    // }, 1000);
 	}
     };
 
-    function JobsCtrl ($scope, $http, client_data, job_data) {
+    function JobsCtrl ($scope, $http) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new Job;
 	$scope.clients = App.elems.filter_elements("Client");
@@ -378,6 +365,15 @@
 
     Inherits.multiple([[EmployeesCtrl], [EmployeesTypesCtrl], [JobsCtrl], [ClientsCtrl], [TrucksCtrl], [BoxesCtrl]], AddElems);
 
+    function DayDetailsCtrl ($scope) {
+	console.log($scope);
+	$scope.$parent.showingDayDetails = true;
+	$scope.day_affectations = [];
+	$scope.fetched_all.then(function () { $scope.safeApply(function () { $scope.day_affectations = App.affectations.get_todays()})});
+	
+    }
+
+    
     ng.module('casaApp.controllers', [])
 	.controller('CasaCtrl', CasaCtrl)
 	.controller('DispatchCtrl', DispatchCtrl)
@@ -391,7 +387,8 @@
 	.controller('BoxesCtrl', BoxesCtrl)
 	.controller('EmployeesCtrl', EmployeesCtrl)
 	.controller('EmployeesTypesCtrl', EmployeesTypesCtrl)
-	.controller('UsersCtrl', function(){});
+	.controller('UsersCtrl', function(){})
+	.controller('DayDetailsCtrl', DayDetailsCtrl);
     
 }(angular, casaApp));
 

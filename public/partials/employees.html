@@ -38,7 +38,6 @@
 	    <tr ng-repeat="emp in elements | elems:'Employee'">
 	      <td>{{emp.name}}</td>
 	      <td>{{emp.type}}</td>
-	      <!-- <td>{{get_employee_type(emp.employees_type_id)}}</td> -->
 	      <td>{{emp.notes}}</td>
 	    </tr>
 	  </table>
@@ -51,7 +50,7 @@
 	  <legend> Ajouter un nouveau type d'employé</legend>
 	  <form>
 	    <label>Type :</label>
-	    <input type="text" ng-model="newElem.type">
+	    <input type="text" ng-model="newElem.employees_type_id">
 	    <label></label>
 	    <button class="btn btn-success" ng-click="submit()">Ajouter</button>
 	  </form>
