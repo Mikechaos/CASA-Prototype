@@ -302,7 +302,7 @@
     EmployeesCtrl.prototype = {
 	save: function () {
 	    this.scope.newElem.set_string_type();
-	    App.elems.push(this.scope.newElem.type === 0 ? new Supervisor(this.scope.newElem) : this.scope.newElem);
+	    App.elems.push(this.scope.newElem.employees_type_id === 0 ? new Supervisor(this.scope.newElem) : this.scope.newElem);
 	    this.scope.newElem = new Employee;
 	},
 	// submit: function () {
