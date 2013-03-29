@@ -336,7 +336,7 @@
     };
 	
 				   
-    function ClientsCtrl ($scope, $http, client_data) {
+    function ClientsCtrl ($scope, $http) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new Client;
     }
@@ -345,7 +345,7 @@
  
     };
 
-    function TrucksCtrl ($scope, $http, truck_data) {
+    function TrucksCtrl ($scope, $http) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new Truck;
     }
@@ -354,7 +354,7 @@
 
     };
 	
-    function BoxesCtrl ($scope, $http, box_data) {
+    function BoxesCtrl ($scope, $http) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new Box;
     }
