@@ -50,7 +50,7 @@
   <div ng-controller="RenderCtrl" ng-show="!affectation">
     <div ng-repeat="affect in affectations | between:date.fstDate:date.sndDate">
       <div class="renderAffectation span4">
-	<div class="affectTitle span4 btn btn-success">{{affect.job.name}}</div>
+	<div class="affectTitle span4 btn btn-success">{{affect.name}}</div>
 	<div class="affectBody span4">
 	  <div style="text-align:center; font-size:18px;">{{affect.format_date()}}</div>
 	  <ul style="font-size:18px;">
