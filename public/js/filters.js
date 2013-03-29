@@ -58,5 +58,5 @@ angular.module('casaApp.filters', []).
 	};
     }).
     filter('between', function () {
-    	return function (affectaions, fst_date, snd_date) {return affectaions.filter_affectations(fst_date, snd_date)};
+    	return function (affectations, fst_date, snd_date) {return affectations.filter_affectations(fst_date, snd_date)};
     });

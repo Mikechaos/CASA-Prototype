@@ -55,7 +55,7 @@ function Employee (emp) {
     if (typeof emp !== "undefined") {
 	this.employees_type_id = emp.employees_type_id;
 	// this.type = App.elems.get(search_index(App.elems.filter_elements("EmployeesType", this.employees_type_id, function (e, type_id) { return e.id === type_id }))).type;
-	this.type = App.elems.get(search_index(App.elems.filter_elements("EmployeesType"), this.employees_type_id, function (e, type_id) { return e.id === type_id })).type;
+	this.type = App.elems.get(search_index(App.elems.list, this.employees_type_id, function (e, type_id) { return e.id === type_id && e.strElem === "EmployeesType";})).type;
     } else {
 	this.employees_type_id = ""; // employee_type_id
     }
@@ -123,10 +123,11 @@ function Client (client) {
 
 
 function Affectation () {
+    this.name = "";
     this.date = new Date();
     this.date_format = this.format_date(this.date);
     this.start_time = { time : "06:00AM"};
-    this.job = {};
+    this.client_id = 1;
     this.link_number = "";
 
     this.elems = new ElementList;
@@ -135,6 +136,32 @@ function Affectation () {
 
     this.render();
 }
+
+Affectation.createFromList = function (data_base_affectations) {
+
+    forEach (data_base_affectations, function (dba) {
+	a = new Affectation;
+	a.id = dba.id
+	a.name = dba.name;
+	a.date = new Date(dba.day);
+	a.date_format = a.format_date(a.date);
+	a.start_time = { time : dba.start_time};
+	a.client_id = dba.client_id;
+	a.link_number = dba.link_number;
+	
+	a.state = dba.state
+	a.end_time = dba.end_time; // Not usefull for now
+	a.user_id = dba.user_id;
+	a.affectation_type = dba.affectation_type;
+	a.notes = dba.notes;
+	dba.elements = eval(dba.elements);
+	console.log(App.elems);
+	forEach(dba.elements, function (e) {
+	    a.elems.push(App.elems.get(App.elems.search_index(e, function (elem, e) {console.log (e.id, e.strElem); return e.id === elem.id && e.strElem === elem.strElem})));
+	});
+	App.affectations.push(a);
+    });
+};
 
 Affectation.prototype = {
     
@@ -150,6 +177,7 @@ Affectation.prototype = {
     
     // Gets the object elem<Object> is representing
     // bound as an Element's subtype
+    // Unused.
     get_elems_ref: function (elems) {
 	forEach(elems, get_elem_ref(elem));
     },
@@ -211,6 +239,31 @@ Affectation.prototype = {
 
 };
 
+function PostAffectation(a) {
+    this.state = 4; // Not usefull for now
+    this.end_time = ""; // Not usefull for now
+    this.user_id = 0;
+    this.affectation_type = 0;
+
+    this.name = a.name;
+    this.start_time = a.start_time.time;
+    this.day = a.date.getTime();
+    this.notes = a.notes;
+    this.link_number = a.link_number;
+    this.client_id = this.client_id;
+    
+    this.elements = this.setElems(a);
+}
+
+PostAffectation.prototype = {
+    setElems: function (a) {
+	var elements = [];
+	a.elems.forEach(function (e) {
+	    elements.push({id: e.id, strElem: e.strElem})
+	});
+	return elements;
+    },
+};
 
 /* Role : Encapsulate information needed for rendering.
  * Serve as a template model
@@ -402,9 +455,9 @@ AffectationList.prototype =  {
 
 };
 
-function ElemAffected(elem, job) {
+function ElemAffected(elem, name) {
     this.elem = elem;
-    this.job = job;
+    this.affect_name = name;
 };
 
 
@@ -447,10 +500,11 @@ var App = {
 	var affected = this.affected_today;
 	App.affectations.get_todays().forEach(function (a) {
 	    a.elems.forEach(function (e) {
-		affected.push(new ElemAffected(e, a.job))
+		console.log(e);
+		affected.push(new ElemAffected(e, a.name))
 	    });
 	});
-	console.log(affected);
+	
 	return affected
     },
 
@@ -460,7 +514,7 @@ var App = {
 	var attributed = this.attributed;
 	forEach(this.affectations.filter_affectations(day), function (a) {
 	    a.elems.forEach(function (e) {
-		attributed.push(new ElemAffected(e, a.job));
+		attributed.push(new ElemAffected(e, a.name));
 	    });
 	});
 	return attributed;

@@ -83,21 +83,25 @@
 	<!-- <legend> Info Générale </legend> -->
 	<div class="pane">
 	  <fieldset>
+	    <div class="span3">
+	      <label>Name :</label>
+	      <input type="text" ng-model="newAffectation.name">
+	    </div>
 	    <div class="span12" style="margin-left:0px;">
-	      <div class="span3">
-		<label>Jobs :</label>
-		<select ng-model="newAffectation.job" ng-options="job.name for job in elements | elems:'Job'"></select>
-	      </div>
+	      <!-- <div class="span3"> -->
+	      <!-- 	<label>Jobs :</label> -->
+	      <!-- 	<select ng-model="newAffectation.job" ng-options="job.name for job in elements | elems:'Job'"></select> -->
+	      <!-- </div> -->
 	      <div class="span3">
 		<label>Client :</label>
-		<input type="text" ng-model="newAffectation.job.client.name" disabled style="background-color: rgb(192, 192, 192);">
+		<select type="text" ng-model="newAffectation.client_id" ng-options="client.id as client.name for client in elements | elems:'Client'"></select>
 		<!-- <label>Superviseur : </label> -->
 		<!-- <select ng-model="supervisor"  ng-options="supervisor.name for supervisor in (emps | subset_emp:true)"></select> -->
 	      </div>
-	    </div>
-	    <div class="span6">
-	      <label>Bon de service :</label>
-	      <input type="text" ng-model="newAffectation.link_number">
+	      <div class="span3">
+		<label>Bon de service :</label>
+		<input type="text" ng-model="newAffectation.link_number">
+	      </div>
 	    </div>
 	    <div class="span8">
 	      <label>Notes : </label>
@@ -275,7 +279,7 @@
     <div class="row" style="margin-bottom: 20px;" ng-show="(affected_elems | elems:elements_class[$index].name).length > 0">
       <legend class="span12">{{class.screen}}</legend>
       <div class="span12">
-	<li ng-repeat="elem in affected_elems | elems:elements_class[$index].name" class="span5"><strong>{{elem.elem.name}}</strong> => <em>{{elem.job.name}}</em></li>
+	<li ng-repeat="elem in affected_elems | elems:elements_class[$index].name" class="span5"><strong>{{elem.elem.name}}</strong> => <em>{{elem.affect_name}}</em></li>
       </div>
     </div>
   </div>

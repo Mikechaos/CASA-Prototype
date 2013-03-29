@@ -3,10 +3,10 @@
 /* Controllers */
 
 
-(function (ng, app, $http, client_data, job_data, employees_data, truck_data, box_data) {
+(function (ng, app, $http, fetch_all_data, affectation_data) {
 
     // CASA CONTROLLER
-    function CasaCtrl($scope)
+    function CasaCtrl($scope, fetch_all_data, affectation_data)
     {
 	$scope.elements = App.elems;
 	this.scope = $scope;
@@ -23,6 +23,9 @@
 	    }
 	};
 	this.scope.root = '/#/';
+	this.scope.data_promise = fetch_all_data;
+	console.log(this.scope.data_promise);
+	//fetch_all_data.then(function () { console.log("hmm"); affectation_data().success(function () {console.log('wooh!')})});
 	return (this);
 	
     }
@@ -36,10 +39,10 @@
 
     // DISPATCH CONTROLLER
     // Will need to refactor usage of services here
-    function DispatchCtrl($scope, client_data, job_data, employees_data, truck_data, box_data) {
+    function DispatchCtrl($scope, $http) {
 
 	$scope.elems = [];
-	$scope.jobs = job_data;
+	//$scope.jobs = job_data;
 
 	$scope.date = {
 	    today: new Date(),
@@ -76,6 +79,7 @@
 	    
 	};*/
 	this.scope = $scope;
+	this.http = $http;
 	this.init();
 	
 	return (this);
@@ -93,19 +97,28 @@
 	    }
 
 	    var $scope = this.scope
+	    var self = this;
 	    forEach (Date.days, function (d, i) {
 	    	if ($scope.days[d] === true) {
 		    var affect = new Affectation();
 		    affect.copy($scope.newAffectation);
 	    	    affect.date.setDate($scope.newAffectation.date.getDate() + diff_array[i]);
+		    affect.id = self.post_affectation(affect);
 	    	    App.insert_affect(affect);
 	    	}
 	    	++i;
 	    });
+	    App.verify_today();
 	    this.clean();
 	    this.init();
 	},
     	
+	post_affectation: function (a) {
+	    this.http({method: 'POST',  url: '/affectations', params: new PostAffectation(a), headers: "application/x-www-form-urlencoded"})
+		.success(function (data, status) {console.log(data);})
+		.error(function () {console.log('error')});
+	},
+
 	init: function () {
 	    this.scope.newAffectation = new Affectation();
 	    this.scope.days = {
@@ -263,14 +276,14 @@
 
     };
 
-    function EmployeesCtrl ($scope, $http, employees_data, employees_type_data) {
+    function EmployeesCtrl ($scope, $http, fetch_all_data) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new Employee;
 	$scope.employeesTypes = {};
-
-	employees_data.success(function () {
-	    $scope.employeesTypes = $scope.elements.filter_elements("EmployeesType");
-
+	// $scope.employeesTypes
+	fetch_all_data.then(function (app) {
+	    $scope.employeesTypes = app.elems.filter_elements("EmployeesType");
+	    $scope.safeApply();	    
 	});
 
 	$scope.refresh_employees = function () {

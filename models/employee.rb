@@ -1,15 +1,15 @@
 # encoding: utf-8
 class Employee < Sequel::Model(:Employees)
-	many_to_one :Employees_types
-	def position
-		if self.supervisor
-			"Superviseur"
-		else
-			"Employee"
-		end
-	end
+  many_to_one :employees_types
+  def position
+    if self.supervisor
+      "Superviseur"
+    else
+      "Employee"
+    end
+  end
 
-	def supervisor?
-		self.supervisor
-	end
+  def supervisor?
+    self.supervisor
+  end
 end
