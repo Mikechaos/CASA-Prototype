@@ -260,7 +260,7 @@ function PostAffectation(a) {
     this.day = a.date.getTime();
     this.notes = a.notes;
     this.link_number = a.link_number;
-    this.client_id = this.client_id;
+    this.client_id = a.client_id;
     
     this.elements = this.setElems(a);
 }

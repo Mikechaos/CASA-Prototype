@@ -30,7 +30,7 @@
 }
 
 .affectation legend {
-    margin-left:125px; 
+    margin-left:80px; 
     width: 300px;
 }
 
@@ -39,10 +39,10 @@
 }
 
 .affectation div.pane {
-    background: #606060;
-    border-radius: 8px;
-    border: 1px solid #2d2d2d;
-    color: white;
+    /* background: #606060; */
+    /* border-radius: 8px; */
+    /* border: 1px solid #2d2d2d; */
+    color: rgb(0, 0, 0);;
     /* padding: 20px 10px 0px 10px; */
     padding: 20px 20px 20px 20px;
     /* display: none; */
@@ -87,12 +87,12 @@
 }
 
 .date_selection {
-    background: #606060;
+    /*background: #606060;*/
     height: 100px;
     line-height: 50px;
-    color: white;
-    border-radius: 5px;
-    border: 1px solid #2d2d2d;
+    color: black;
+    /* border-radius: 5px; */
+    /* border: 1px solid #2d2d2d; */
     padding: 0px 20px;
     margin: 20px;
     width: 50.00%;
@@ -181,7 +181,7 @@
 
 .renderAffectation {
     line-height: 50px;
-    color: white;
+    color: black;
     margin: 20px;
     width: 28%;
     margin-left: 0px;
@@ -194,22 +194,21 @@
     height: 20px;
     border-radius: 5px;
     border: 1px solid #2d2d2d;
-    border-bottom-color: rgb(45, 45, 45);
     border-bottom-style: solid;
-    border-bottom-width: 4px;
+    border-bottom-width: 3px;
     padding: 12px 20px;
     font-size: 22px;
 }
 
 .affectBody {
-    background-color: #606060;
     height: auto;
-    border-radius: 5px;
-    border: 1px solid #2d2d2d;
+    /* border-radius: 5px; */
+    /* border: 1px solid #2d2d2d; */
+    /* background-color: #606060; */
     padding: 0px 20px;
-    border-top-color: rgb(45, 45, 45);
+    border-top-color: #b3b3b3;
     border-top-style: solid;
-    border-top-width: 4px;
+    border-top-width: 2px;
     font-size:18px;
     
 }

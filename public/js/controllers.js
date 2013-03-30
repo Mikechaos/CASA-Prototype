@@ -363,7 +363,7 @@
     Inherits.multiple([[EmployeesCtrl], [EmployeesTypesCtrl], [JobsCtrl], [ClientsCtrl], [TrucksCtrl], [BoxesCtrl]], AddElems);
 
     function DayDetailsCtrl ($scope) {
-
+	console.log('triggered');
 	$scope.$parent.showingDayDetails = true;
 	$scope.day_affectations = [];
 	$scope.fetched_all.then(function () { $scope.safeApply(function () { $scope.day_affectations = App.affectations.get_todays()})});

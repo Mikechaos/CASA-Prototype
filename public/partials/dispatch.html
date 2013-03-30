@@ -1,13 +1,13 @@
 <legend class="row"><h2 style="float:left;">DISPATCH</h2>
   <button class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" ng-show="!attribute_elem_screen" ng-click="attribute_elem_screen=true">Éléments Attribués</button>
   <button class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" ng-show="attribute_elem_screen" ng-click="attribute_elem_screen=false">Dispatch</button>
-  <a class="btn btn-warning btn-large" style="margin-left:4%; margin-bottom:-1%;" href="#/day_details" target="blank" style="font-size:16px">Rapports de la journée</a>
+  <a class="btn btn-warning btn-large" style="margin-left:4%; margin-bottom:-1%;" href="#/day_details" ng-click="safeApply()" target="blank" style="font-size:16px">Rapports de la journée</a>
 </legend>
 
 <!-- *** Dispatch screen *** -->
 <div class="Dispatch" ng-show="!attribute_elem_screen">
   <div class="row date_selecter" ng-controller="DateSelecterCtrl" style="margin-left:5%;">
-    <div class="span9 date_selection date-control" style="padding-top:15px; height:{{pane_height}}px;">
+    <div class="span9 date_selection date-control well well-large" style="padding-top:15px; height:{{pane_height}}px;">
       <div class="span12" style="margin:0;">
 	<div class="span2" style="width:80px; margin-left:10px;">
 	  <label style="float:left;"> En date du : </label>
@@ -52,7 +52,7 @@
     <div ng-repeat="affect in affectations | between:date.fstDate:date.sndDate">
       <div class="renderAffectation span4">
 	<div class="affectTitle span4 btn btn-success">{{affect.name}}</div>
-	<div class="affectBody span4">
+	<div class="affectBody span4 well well-large">
 	  <div style="text-align:center; font-size:18px;">{{affect.format_date()}}</div>
 	  <ul style="font-size:18px;">
 	    <li><div style="float:right;">{{affect.job.client}}</div>{{affect.link_number}}</li>
@@ -68,7 +68,7 @@
 
   <div class="row span12" style="margin-left:5%;">
     <div class="affectation" ng-show="affectation">
-      <div class="pane">
+      <div class="pane well well-large">
 	<div class="btn-group" bs-buttons-checkbox style="margin-left:5%;">
 	  <button type="button" class="btn btn-info btn-large" ng-model="days.Dimanche">Dimanche</button>
 	  <button type="button" class="btn btn-info btn-large" ng-model="days.Lundi">Lundi</button>
@@ -82,7 +82,7 @@
 
       <form>
 	<!-- <legend> Info Générale </legend> -->
-	<div class="pane">
+	<div class="pane well well-large">
 	  <fieldset>
 	    <div class="span3">
 	      <label>Name :</label>
@@ -96,6 +96,7 @@
 	      <div class="span3">
 		<label>Client :</label>
 		<select type="text" ng-model="newAffectation.client_id" ng-options="client.id as client.name for client in elements | elems:'Client'"></select>
+		{{newAffectation.client_id}}
 		<!-- <label>Superviseur : </label> -->
 		<!-- <select ng-model="supervisor"  ng-options="supervisor.name for supervisor in (emps | subset_emp:true)"></select> -->
 	      </div>
@@ -148,127 +149,49 @@
 	</div>
 
 	<!-- Will be transform in a directive -->
-	<div ng-show=" (newAffectation.elems | elems:'Supervisor').length > 0">
+	<div class="row span3" ng-show="(newAffectation.elems | elems:'Supervisor').length > 0">
 	  <legend>Supervisor(s)</legend>
-	  <div class="pane employeeOnJob">
-            <!-- <div class="row" ng-repeat="emp1 in newAffectation.supervisors"> -->
+	  <div style="margin-left: 75px" class="pane well well-large employeeOnJob">
             <div class="row modal-checkboxes" ng-repeat="sup in newAffectation.elems | elems:'Supervisor'">
-	      <div class="squaredFour span1">
-		<input type="checkbox" id="select_sup_{{sup.id}}" ng-model="time"/><label for="select_sup_{{sup.id}}"></label>
-	      </div>
 	      <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{sup.name}}</div>
-	      <div class="span9" ng-show="time">
-		<div class="span2">
-		  <label for="start_time_sup_id_{{sup.id}}" style="margin-top:4px;"> Heure de départ :</label>
-		</div>
-		<div class="control-group span2">
-		  <input id="start_time_sup_id_{{sup.id}}" style="width:85px; margin-top:0px; margin-left:-23px;" type="text" ng-model="sup.start_time" bs-timepicker>
-		  <i class="icon-time" style="position: relative;margin: -3.2px 0 0 -24px;"></i>
-		</div>
-		<div class="span2">
-		  <label for="end_time_sup_id_{{sup.id}}" style="margin-left:-30px; margin-top:4px;"> Heure de fin :</label>
-		</div>
-		<div class="control-group span2">
-		  <input id="end_time_sup_id_{{sup.id}}" style="width:85px; margin-top:0px; margin-left:-75px;" type="text" ng-model="sup.end_time" bs-timepicker>
-		  <i class="icon-time" style="position: relative;margin: -3.2px 0 0 -24px;"></i>
-		</div>
-	      </div>
             </div>
 	  </div>  
 	</div>
 
 	<!-- Will be transform in a directive -->
-	<div ng-show="(newAffectation.elems | elems:'Employee').length > 0">
+	<div class="row span3" ng-show="(newAffectation.elems | elems:'Employee').length > 0">
 	  <legend>Employee(s)</legend>
-	  <div class="pane employeeOnJob">
-            <!-- <div class="row" ng-repeat="emp1 in newAffectation.employees"> -->
+	  <div style="margin-left: 75px" class="pane well well-large employeeOnJob">
             <div class="row modal-checkboxes" ng-repeat="emp in newAffectation.elems | elems:'Employee'">
-	      <div class="squaredFour span1">
-		<input type="checkbox" id="select_emp_{{emp.id}}" ng-model="time"/><label for="select_emp_{{emp.id}}"></label>
-	      </div>
 	      <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{emp.name}}</div>
-	      <div class="span9" ng-show="time">
-		<div class="span2">
-		  <label for="start_time_emp_id_{{emp.id}}" style="margin-top:4px;"> Heure de départ :</label>
-		</div>
-		<div class="control-group span2">
-		  <input id="start_time_emp_id_{{emp.id}}" style="width:85px; margin-top:0px; margin-left:-23px;" type="text" ng-model="emp.start_time" bs-timepicker>
-		  <i class="icon-time" style="position: relative;margin: -3.2px 0 0 -24px;"></i>
-		</div>
-		<div class="span2">
-		  <label for="end_time_emp_id_{{emp.id}}" style="margin-left:-30px; margin-top:4px;"> Heure de fin :</label>
-		</div>
-		<div class="control-group span2">
-		  <input id="end_time_emp_id_{{emp.id}}" style="width:85px; margin-top:0px; margin-left:-75px;" type="text" ng-model="emp.end_time" bs-timepicker>
-		  <i class="icon-time" style="position: relative;margin: -3.2px 0 0 -24px;"></i>
-		</div>
-	      </div>
             </div>
 	  </div>  
 	</div>
 
 	<!-- Will be transform in a directive -->
-	<div ng-show="(newAffectation.elems | elems:'Truck').length > 0">
+	<div class="row span3" ng-show="(newAffectation.elems | elems:'Truck').length > 0">
 	  <legend>Truck(s)</legend>
-	  <div class="pane employeeOnJob">
-            <!-- <div class="row" ng-repeat="truck1 in newAffectation.trucks"> -->
+	  <div style="margin-left: 75px" class="pane well well-large employeeOnJob">
             <div class="row modal-checkboxes" ng-repeat="truck in newAffectation.elems | elems:'Truck'">
-	      <div class="squaredFour span1">
-		<input type="checkbox" id="select_truck_{{truck.id}}" ng-model="time_truck"/><label for="select_truck_{{truck.id}}"></label>
-	      </div>
 	      <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{truck.name}}</div>
-	      <div class="span9" ng-show="time_truck">
-		<div class="span2">
-		  <label for="start_time_truck_id_{{truck.id}}" style="margin-top:4px;"> Heure de départ :</label>
-		</div>
-		<div class="control-group span2">
-		  <input id="start_time_truck_id_{{truck.id}}" style="width:85px; margin-top:0px; margin-left:-23px;" type="text" ng-model="truck.start_time" bs-timepicker>
-		  <i class="icon-time" style="position: relative;margin: -3.2px 0 0 -24px;"></i>
-		</div>
-		<div class="span2">
-		  <label for="end_time_truck_id_{{truck.id}}" style="margin-left:-30px; margin-top:4px;"> Heure de fin :</label>
-		</div>
-		<div class="control-group span2">
-		  <input id="end_time_truck_id_{{truck.id}}" style="width:85px; margin-top:0px; margin-left:-75px;" type="text" ng-model="truck.end_time" bs-timepicker>
-		  <i class="icon-time" style="position: relative;margin: -3.2px 0 0 -24px;"></i>
-		</div>
-	      </div>
-            </div>
+	    </div>
 	  </div>  
 	</div>
 
 	<!-- Will be transform in a directive -->
-	<div ng-show="(newAffectation.elems | elems:'Box').length > 0">
+	<div class="row span3" ng-show="(newAffectation.elems | elems:'Box').length > 0">
 	  <legend>Coffre(s)</legend>
-	  <div class="pane employeeOnJob">
-            <!-- <div class="row" ng-repeat="box1 in newAffectation.boxes"> -->
+	  <div style="margin-left: 75px" class="pane well well-large employeeOnJob">
             <div class="row modal-checkboxes" ng-repeat="box in newAffectation.elems | elems:'Box'">
-	      <div class="squaredFour span1">
-		<input type="checkbox" id="select_box_{{box.id}}" ng-model="time_box"/><label for="select_box_{{box.id}}"></label>
-	      </div>
 	      <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{box.name}}</div>
-	      <div class="span9" ng-show="time_box">
-		<div class="span2">
-		  <label for="start_time_box_id_{{box.id}}" style="margin-top:4px;"> Heure de départ :</label>
-		</div>
-		<div class="control-group span2">
-		  <input id="start_time_box_id_{{box.id}}" style="width:85px; margin-top:0px; margin-left:-23px;" type="text" ng-model="box.start_time" bs-timepicker>
-		  <i class="icon-time" style="position: relative;margin: -3.2px 0 0 -24px;"></i>
-		</div>
-		<div class="span2">
-		  <label for="end_time_box_id_{{box.id}}" style="margin-left:-30px; margin-top:4px;"> Heure de fin :</label>
-		</div>
-		<div class="control-group span2">
-		  <input id="end_time_box_id_{{box.id}}" style="width:85px; margin-top:0px; margin-left:-75px;" type="text" ng-model="box.end_time" bs-timepicker>
-		  <i class="icon-time" style="position: relative;margin: -3.2px 0 0 -24px;"></i>
-		</div>
-	      </div>
             </div>
 	  </div>  
 	</div>
 	<hr>
-	<a href="" class="btn btn-danger" ng-click="clear_affectation()" style="margin-left:33%; margin-top:25px;">Clear</a>
-	<a href="" class="btn btn-success" ng-click="save_affectation()" style="margin-left:2%; margin-top:25px;">Sauvegarder</a>
+	<div class="row" style="clear: both; margin-bottom: 85px;">
+	  <a href="" class="btn btn-danger" ng-click="clear_affectation()" style="margin-left:33%; margin-top:25px;">Clear</a>
+	  <a href="" class="btn btn-success" ng-click="save_affectation()" style="margin-left:2%; margin-top:25px;">Sauvegarder</a>
+	</div>
       </form>
     </div>
   </div>
