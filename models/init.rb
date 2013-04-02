@@ -15,7 +15,7 @@ require 'sequel'
 #      :max_connections=>10)
 
 ## PROD DB ##
-DB = Sequel.connect('postgres://klbjgybznoivis:ZDle9i-xDesjTPceGWI1AptPzF@ec2-107-22-165-15.compute-1.amazonaws.com:5432/dforhe0nga07t7')
+ DB = Sequel.connect('postgres://klbjgybznoivis:ZDle9i-xDesjTPceGWI1AptPzF@ec2-107-22-165-15.compute-1.amazonaws.com:5432/dforhe0nga07t7')
 
 DB << "SET CLIENT_ENCODING TO 'UTF8';"
 
