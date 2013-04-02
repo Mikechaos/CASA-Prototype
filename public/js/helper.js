@@ -104,7 +104,8 @@ function search_index (list, elem, predicate) {
 	// If predicate is true, will result in return false => end of loop
 	// && second part (found = i) will be evaluate
 	// Else second part is not evaluate and returns true => equiv to continue);
-	return !(predicate(e, elem) && (index = i));
+	// if (predicate(e, elem)) console.log(elem, !((index = i) === false), !(predicate(e, elem) && (index = i)));
+	return !(predicate(e, elem) && !((index = i) === false));
     });
     return index;
 }

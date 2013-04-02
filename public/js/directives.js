@@ -12,8 +12,20 @@ angular.module('casaApp.directives', []).
 	    scope: false,
 	    templateUrl: 'partials/_header.html',
 	};
-    });// .directive('paneElem' function factory() {
-	
+    })
+    .directive('renderAffectation', function() {
+	return {
+	    require: 'ngModel',
+	    templateUrl: 'partials/render_affectation.html',
+	    link: function(scope, element, attrs, controller) {
+		scope.affect = scope[attrs.ngModel];
+		//TODO: implementation logic will have to be written here
+	    }
+	};
+    });
+
+// .directive('paneElem' function factory() {
+
     // 	return function (
 
     // };// .

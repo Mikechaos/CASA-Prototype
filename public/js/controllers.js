@@ -40,7 +40,6 @@
 
 
     // DISPATCH CONTROLLER
-    // Will need to refactor usage of services here
     function DispatchCtrl($scope, $http) {
 
 	$scope.elems = [];
@@ -72,6 +71,10 @@
 	});
 	
 	$scope.clear_affectation = ng.bind(this, this.clear_affectation);
+
+	$scope.quick_view = true;
+
+	$scope.filter = {};
 
 	/*
 	$scope.validation_error = false;
@@ -117,6 +120,7 @@
 	    // If we just save the affect, means we keep the same team
 	    this.init_general();
 	    this.scope.newAffectation.elems.list = [].concat(this.scope.elems)
+	    this.scope.use_already_affected = true;
 	},
     	
 	post_affectation: function (a) {
@@ -140,8 +144,11 @@
 
 	init: function () {
 	    this.init_general();
-	    this.scope.team_confirmed = false;
-	    this.scope.team_applied = false;
+	    
+	    // If I want to prevent editing team once confirmed
+	    // Set those to false
+	    this.scope.team_confirmed = true;
+	    this.scope.team_applied = true;
 	    this.scope.use_already_affected = false;
 	    this.scope.elems = [];
 	    this.scope.$watch('newAffectation', this.scope.newAffectation.render());
@@ -178,14 +185,15 @@
 	    this.date.sndDate.setDate(this.date.sndDate.getDate() + 7);
 	};
 	$scope.mode_enum = {
-	    ADD : "add_mode",
-	    SELECT : "select_mode",
+	    ADD : "set_add_mode",
+	    QUICK : "set_quick_view_mode",
+	    COMPLETE : "set_complete_view_mode",
 	};
 
 	$scope.set_mode = ng.bind( this, this.set_mode );
 
 	this.scope = $scope;
-	this.set_select_mode();
+	this.set_quick_view_mode();
 	// this.set_add_mode();
 
 
@@ -196,17 +204,26 @@
     DateSelecterCtrl.prototype = { 
 	
 	set_mode : function (mode) {
-	    (mode === this.scope.mode_enum.ADD) ? this.set_add_mode() : this.set_select_mode();
+	    // (mode === this.scope.mode_enum.ADD) ? this.set_add_mode() : this.set_select_mode();
+	    this[mode]();
 	},
 	
 	set_add_mode : function () { 
 	    this.scope.pane_height = this.addm_height;
 	    this.scope.$parent.affectation = true;
 	},
-
-	set_select_mode : function () {
+	set_view_mode: function (quick_view) {
 	    this.scope.pane_height = this.selectm_height;
 	    this.scope.$parent.affectation = false;
+	    this.scope.$parent.quick_view = quick_view;
+	},
+
+	set_quick_view_mode : function () {
+	    this.set_view_mode(true);
+	},
+
+	set_complete_view_mode : function () {
+	    this.set_view_mode(false);
 	},
 
     };

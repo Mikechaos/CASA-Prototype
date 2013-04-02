@@ -1,7 +1,10 @@
 <legend class="row"><h2 style="float:left;">DISPATCH</h2>
-  <button class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" ng-show="!attribute_elem_screen" ng-click="attribute_elem_screen=true">Éléments Attribués</button>
-  <button class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" ng-show="attribute_elem_screen" ng-click="attribute_elem_screen=false">Dispatch</button>
-  <a class="btn btn-warning btn-large" style="margin-left:4%; margin-bottom:-1%;" href="#/day_details" ng-click="safeApply()" target="blank" style="font-size:16px">Rapports de la journée</a>
+  <button class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" ng-show="!attribute_elem_screen" 
+	  ng-click="attribute_elem_screen=true">Éléments Attribués</button>
+  <button class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" ng-show="attribute_elem_screen" 
+	  ng-click="attribute_elem_screen=false">Dispatch</button>
+  <a class="btn btn-warning btn-large" style="margin-left:4%; margin-bottom:-1%;" href="#/day_details" 
+     ng-click="safeApply()" target="blank" style="font-size:16px">Rapports de la journée</a>
 </legend>
 
 <!-- *** Dispatch screen *** -->
@@ -14,8 +17,10 @@
 	</div>
 	<!-- <input type="text" class="datepicker " value="2013-02-28" style="padding-left:15px;"> -->
 	<div class="span3 input-append" style="margin-left:-10px; margin-top:0;">
-	  <input type="text"  ui-date="{ dateFormat: 'd MM, yy'}" ng-show="!affectation" ng-model="date.fstDate" style="padding-left:15px; width:135px;"></input>
-	  <input type="text" ui-date="{ dateFormat: 'd MM, yy'}"  ng-show="affectation" ng_model="newAffectation.date" style="padding-left:15px; width:135px;"></input>
+	  <input type="text"  ui-date="{ dateFormat: 'd MM, yy'}" ng-show="!affectation" 
+		 ng-model="date.fstDate" style="padding-left:15px; width:135px;"></input>
+	  <input type="text" ui-date="{ dateFormat: 'd MM, yy'}"  ng-show="affectation" 
+		 ng_model="newAffectation.date" style="padding-left:15px; width:135px;"></input>
 	  <a href="" ng-click="today();" class="btn-success btn">Aujourd'hui</a>
 	</div>
 	
@@ -40,8 +45,9 @@
       </div>
     </div>
     <div class="span2">
-      <a href="" ng-click="set_mode(mode_enum.ADD);" class="btn btn-info" style="margin-top:10px;">Ajouter</a>
-      <input type="submit" ng-click="set_mode(mode_enum.SELECT);" value="Sélectionner" class="btn btn-info small radius success change_date" style="margin-top:8px;">
+      <button href="" ng-click="set_mode(mode_enum.ADD);" class="btn btn-info" style="margin-top:10px;">Ajouter</button>
+      <button ng-click="set_mode(mode_enum.QUICK); quick_view = true;" class="btn btn-info change_date" style="margin-top:8px;">Affichage Rapide</button>
+      <button ng-click="set_mode(mode_enum.COMPLETE); quick_view = false;" class="btn btn-info" style="margin-top:8px;"> Affichage Complet</button>
     </div>
     <div class="span2">
 
@@ -49,7 +55,26 @@
   </div>
 
   <div ng-controller="RenderCtrl" ng-show="!affectation">
-    <div ng-repeat="affect in affectations | between:date.fstDate:date.sndDate">
+    <form style="margin-left:5%;" class="form-search filter_dispatch well span12 clearfix" style="clear:both;">
+      <h4>Filtres</h4>
+      {{filter.element}}
+      <div class="input-prepend">
+	<span class="add-on" title="Superviseurs, employés, camions...">Élément</span>
+	<input type="text" ng-model="filter.element" class="input-medium search-query">
+      </div>
+      <div class="input-prepend">
+	<span class="add-on">Client</span>
+	<input type="text" ng-model="filter.client" class="input-medium search-query">
+      </div>
+      <div class="input-prepend">
+	<span class="add-on">Bon de service</span>
+	<input type="text" ng-model="filter.link" class="input-medium search-query">
+      </div>
+      <!-- <button type="submit" class="btn">Search</button> -->
+    </form>
+    <!-- QUICK VIEW -->
+    <div ng-show="quick_view" 
+	 ng-repeat="affect in affectations | between:date.fstDate:date.sndDate | affect_by_fields:filter.element:filter.client:filter.link">
       <div class="renderAffectation span4">
 	<div class="affectTitle span4 btn btn-success">{{affect.name}}</div>
 	<div class="affectBody span4 well well-large">
@@ -64,6 +89,13 @@
 	</div>
       </div>
     </div>
+
+    <!-- COMPLETE VIEW -->
+    <!-- <div class="clearfix"></div> -->
+    <div ng-show="!quick_view" 
+	 ng-repeat="affect in affectations | between:date.fstDate:date.sndDate | affect_by_fields:filter.element:filter.client:filter.link">
+      <div class="span12 affect_report" ng-model="affect" render-affectation="true"></div>
+    </div>
   </div>
 
   <div class="row span12" style="margin-left:5%;">
@@ -72,12 +104,12 @@
       <!-- SELECT TEAM -->
       <div id="modal_elements_id" class="modal-elements" ng-controller="ElementsSelectionCtrl" style="width:90%;">
 	<legend style="width:225px; float:left;"> Équipe : </legend>
-	<div ng-show="!team_confirmed">
+	<div>  <!-- ng-show="!team_confirmed"> -->
 	  <button style="float:left; margin-left:45px; margin-top:8px;" class="btn btn-info" ng-click="open()">Sélectionner votre équipe</button>
-	  <div style="display:inline-block; margin-left:15px;">
+	  <label class="checkbox inline" for="use_already_affected_checkbox" style="margin-left:15px;">
 	    <input id="use_already_affected_checkbox" type="checkbox" ng-model="use_already_affected">
-	    <label for="use_already_affected_checkbox" style="float:left;">Utiliser des éléments déjà affectés</label>
-	  </div>
+	    Utiliser des éléments déjà affectés
+	  </label>
 	</div>
 	<div style="clear:both";></div>
 	<div modal="shouldBeOpen" close="close()" options="opts">
@@ -116,8 +148,9 @@
       <!-- DISPLAY TEAM -->
 
       <!-- Will be transform in a directive -->
+      
       <div class="row span3" ng-show="(newAffectation.elems | elems:'Supervisor').length > 0">
-	<legend>Supervisor(s)</legend>
+	<legend>Superviseur(s)</legend>
 	<div style="margin-left: 75px" class="pane well well-large employeeOnJob">
           <div class="row modal-checkboxes" ng-repeat="sup in newAffectation.elems | elems:'Supervisor'">
 	    <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{sup.name}}</div>
@@ -127,7 +160,7 @@
 
       <!-- Will be transform in a directive -->
       <div class="row span3" ng-show="(newAffectation.elems | elems:'Employee').length > 0">
-	<legend>Employee(s)</legend>
+	<legend>Employé(s)</legend>
 	<div style="margin-left: 75px" class="pane well well-large employeeOnJob">
           <div class="row modal-checkboxes" ng-repeat="emp in newAffectation.elems | elems:'Employee'">
 	    <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{emp.name}}</div>
@@ -137,7 +170,7 @@
 
       <!-- Will be transform in a directive -->
       <div class="row span3" ng-show="(newAffectation.elems | elems:'Truck').length > 0">
-	<legend>Truck(s)</legend>
+	<legend>Camion(s)</legend>
 	<div style="margin-left: 75px" class="pane well well-large employeeOnJob">
           <div class="row modal-checkboxes" ng-repeat="truck in newAffectation.elems | elems:'Truck'">
 	    <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{truck.name}}</div>
@@ -155,7 +188,8 @@
 	</div>  
       </div>
       <div style="clear:both"></div>
-      <button ng-click="team_confirmed = true;" ng-show="team_applied && !team_confirmed" style="margin-left:40%;" class="btn btn-success">Confirmer</button>
+      <!-- <button ng-click="team_confirmed = true;" 
+	   ng-show="team_applied && !team_confirmed" style="margin-left:40%;" class="btn btn-success">Confirmer</button> -->
       <hr>
 
       <!-- GENERAL INFO -->
@@ -215,7 +249,8 @@
     <div class="row" style="margin-bottom: 20px;" ng-show="(affected_elems | elems:elements_class[$index].name).length > 0">
       <legend class="span12">{{class.screen}}</legend>
       <div class="span12">
-	<li ng-repeat="elem in affected_elems | elems:elements_class[$index].name" class="span5"><strong>{{elem.elem.name}}</strong> => <em>{{elem.affect_name}}</em></li>
+  	<li ng-repeat="elem in affected_elems | elems:elements_class[$index].name"
+  	    class="span5"><strong>{{elem.elem.name}}</strong> => <em>{{elem.affect_name}}</em></li>
       </div>
     </div>
   </div>

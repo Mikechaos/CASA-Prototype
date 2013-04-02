@@ -240,3 +240,7 @@
     margin: 20px;
     margin-top:40px;
 }
+
+.filter_dispatch div {
+    padding:10px;
+}

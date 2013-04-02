@@ -60,7 +60,7 @@ function Employee (emp) {
 	this.employees_type_id = emp.employees_type_id;
 	this.set_string_type();
     } else {
-	this.employees_type_id = ""; // employee_type_id
+	this.employees_type_id = 0; // employee_type_id
     }
     this.route = "/employees";
 }
@@ -72,7 +72,9 @@ Employee.render = function (count) {
 
 Employee.prototype = {
     set_string_type: function () {
-	this.type = App.elems.get(search_index(App.elems.list, this.employees_type_id, function (e, type_id) { return e.id === type_id && e.strElem === "EmployeesType";})).type;
+	this.type = App.elems.get(search_index(App.elems.list, this.employees_type_id, function (e, type_id) {
+	    return e.id === type_id && e.strElem === "EmployeesType";
+	})).type;
 	return this.type;
     }
 };
@@ -164,7 +166,7 @@ Affectation.createFromList = function (data_base_affectations) {
 	forEach(dba.elements, function (e) {
 	    a.elems.push(App.elems.get(App.elems.search_index(e, function (elem, e) {return e.id === elem.id && e.strElem === elem.strElem})));
 	});
-	App.affectations.push(a);
+	App.insert_affect(a);
     });
     // console.log("Done affectations", (new Date).getSeconds());
 };
@@ -244,7 +246,9 @@ Affectation.prototype = {
     },
 
     get_client: function() {
-	return App.elems.get(search_index(App.elems.list, this.client_id, function (e, client_id) { return e.id === client_id && e.strElem === "Client";}));
+	var client = App.elems.get(search_index(App.elems.list, this.client_id, function (e, client_id) { return e.id === client_id && e.strElem === "Client";}));
+	if (client === undefined) client = {};
+	return client;
     }
 
 };
@@ -350,11 +354,13 @@ ListClass.prototype = {
     is_include: function (needle, predicate) {
 	predicate = predicate || this.eql_predicate // Will be usefull if want to pass other predicate than default class
 	if (typeof predicate === "string") predicate = this[predicate];
-	return search_index(this.list, needle, predicate);
+	return (search_index(this.list, needle, predicate) !== false);
     },
 
     search_index: function (elem, predicate) {
-	return this.is_include(elem, predicate);
+	predicate = predicate || this.eql_predicate // Will be usefull if want to pass other predicate than default class
+	if (typeof predicate === "string") predicate = this[predicate];
+	return search_index(this.list, elem, predicate);
     },
 
     eql_predicate: function (needle, elem) {
@@ -442,8 +448,9 @@ AffectedList.prototype = {
 // AFFECTATION_LIST
 
 // Singleton for holding every affectation needed
-function AffectationList () {
+function AffectationList (list) {
     ListClass.call(this);
+    this.list = list || [];
 }
 
 
@@ -456,6 +463,31 @@ AffectationList.prototype =  {
     filter_affectations: function (fst, snd) {
 	snd = snd || fst;
 	return this.list.filter(function (a) {return a.is_between_dates(fst, snd);});
+    },
+    
+    filter_by_field : function (field, needle) {
+	if (needle === undefined || needle.length === 0) return this;
+	return new AffectationList(this.list.filter(function (a) {
+	    return (needle.length === 0) || new RegExp('(^|\\s)' + needle).test(a[field]);
+	}));
+    },
+
+    filter_by_client: function (client) {
+	if (client === undefined || client.length === 0) return this;
+	return new AffectationList(this.list.filter(function (a) {
+	    return (client.length === 0) || new RegExp('(^|\\s)' + client).test(a.get_client().name);
+	}));
+    },
+
+    filter_by_elem: function (element) {
+	if (element === undefined || element.length === 0) return this;
+	return new AffectationList(this.list.filter(function (a) {
+	    return a.elems.is_include(element, function (elem, elem_name) {
+		// Search beginning (^) or each word (\\s)
+		// console.log(elem.name, new RegExp('(^|\\s)' + elem_name), new RegExp('(^|\\s)' + elem_name).test(elem.name));
+		return new RegExp('(^|\\s)' + elem_name).test(elem.name);
+	    });
+	}));
     },
 
     get_todays: function () {
