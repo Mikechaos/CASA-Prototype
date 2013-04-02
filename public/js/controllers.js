@@ -60,6 +60,8 @@
 	$scope.save_affectation = ng.bind(this, this.save_affectation);
 	$scope.affected_elems = App.affected_today
 	$scope.attributed_given_day = App.attributed;
+
+	// Reset day buttons
 	$scope.$watch('newAffectation.date', function () {
 	    forEach(Date.days, function (d) {
 		$scope.days[d] = false;
@@ -70,6 +72,7 @@
 	});
 	
 	$scope.clear_affectation = ng.bind(this, this.clear_affectation);
+
 	/*
 	$scope.validation_error = false;
 	$scope.alert: {	
@@ -111,8 +114,9 @@
 	    	++i;
 	    });
 	    App.verify_today();
-	    this.clean();
-	    this.init();
+	    // If we just save the affect, means we keep the same team
+	    this.init_general();
+	    this.scope.newAffectation.elems.list = [].concat(this.scope.elems)
 	},
     	
 	post_affectation: function (a) {
@@ -121,7 +125,7 @@
 		.error(function () {console.log('error')});
 	},
 
-	init: function () {
+	init_general: function () {
 	    this.scope.newAffectation = new Affectation();
 	    this.scope.days = {
 		Dimanche: false,
@@ -132,6 +136,13 @@
 		Vendredi: false,
 		Samedi: false,
 	    };
+	},
+
+	init: function () {
+	    this.init_general();
+	    this.scope.team_confirmed = false;
+	    this.scope.team_applied = false;
+	    this.scope.use_already_affected = false;
 	    this.scope.elems = [];
 	    this.scope.$watch('newAffectation', this.scope.newAffectation.render());
 	},
@@ -236,6 +247,7 @@
 	
 	process: function () {
 	    this.scope.newAffectation.elems.list = [].concat(this.scope.elems)
+	    this.scope.$parent.team_applied = true;
 	},
 	
 	open: function () {

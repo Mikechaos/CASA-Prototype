@@ -68,20 +68,109 @@
 
   <div class="row span12" style="margin-left:5%;">
     <div class="affectation" ng-show="affectation">
-      <div class="pane well well-large">
-	<div class="btn-group" bs-buttons-checkbox style="margin-left:5%;">
-	  <button type="button" class="btn btn-info btn-large" ng-model="days.Dimanche">Dimanche</button>
-	  <button type="button" class="btn btn-info btn-large" ng-model="days.Lundi">Lundi</button>
-	  <button type="button" class="btn btn-info btn-large" ng-model="days.Mardi">Mardi</button>
-	  <button type="button" class="btn btn-info btn-large" ng-model="days.Mercredi">Mercredi</button>
-	  <button type="button" class="btn btn-info btn-large" ng-model="days.Jeudi">Jeudi</button>
-	  <button type="button" class="btn btn-info btn-large" ng-model="days.Vendredi">Vendredi</button>
-	  <button type="button" class="btn btn-info btn-large" ng-model="days.Samedi">Samedi</button>
+
+      <!-- SELECT TEAM -->
+      <div id="modal_elements_id" class="modal-elements" ng-controller="ElementsSelectionCtrl" style="width:90%;">
+	<legend style="width:225px; float:left;"> Équipe : </legend>
+	<div ng-show="!team_confirmed">
+	  <button style="float:left; margin-left:45px; margin-top:8px;" class="btn btn-info" ng-click="open()">Sélectionner votre équipe</button>
+	  <div style="display:inline-block; margin-left:15px;">
+	    <input id="use_already_affected_checkbox" type="checkbox" ng-model="use_already_affected">
+	    <label for="use_already_affected_checkbox" style="float:left;">Utiliser des éléments déjà affectés</label>
+	  </div>
+	</div>
+	<div style="clear:both";></div>
+	<div modal="shouldBeOpen" close="close()" options="opts">
+          <div class="modal-header">
+            <h4>Ajouter des Éléments</h4>
+          </div>
+          <div class="modal-body tabbable">
+            <ul>
+	      <ul class="nav nav-tabs">
+		<li class="active"><a href="#tab1" data-toggle="tab">Supervisors</a></li>
+		<li><a href="#tab2" data-toggle="tab">Employee</a></li>
+		<li><a href="#tab3" data-toggle="tab">Camions</a></li>
+		<li><a href="#tab4" data-toggle="tab">Coffres</a></li>
+	      </ul>
+	      <div class="tab-content">
+
+		<div ng-repeat="class in elements_class" class="tab-pane {{hack[$index].active}}" id="tab{{$index + 1}}">
+		  <div class="row modal-checkboxes" 
+		       ng-repeat="elem in elements | elems:elements_class[$index].name | already_attr_elems:days:newAffectation.date:use_already_affected">
+		    <div class="squaredFour span1" style="margin-bottom:8px;">
+		      <input type="checkbox" ng-checked="elem.selected" id="modal_{{elements_class[$parent.$index].name}}{{elem.id}}" ng-model="elem.selected" ng-change="change(elem);" />
+		      <label for="modal_{{elements_class[$parent.$index].name}}{{elem.id}}"></label>
+		    </div>
+		    <div class="span3 modal-label" style="margin-top:0px; margin-left:-40px;">{{elem.name}} </div>
+		  </div>
+		</div>
+	      </div>
+            </ul>
+          </div>
+          <div class="modal-footer row">
+            <button class="btn btn-success" ng-click="process();close()">Appliquer</button>
+          </div>
 	</div>
       </div>
 
-      <form>
-	<!-- <legend> Info Générale </legend> -->
+      <!-- DISPLAY TEAM -->
+
+      <!-- Will be transform in a directive -->
+      <div class="row span3" ng-show="(newAffectation.elems | elems:'Supervisor').length > 0">
+	<legend>Supervisor(s)</legend>
+	<div style="margin-left: 75px" class="pane well well-large employeeOnJob">
+          <div class="row modal-checkboxes" ng-repeat="sup in newAffectation.elems | elems:'Supervisor'">
+	    <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{sup.name}}</div>
+          </div>
+	</div>  
+      </div>
+
+      <!-- Will be transform in a directive -->
+      <div class="row span3" ng-show="(newAffectation.elems | elems:'Employee').length > 0">
+	<legend>Employee(s)</legend>
+	<div style="margin-left: 75px" class="pane well well-large employeeOnJob">
+          <div class="row modal-checkboxes" ng-repeat="emp in newAffectation.elems | elems:'Employee'">
+	    <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{emp.name}}</div>
+          </div>
+	</div>  
+      </div>
+
+      <!-- Will be transform in a directive -->
+      <div class="row span3" ng-show="(newAffectation.elems | elems:'Truck').length > 0">
+	<legend>Truck(s)</legend>
+	<div style="margin-left: 75px" class="pane well well-large employeeOnJob">
+          <div class="row modal-checkboxes" ng-repeat="truck in newAffectation.elems | elems:'Truck'">
+	    <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{truck.name}}</div>
+	  </div>
+	</div>  
+      </div>
+
+      <!-- Will be transform in a directive -->
+      <div class="row span3" ng-show="(newAffectation.elems | elems:'Box').length > 0">
+	<legend>Coffre(s)</legend>
+	<div style="margin-left: 75px" class="pane well well-large employeeOnJob">
+          <div class="row modal-checkboxes" ng-repeat="box in newAffectation.elems | elems:'Box'">
+	    <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{box.name}}</div>
+          </div>
+	</div>  
+      </div>
+      <div style="clear:both"></div>
+      <button ng-click="team_confirmed = true;" ng-show="team_applied && !team_confirmed" style="margin-left:40%;" class="btn btn-success">Confirmer</button>
+      <hr>
+
+      <!-- GENERAL INFO -->
+      <div ng-show="team_confirmed">
+	<div class="pane well well-large">
+	  <div class="btn-group" bs-buttons-checkbox style="margin-left:5%;">
+	    <button type="button" class="btn btn-info btn-large" ng-model="days.Dimanche">Dimanche</button>
+	    <button type="button" class="btn btn-info btn-large" ng-model="days.Lundi">Lundi</button>
+	    <button type="button" class="btn btn-info btn-large" ng-model="days.Mardi">Mardi</button>
+	    <button type="button" class="btn btn-info btn-large" ng-model="days.Mercredi">Mercredi</button>
+	    <button type="button" class="btn btn-info btn-large" ng-model="days.Jeudi">Jeudi</button>
+	    <button type="button" class="btn btn-info btn-large" ng-model="days.Vendredi">Vendredi</button>
+	    <button type="button" class="btn btn-info btn-large" ng-model="days.Samedi">Samedi</button>
+	  </div>
+	</div>
 	<div class="pane well well-large">
 	  <fieldset>
 	    <div class="span3">
@@ -110,88 +199,12 @@
 	    </div>
 	  </fieldset>
 	</div>
-
-	<!-- MODAL ELEMENTS SELECTION -->
-	<div id="modal_elements_id" class="modal-elements" ng-controller="ElementsSelectionCtrl" style="width:60%">
-	  <legend style="width:225px; float:left;"> Éléments : </legend><button style="float:left; margin-left:45px; margin-top:8px;" class="btn btn-info" ng-click="open()">Ajouter</button>
-	  <div style="clear:both";></div>
-	  <div modal="shouldBeOpen" close="close()" options="opts">
-            <div class="modal-header">
-              <h4>Ajouter des Éléments</h4>
-            </div>
-            <div class="modal-body tabbable">
-              <ul>
-		<ul class="nav nav-tabs">
-		  <li class="active"><a href="#tab1" data-toggle="tab">Supervisors</a></li>
-		  <li><a href="#tab2" data-toggle="tab">Employee</a></li>
-		  <li><a href="#tab3" data-toggle="tab">Camions</a></li>
-		  <li><a href="#tab4" data-toggle="tab">Coffres</a></li>
-		</ul>
-		<div class="tab-content">
-
-		  <div ng-repeat="class in elements_class" class="tab-pane {{hack[$index].active}}" id="tab{{$index + 1}}">
-		    <div class="row modal-checkboxes" ng-repeat="elem in elements | elems:elements_class[$index].name | already_attr_elems:days:newAffectation.date">
-		      <div class="squaredFour span1" style="margin-bottom:8px;">
-			<input type="checkbox" ng-checked="elem.selected" id="modal_{{elements_class[$parent.$index].name}}{{elem.id}}" ng-model="elem.selected" ng-change="change(elem);" />
-			<label for="modal_{{elements_class[$parent.$index].name}}{{elem.id}}"></label>
-		      </div>
-		      <div class="span3 modal-label" style="margin-top:0px; margin-left:-40px;">{{elem.name}} </div>
-		    </div>
-		  </div>
-		</div>
-              </ul>
-            </div>
-            <div class="modal-footer row">
-              <button class="btn btn-success" ng-click="process();close()">Appliquer</button>
-            </div>
+	<hr>
+	  <div class="row" style="clear: both; margin-bottom: 85px;">
+	    <a href="" class="btn btn-danger" ng-click="clear_affectation()" style="margin-left:33%; margin-top:25px;">Clear</a>
+	    <a href="" class="btn btn-success" ng-click="save_affectation()" style="margin-left:2%; margin-top:25px;">Sauvegarder</a>
 	  </div>
 	</div>
-
-	<!-- Will be transform in a directive -->
-	<div class="row span3" ng-show="(newAffectation.elems | elems:'Supervisor').length > 0">
-	  <legend>Supervisor(s)</legend>
-	  <div style="margin-left: 75px" class="pane well well-large employeeOnJob">
-            <div class="row modal-checkboxes" ng-repeat="sup in newAffectation.elems | elems:'Supervisor'">
-	      <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{sup.name}}</div>
-            </div>
-	  </div>  
-	</div>
-
-	<!-- Will be transform in a directive -->
-	<div class="row span3" ng-show="(newAffectation.elems | elems:'Employee').length > 0">
-	  <legend>Employee(s)</legend>
-	  <div style="margin-left: 75px" class="pane well well-large employeeOnJob">
-            <div class="row modal-checkboxes" ng-repeat="emp in newAffectation.elems | elems:'Employee'">
-	      <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{emp.name}}</div>
-            </div>
-	  </div>  
-	</div>
-
-	<!-- Will be transform in a directive -->
-	<div class="row span3" ng-show="(newAffectation.elems | elems:'Truck').length > 0">
-	  <legend>Truck(s)</legend>
-	  <div style="margin-left: 75px" class="pane well well-large employeeOnJob">
-            <div class="row modal-checkboxes" ng-repeat="truck in newAffectation.elems | elems:'Truck'">
-	      <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{truck.name}}</div>
-	    </div>
-	  </div>  
-	</div>
-
-	<!-- Will be transform in a directive -->
-	<div class="row span3" ng-show="(newAffectation.elems | elems:'Box').length > 0">
-	  <legend>Coffre(s)</legend>
-	  <div style="margin-left: 75px" class="pane well well-large employeeOnJob">
-            <div class="row modal-checkboxes" ng-repeat="box in newAffectation.elems | elems:'Box'">
-	      <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{box.name}}</div>
-            </div>
-	  </div>  
-	</div>
-	<hr>
-	<div class="row" style="clear: both; margin-bottom: 85px;">
-	  <a href="" class="btn btn-danger" ng-click="clear_affectation()" style="margin-left:33%; margin-top:25px;">Clear</a>
-	  <a href="" class="btn btn-success" ng-click="save_affectation()" style="margin-left:2%; margin-top:25px;">Sauvegarder</a>
-	</div>
-      </form>
     </div>
   </div>
 </div>
