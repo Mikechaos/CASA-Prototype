@@ -116,11 +116,13 @@
 	    	}
 	    	++i;
 	    });
+	    var supervisor_id = this.scope.newAffectation.supervisor_id
 	    App.verify_today();
 	    // If we just save the affect, means we keep the same team
 	    this.init_general();
 	    this.scope.newAffectation.elems.list = [].concat(this.scope.elems)
 	    this.scope.use_already_affected = true;
+	    this.scope.newAffectation.supervisor_id = supervisor_id;
 	},
     	
 	post_affectation: function (a) {
