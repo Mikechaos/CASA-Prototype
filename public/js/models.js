@@ -141,7 +141,7 @@ function Affectation () {
     this.elems = new ElementList;
 
     this.notes = "";
-
+    this.height = Affectation.DEF_HEIGHT;
     this.render();
 }
 
@@ -166,9 +166,28 @@ Affectation.createFromList = function (data_base_affectations) {
 	forEach(dba.elements, function (e) {
 	    a.elems.push(App.elems.get(App.elems.search_index(e, function (elem, e) {return e.id === elem.id && e.strElem === elem.strElem})));
 	});
+	a.height = Affectation.get_height(a);
 	App.insert_affect(a);
     });
+    
     // console.log("Done affectations", (new Date).getSeconds());
+};
+
+Affectation.DEF_HEIGHT = 520;
+Affectation.MAX_LINES = 23;
+Affectation.MAX_CHARS_PER_LINE = 38;
+Affectation.INIT_HEIGHT = 4 // Number of line initially => one for date, one for client, one for link number and one for Supervisor
+Affectation.PADDING = 11; // Need it so a doubled affectatation is precisely the same size as two single
+
+// If height is over 20 lines (little formula, pretty simple)
+Affectation.get_height = function (a) {
+    return Affectation.get_line_count(a) > Affectation.MAX_LINES ?
+	Affectation.DEF_HEIGHT * 2 + Affectation.PADDING :
+	Affectation.DEF_HEIGHT;
+};
+
+Affectation.get_line_count = function (a) {
+    return Affectation.INIT_HEIGHT + a.elems.list.length + Math.ceil(a.notes.length / Affectation.MAX_CHARS_PER_LINE);
 };
 
 Affectation.prototype = {
@@ -343,8 +362,10 @@ ListClass.prototype = {
 	this.list.push(e);
     },
 
-    insertion_sort: function(to_insert) {
-	insertion_sort(this.list, to_insert, this.sort_predicate);
+    insertion_sort: function(to_insert, predicate) {
+	predicate = predicate || this.sort_predicate;
+	if (typeof predicate === "string") predicate = this[predicate];
+	insertion_sort(this.list, to_insert, predicate);
     },
 
     forEach: function (action) {
@@ -376,6 +397,7 @@ ListClass.prototype = {
     sort_predicate: function (is_smaller, elem) {
 	return (is_smaller < elem) ? true : false
     },
+
   
 };
 
@@ -505,6 +527,10 @@ AffectationList.prototype =  {
 	return this.filter_affectations(today);
     },
 
+    sort_for_long_affect_predicate: function (is_smaller, elem) {
+	return (is_smaller <= elem) ? true : false
+    },
+
 };
 
 function ElemAffected(elem, name) {
@@ -541,9 +567,10 @@ var App = {
 
     affected_today: new AffectedList,
     attributed: new AffectedList,
-    
+
     insert_affect: function (affect) {
-	this.affectations.insertion_sort(affect);
+	var predicate = affect.height > Affectation.DEF_HEIGHT ? "sort_for_long_affect_predicate" : "sort_predicate";
+	this.affectations.insertion_sort(affect, predicate);
 	if (affect.is_today()) this.affected_today.verify_affect(affect);
     },
 
