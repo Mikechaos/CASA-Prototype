@@ -33,21 +33,21 @@
 	  <i class="icon-time" style="position: relative;margin: -8.2px 0 0 -24px;"></i>
 	</div>
       </div>
-      <div class="span12">
+      <!-- <div class="span12"> -->
 	<!-- Selection mode -->
-	<div class="span2" style="width:80px; margin-left:-10px;" ng-show="!affectation">
-	  <label style="float:left;"> Jusqu'au : </label>
-	</div>
-	<div class="span3 input-append" style="margin-left:-10px; margin-top:0;" ng-show="!affectation">
-	  <input type="text" ui-date="{ dateFormat: 'd MM, yy'}" ng-model="date.sndDate" style="padding-left:15px; width:135px;"/ >
-	  <a href="" ng-click="nextWeek();" class="btn-success btn">Sem. Prochaine</a>
-	</div>
-      </div>
+	<!-- <div class="span2" style="width:80px; margin-left:-10px;" ng-show="!affectation"> -->
+	<!--   <label style="float:left;"> Jusqu'au : </label> -->
+	<!-- </div> -->
+	<!-- <div class="span3 input-append" style="margin-left:-10px; margin-top:0;" ng-show="!affectation"> -->
+	<!--   <input type="text" ui-date="{ dateFormat: 'd MM, yy'}" ng-model="date.sndDate" style="padding-left:15px; width:135px;"/ > -->
+	<!--   <a href="" ng-click="nextWeek();" class="btn-success btn">Sem. Prochaine</a> -->
+	<!-- </div> -->
+      <!-- </div> -->
     </div>
     <div class="span2">
       <button href="" ng-click="set_mode(mode_enum.ADD);" class="btn btn-info" style="margin-top:10px;">Ajouter</button>
-      <button ng-click="set_mode(mode_enum.QUICK); quick_view = true;" class="btn btn-info change_date" style="margin-top:8px;">Affichage Rapide</button>
-      <button ng-click="set_mode(mode_enum.COMPLETE); quick_view = false;" class="btn btn-info" style="margin-top:8px;"> Affichage Complet</button>
+      <!-- <button ng-click="set_mode(mode_enum.QUICK); quick_view = true;" class="btn btn-info change_date" style="margin-top:8px;">Affichage Rapide</button> -->
+      <button ng-click="set_mode(mode_enum.VIEW);" class="btn btn-info" style="margin-top:8px;"> Affichage</button>
     </div>
     <div class="span2">
 
@@ -55,26 +55,25 @@
   </div>
 
   <div ng-controller="RenderCtrl" ng-show="!affectation">
-    <form style="margin-left:5%;" class="form-search filter_dispatch well span12 clearfix" style="clear:both;">
-      <h4>Filtres</h4>
-      {{filter.element}}
-      <div class="input-prepend">
-	<span class="add-on" title="Superviseurs, employés, camions...">Élément</span>
-	<input type="text" ng-model="filter.element" class="input-medium search-query">
-      </div>
-      <div class="input-prepend">
-	<span class="add-on">Client</span>
-	<input type="text" ng-model="filter.client" class="input-medium search-query">
-      </div>
-      <div class="input-prepend">
-	<span class="add-on">Bon de service</span>
-	<input type="text" ng-model="filter.link" class="input-medium search-query">
-      </div>
-      <!-- <button type="submit" class="btn">Search</button> -->
-    </form>
+    <!-- <form style="margin-left:5%;" class="form-search filter_dispatch well span12 clearfix" style="clear:both;"> -->
+    <!--   <h4>Filtres</h4> -->
+    <!--   <div class="input-prepend"> -->
+    <!-- 	<span class="add-on" title="Superviseurs, employés, camions...">Élément</span> -->
+    <!-- 	<input type="text" ng-model="filter.element" class="input-medium search-query"> -->
+    <!--   </div> -->
+    <!--   <div class="input-prepend"> -->
+    <!-- 	<span class="add-on">Client</span> -->
+    <!-- 	<input type="text" ng-model="filter.client" class="input-medium search-query"> -->
+    <!--   </div> -->
+    <!--   <div class="input-prepend"> -->
+    <!-- 	<span class="add-on">Bon de service</span> -->
+    <!-- 	<input type="text" ng-model="filter.link" class="input-medium search-query"> -->
+    <!--   </div> -->
+    <!--   <\!-- <button type="submit" class="btn">Search</button> -\-> -->
+    <!-- </form> -->
     <!-- QUICK VIEW -->
     <div ng-show="quick_view" 
-	 ng-repeat="affect in affectations | between:date.fstDate:date.sndDate | affect_by_fields:filter.element:filter.client:filter.link">
+	 ng-repeat="affect in affectations | between:date.fstDate">
       <div class="renderAffectation span4">
 	<div class="affectTitle span4 btn btn-success">{{affect.name}}</div>
 	<div class="affectBody span4 well well-large">
@@ -89,12 +88,13 @@
 	</div>
       </div>
     </div>
-
     <!-- COMPLETE VIEW -->
     <!-- <div class="clearfix"></div> -->
-    <div ng-show="!quick_view" 
-	 ng-repeat="affect in affectations | between:date.fstDate:date.sndDate | affect_by_fields:filter.element:filter.client:filter.link">
-      <div class="span12 affect_report" ng-model="affect" render-affectation="true"></div>
+    <div class="span12" style="border: 3px rgb(240, 240, 240) solid; border-radius:15px; width:928px">
+      <div ng-show="!quick_view" 
+	   ng-repeat="affect in affectations | between:date.fstDate">
+	<div class="span3 affect_report" ng-model="affect" render-affectation="true"></div>
+      </div>
     </div>
   </div>
 
@@ -208,8 +208,9 @@
 	<div class="pane well well-large">
 	  <fieldset>
 	    <div class="span3">
-	      <label>Name :</label>
-	      <input type="text" ng-model="newAffectation.name">
+	      <label>Chef de chantier : </label>
+	      <select ng-model="newAffectation.supervisor_id" 
+		      ng-options="sup.id as sup.name for sup in elements | elems:'Supervisor' | already_attr_elems:days:newAffectation.date:use_already_affected"></select>
 	    </div>
 	    <div class="span12" style="margin-left:0px;">
 	      <!-- <div class="span3"> -->

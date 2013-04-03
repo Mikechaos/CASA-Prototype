@@ -5,7 +5,7 @@ class MyApp < Sinatra::Application
     @title = "Tous les employés"
     @form_action = "/affectations"
     @affectation = Affectation.new
-    @affectations = Affectation.all
+    @affectations = Affectation.order(:id).all
     @route_name = "affectations"
     @affectations.to_json
     # haml :reglages	
@@ -21,7 +21,7 @@ class MyApp < Sinatra::Application
   end
 
   post "/affectations" do
-    Affectation.create(:name => params[:name], 
+    Affectation.create(:supervisor_id => params[:supervisor_id], 
                        :link_number => params[:link_number],
                        :client_id => params[:client_id],
                        :elements => params[:elements],

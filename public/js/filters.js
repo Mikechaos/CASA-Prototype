@@ -59,7 +59,7 @@ angular.module('casaApp.filters', []).
 	};
     }).
     filter('between', function () {
-    	return function (affectations, fst_date, snd_date) {return affectations.filter_affectations(fst_date, snd_date)};
+    	return function (affectations, fst_date, snd_date) {return affectations.filter_affectations(fst_date, fst_date)};
     })
     .filter('affect_by_fields', function () {
 	return function (affectations, element, client, link_number) {

@@ -62,7 +62,7 @@ Inherits = {
 
 };
 
-3// Found somewhere in the internets
+// Found somewhere in the internets
 // Actually is there only for comparative and study purpose
 function createSpec(child, parent){
     var parentPrototype;

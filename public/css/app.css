@@ -233,12 +233,27 @@
     width: 15%;
 }
 
+.table-condensed td, .table-condensed th {
+    padding: 1px;
+    line-height: 20px;
+    text-align: center;
+    vertical-align: top;
+    border-top: 1px solid #dddddd;
+}
+
+/* .affect_report { */
+/*     border: 4px rgb(240, 240, 240) solid; */
+/*     border-radius: 20px; */
+/*     padding: 20px; */
+/*     margin: 20px; */
+/*     margin-top:40px; */
+/* } */
+
 .affect_report {
-    border: 4px rgb(240, 240, 240) solid;
-    border-radius: 20px;
-    padding: 20px;
-    margin: 20px;
-    margin-top:40px;
+    border: 1px rgb(240, 240, 240) solid;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 0px;
 }
 
 .filter_dispatch div {

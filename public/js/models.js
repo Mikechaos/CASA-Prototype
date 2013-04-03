@@ -131,11 +131,11 @@ function Client (client) {
 
 
 function Affectation () {
-    this.name = "";
     this.date = new Date();
     this.date_format = this.format_date(this.date);
     this.start_time = { time : "06:00AM"};
     this.client_id = 1;
+    this.supervisor_id = 1
     this.link_number = "";
 
     this.elems = new ElementList;
@@ -150,10 +150,10 @@ Affectation.createFromList = function (data_base_affectations) {
     forEach (data_base_affectations, function (dba) {
 	a = new Affectation;
 	a.id = dba.id
-	a.name = dba.name;
 	a.date = new Date(dba.day);
 	a.date_format = a.format_date(a.date);
 	a.start_time = { time : dba.start_time};
+	a.supervisor_id = dba.supervisor_id;
 	a.client_id = dba.client_id;
 	a.link_number = dba.link_number;
 	
@@ -246,10 +246,16 @@ Affectation.prototype = {
     },
 
     get_client: function() {
-	var client = App.elems.get(search_index(App.elems.list, this.client_id, function (e, client_id) { return e.id === client_id && e.strElem === "Client";}));
+	var client = App.elems.get_elem({id: this.client_id, strElem: "Client"})
 	if (client === undefined) client = {};
 	return client;
-    }
+    },
+
+    get_supervisor: function () {
+	var supervisor = App.elems.get_elem({id: this.supervisor_id, strElem: "Supervisor"})
+	if (supervisor === undefined) supervisor = {};
+	return supervisor;
+    },
 
 };
 
@@ -259,7 +265,7 @@ function PostAffectation(a) {
     this.user_id = 0;
     this.affectation_type = 0;
 
-    this.name = a.name;
+    this.supervisor_id = a.supervisor_id
     this.start_time = a.start_time.time;
     this.day = a.date.getTime();
     this.notes = a.notes;
@@ -416,6 +422,10 @@ ElementList.prototype = {
 
     filter_predicate: function (e, strClass) {
 	return e.strElem === strClass;
+    },
+
+    get_elem: function (elem) {
+	return this.get(this.search_index(elem, function (e, elem) {return e.id === elem.id && e.strElem === elem.strElem}));
     },
 };
 

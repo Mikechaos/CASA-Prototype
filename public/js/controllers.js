@@ -72,7 +72,7 @@
 	
 	$scope.clear_affectation = ng.bind(this, this.clear_affectation);
 
-	$scope.quick_view = true;
+	$scope.quick_view = false;
 
 	$scope.filter = {};
 
@@ -173,7 +173,7 @@
 	this.addm_height = 45;
 
 	// selectm_ => select mode
-	this.selectm_height = 100;
+	this.selectm_height = 45;
 
 	// Date ui
 	$scope.today = function () {
@@ -186,14 +186,14 @@
 	};
 	$scope.mode_enum = {
 	    ADD : "set_add_mode",
-	    QUICK : "set_quick_view_mode",
-	    COMPLETE : "set_complete_view_mode",
+	    //QUICK : "set_quick_view_mode",
+	    VIEW : "set_view_mode",
 	};
 
 	$scope.set_mode = ng.bind( this, this.set_mode );
 
 	this.scope = $scope;
-	this.set_quick_view_mode();
+	this.set_view_mode();
 	// this.set_add_mode();
 
 
@@ -215,7 +215,7 @@
 	set_view_mode: function (quick_view) {
 	    this.scope.pane_height = this.selectm_height;
 	    this.scope.$parent.affectation = false;
-	    this.scope.$parent.quick_view = quick_view;
+	    //this.scope.$parent.quick_view = quick_view;
 	},
 
 	set_quick_view_mode : function () {
