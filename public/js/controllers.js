@@ -157,8 +157,8 @@
 	},
 
 	modify_affectation: function (id) {
-	    this.scope.modifying = true;
 	    this.init_mod_or_copy_screen(App.affectations.get_by_id(id));
+	    this.scope.modifying = true;
 	},
 
 	copy_affectation: function (id) {
