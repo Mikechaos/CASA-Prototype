@@ -142,7 +142,7 @@ function Affectation () {
 
     this.notes = "";
     this.height = Affectation.DEF_HEIGHT;
-    this.render();
+    //this.render();
 }
 
 Affectation.createFromList = function (data_base_affectations) {
@@ -265,13 +265,13 @@ Affectation.prototype = {
     },
 
     get_client: function() {
-	var client = App.elems.get_elem({id: this.client_id, strElem: "Client"})
+	var client = App.elems.get_by_id({id: this.client_id, strElem: "Client"})
 	if (client === undefined) client = {};
 	return client;
     },
 
     get_supervisor: function () {
-	var supervisor = App.elems.get_elem({id: this.supervisor_id, strElem: "Supervisor"})
+	var supervisor = App.elems.get_by_id({id: this.supervisor_id, strElem: "Supervisor"})
 	if (supervisor === undefined) supervisor = {};
 	return supervisor;
     },
@@ -349,6 +349,10 @@ ListClass.prototype = {
 	return this.list[index];
     },
     
+    get_by_id: function (elem) {
+	return this.get(this.search_index(elem, "by_id"));
+    },
+
     add_many: function (xs) {
 	if (typeof xs !== 'undefined') {
 	    if (typeof xs.push === "undefined") {
@@ -398,6 +402,10 @@ ListClass.prototype = {
 	return (is_smaller < elem) ? true : false
     },
 
+    by_id: function (elem, searched_id) {
+	return searched_id === elem.id;
+    }
+
   
 };
 
@@ -444,10 +452,6 @@ ElementList.prototype = {
 
     filter_predicate: function (e, strClass) {
 	return e.strElem === strClass;
-    },
-
-    get_elem: function (elem) {
-	return this.get(this.search_index(elem, function (e, elem) {return e.id === elem.id && e.strElem === elem.strElem}));
     },
 };
 
@@ -614,9 +618,14 @@ var App = {
 	});
 	return elems.filter((function (e) {
 	    var found = false;
-	    forEach(attributed, function (affected) {
-		return !((affected.elem.strElem === e.strElem && affected.elem.id === e.id) && (found = true))
-	    });
+
+	    // Don't filter if it's selected
+	    if (!e.selected) {
+		forEach(attributed, function (affected) {
+		    
+		    return !((affected.elem.strElem === e.strElem && affected.elem.id === e.id) && (found = true))
+		});
+	    }
 	    // inverted because we want to filter it only if we find (true) it (false = filtered)
 	    return !found;
 	}))

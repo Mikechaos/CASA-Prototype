@@ -59,18 +59,40 @@ angular.module('casaApp.filters', []).
 	};
     }).
     filter('between', function () {
-    	return function (affectations, fst_date, snd_date) {return affectations.filter_affectations(fst_date, fst_date)};
+    	return function (affectations, fst_date, snd_date) {return affectations.filter_affectations(fst_date, snd_date)};
     })
     .filter('affect_by_fields', function () {
-	return function (affectations, element, client, link_number) {
-	    if ((element === undefined || element.length == 0) &&
-		(client === undefined || client.length == 0) &&
-		(link_number === undefined || link_number.length == 0)) return affectations;
-	    else {
-		affectations = new AffectationList(affectations);
-		return affectations.filter_by_elem(element).filter_by_client(client).filter_by_field("link_number", link_number).list;
+	return function (affectations, supervisor, element, client, link_number) {
+	    // (function filter_by_field (array) {
+	    if (supervisor !== undefined && supervisor.length !== 0) {
+		affectations = affectations.filter(function (a) {
+		    return new RegExp('(^|\\s)' + supervisor).test(a.get_supervisor().name);
+		});
 	    }
-	};
+	    if (link_number !== undefined && link_number.length !== 0) {
+		affectations = affectations.filter(function (a) {
+		    return new RegExp('(^|\\s)' + link_number).test(a["link_number"]);
+		});
+	    }
+	    // })(affectations);
+	    // (function filter_by_client (array) {
+	    if (client !== undefined && client.length !== 0) {
+	    	affectations = affectations.filter(function (a) {
+	    	    return new RegExp('(^|\\s)' + client).test(a.get_client().name);
+	    	});
+	    }
+	    // })(affectations);
+	    // (function filter_by_elems(array) {
+	    if (element !== undefined && element.length !== 0) {
+	    	affectations = affectations.filter(function (a) {
+	    	    return a.elems.is_include(element, function (elem, elem_name) {
+	    		return new RegExp('(^|\\s)' + elem_name).test(elem.name);
+	    	    });
+	    	});
+	    }
+	    // })(affectations);
+	    return affectations;
+	}
     })
     .filter('affect_by_elements', function () {
 	return function (element) {

@@ -249,13 +249,26 @@
 /*     margin-top:40px; */
 /* } */
 
-.affect_report {
+.schedule_report {
     border: 1px rgb(240, 240, 240) solid;
     border-radius: 10px;
     padding: 5px;
     margin: 0px;
 }
 
+.affect_report {
+    border: 4px rgb(240, 240, 240) solid;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 20px;
+    margin-top:40px;
+    font-size: 12px;
+}
+
 .filter_dispatch div {
     padding:10px;
+}
+
+.render_elements_indiv .table {
+    margin-left:60px;
 }

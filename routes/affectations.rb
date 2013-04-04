@@ -42,12 +42,23 @@ class MyApp < Sinatra::Application
   end
 
   put "/affectations/:id" do |id|
-    # Affectation.find(:id => id).update(:name => params[:name], :supervisor => params[:supervisor])
-    redirect "/affectations"
+
+    Affectation.find(:id => id).update({:supervisor_id => params[:supervisor_id], 
+                                         :link_number => params[:link_number],
+                                         :client_id => params[:client_id],
+                                         :elements => params[:elements],
+                                         :affectation_type => params[:affectation_type],
+                                         :user_id => params[:user_id],
+                                         :notes => params[:notes],
+                                         :state => params[:state],
+                                         :day => params[:day],
+                                         :start_time => params[:start_time],
+                                         :end_time => params[:end_time]})
+    # redirect "/affectations"
   end
 
   delete "/affectations/:id" do |id|
     affectation = Affectation.find(:id => id).delete
-    redirect "/affectations"
+    # redirect "/affectations"
   end
 end

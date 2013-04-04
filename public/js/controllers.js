@@ -58,7 +58,6 @@
 				{name: "Box", screen: "Coffres"}];
 	$scope.date.sndDate = new Date($scope.date.today.getFullYear(), $scope.date.today.getMonth(), $scope.date.today.getDate() + 7),
 	$scope.newAffectation = new Affectation();
-	$scope.save_affectation = ng.bind(this, this.save_affectation);
 	$scope.affected_elems = App.affected_today
 	$scope.attributed_given_day = App.attributed;
 
@@ -76,7 +75,12 @@
 	   $scope.$parent.report_date = date;
 	});
 	
+	$scope.save_affectation = ng.bind(this, this.save_affectation);
 	$scope.clear_affectation = ng.bind(this, this.clear_affectation);
+	$scope.delete_affectation = ng.bind(this, this.delete_affectation);
+	$scope.copy_affectation = ng.bind(this, this.copy_affectation);
+	$scope.modify_affectation = ng.bind(this, this.modify_affectation);
+	$scope.save_modification = ng.bind(this, this.save_modification);
 
 	$scope.quick_view = false;
 
@@ -127,14 +131,55 @@
 	    // If we just save the affect, means we keep the same team
 	    this.init_general();
 	    this.scope.newAffectation.elems.list = [].concat(this.scope.elems)
-	    this.scope.use_already_affected = true;
 	    this.scope.newAffectation.supervisor_id = supervisor_id;
 	},
     	
+	save_modification: function () {
+	    console.log('modifying');
+	    this.put_affectation(this.scope.newAffectation)
+	    this.scope.mode = "INDIV";
+	    this.clean();
+	    this.init();
+	},
+
+	select_elem: function () {
+	    this.scope.newAffectation.elems.forEach(function (e) {console.log(e); e.selected = true });
+	},
+
+	modify_affectation: function (id) {
+	    this.scope.mode = "ADD";
+	    this.scope.modifying = true;
+	    this.scope.newAffectation = App.affectations.get_by_id(id);
+	    this.select_elem();
+	},
+
+	copy_affectation: function (id) {
+	    this.scope.mode = "ADD";
+	    this.scope.newAffectation = new Affectation;
+	    this.scope.newAffectation.copy(App.affectations.get_by_id(id));
+	    this.select_elem();
+	},
+
+	delete_affectation: function (id) {
+	    this.scope.mode = "ADD";
+	},
+	
+	request_affectation: function(method, params, route, callback_success, callback_error) {
+	    callback_success = callback_success || function () {};
+	    callback_error = callback_error || function () {};
+	    this.http({method: method,  url: route, params: params, headers: "application/x-www-form-urlencoded"})
+		.success(function (data, status) {callback_success()})
+		.error(function () {callback_error()});
+	    
+	},
+
 	post_affectation: function (a) {
-	    this.http({method: 'POST',  url: '/affectations', params: new PostAffectation(a), headers: "application/x-www-form-urlencoded"})
-		.success(function (data, status) {console.log(data);})
-		.error(function () {console.log('error')});
+	    this.request_affectation('POST', new PostAffectation(a), '/affectations');
+	},
+
+	put_affectation: function(a)
+	{
+	    this.request_affectation('PUT', new PostAffectation(a), '/affectations/' + a.id);
 	},
 
 	init_general: function () {
@@ -159,7 +204,8 @@
 	    this.scope.team_applied = true;
 	    this.scope.use_already_affected = false;
 	    this.scope.elems = [];
-	    this.scope.$watch('newAffectation', this.scope.newAffectation.render());
+	    //this.scope.$watch('newAffectation', this.scope.newAffectation.render());
+	    this.scope.modifying = false;
 	},
 
 	clean: function () {
@@ -191,16 +237,21 @@
 	var double_height = 100;
 
 	$scope.mode_enum = {
-	    ADD : {fn: "set_add_mode", height: single_height},
+	    ADD : {name: "ADD", fn: "set_add_mode", height: single_height},
 	    //QUICK : "set_quick_view_mode",
-	    SCHEDULE : {fn: "set_schedule_mode", height: single_height},
-	    INDIV : {fn: "set_indiv_mode", height: double_height},
+	    SCHEDULE : {name: "SCHEDULE", fn: "set_schedule_mode", height: single_height},
+	    INDIV : {name: "INDIV", fn: "set_indiv_mode", height: double_height},
 	};
 	console.log($scope.mode_enum);
 	$scope.set_mode = ng.bind( this, this.set_mode );
 
+	var set_mode = this.set_mode.bind(this);
+	$scope.$watch('$parent.mode', function (mode) {
+	    set_mode($scope.mode_enum[mode], false);
+	});
+
 	this.scope = $scope;
-	this.set_mode($scope.mode_enum.SCHEDULE);
+	this.set_mode($scope.mode_enum.INDIV);
 	// this.set_add_mode();
 
 
@@ -210,10 +261,12 @@
 
     DateSelecterCtrl.prototype = { 
 	
-	set_mode : function (mode) {
-	    console.log(mode);
+	set_mode : function (mode, do_not_check_parent) {
 	    this.scope.pane_height = mode.height;
 	    this[mode.fn]();
+	    
+	    console.log(do_not_check_parent);
+	    if (do_not_check_parent !== false) this.scope.$parent.mode = mode.name;
 	},
 	
 	set_add_mode : function () { 
