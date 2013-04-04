@@ -150,6 +150,7 @@
 	    this.scope.mode = "ADD";
 	    this.scope.modifying = true;
 	    this.scope.newAffectation = App.affectations.get_by_id(id);
+	    this.scope.elems = this.scope.newAffectation.elems.list;
 	    this.select_elem();
 	},
 
@@ -251,7 +252,7 @@
 	});
 
 	this.scope = $scope;
-	this.set_mode($scope.mode_enum.INDIV);
+	this.set_mode($scope.mode_enum.SCHEDULE);
 	// this.set_add_mode();
 
 
