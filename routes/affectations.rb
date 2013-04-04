@@ -21,23 +21,23 @@ class MyApp < Sinatra::Application
   end
 
   post "/affectations" do
-    Affectation.create(:supervisor_id => params[:supervisor_id], 
-                       :link_number => params[:link_number],
-                       :client_id => params[:client_id],
-                       :elements => params[:elements],
-                       :affectation_type => params[:affectation_type],
-                       :user_id => params[:user_id],
-                       :notes => params[:notes],
-                       :state => params[:state],
-                       :day => params[:day],
-                       :start_time => params[:start_time],
-                       :end_time => params[:end_time])
+    a = Affectation.create(:supervisor_id => params[:supervisor_id], 
+                           :link_number => params[:link_number],
+                           :client_id => params[:client_id],
+                           :elements => params[:elements],
+                           :affectation_type => params[:affectation_type],
+                           :user_id => params[:user_id],
+                           :notes => params[:notes],
+                           :state => params[:state],
+                           :day => params[:day],
+                           :start_time => params[:start_time],
+                           :end_time => params[:end_time])
     # # puts params
     # Affectation.create(Affectation.from_json(params))
     @affectation = Affectation.new
     @affectations = Affectation.all
     @route_name = 'affectations'
-    puts @affectation[:id]
+    a.to_json
     # haml :reglages
   end
 
@@ -58,7 +58,8 @@ class MyApp < Sinatra::Application
   end
 
   delete "/affectations/:id" do |id|
-    affectation = Affectation.find(:id => id).delete
+    del = affectation = Affectation.find(:id => id).delete
+    del.to_json
     # redirect "/affectations"
   end
 end

@@ -122,7 +122,7 @@
 		    affect.copy($scope.newAffectation);
 	    	    affect.date.setDate($scope.newAffectation.date.getDate() + diff_array[i]);
 		    affect.id = self.post_affectation(affect);
-	    	    App.insert_affect(affect);
+	    	    // App.insert_affect(affect);
 	    	}
 	    	++i;
 	    });
@@ -167,25 +167,36 @@
 	},
 
 	delete_affectation: function (id) {
-	    this.scope.mode = "ADD";
+	    if (confirm('Êtes-vous certain de vouloir supprimer cette job? ')) {
+		App.affectations.find_and_delete(id);
+		this.request_delete_affectation(id);
+	    }
 	},
 	
 	request_affectation: function(method, params, route, callback_success, callback_error) {
 	    callback_success = callback_success || function () {};
 	    callback_error = callback_error || function () {};
 	    this.http({method: method,  url: route, params: params, headers: "application/x-www-form-urlencoded"})
-		.success(function (data, status) {callback_success()})
+		.success(function (data, status) {callback_success(data, status)})
 		.error(function () {callback_error()});
 	    
 	},
 
 	post_affectation: function (a) {
-	    this.request_affectation('POST', new PostAffectation(a), '/affectations');
+	    this.request_affectation('POST', new PostAffectation(a), '/affectations', function (data) {
+		Affectation.createFromList([data]);
+	    });
 	},
 
 	put_affectation: function(a)
 	{
-	    this.request_affectation('PUT', new PostAffectation(a), '/affectations/' + a.id);
+	    this.request_affectation('PUT', new PostAffectation(a), '/affectations/' + a.id)
+	},
+
+	request_delete_affectation: function (id) {
+	    this.request_affectation('DELETE', {}, '/affectations/' + id, function (data) {
+		// console.log(data);
+	    });
 	},
 
 	init_general: function () {
@@ -248,7 +259,6 @@
 	    SCHEDULE : {name: "SCHEDULE", fn: "set_schedule_mode", height: single_height},
 	    INDIV : {name: "INDIV", fn: "set_indiv_mode", height: double_height},
 	};
-	console.log($scope.mode_enum);
 	$scope.set_mode = ng.bind( this, this.set_mode );
 
 	var set_mode = this.set_mode.bind(this);
@@ -271,7 +281,6 @@
 	    this.scope.pane_height = mode.height;
 	    this[mode.fn]();
 	    
-	    console.log(do_not_check_parent);
 	    if (do_not_check_parent !== false) this.scope.$parent.mode = mode.name;
 	},
 	

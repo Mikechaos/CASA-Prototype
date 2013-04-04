@@ -349,8 +349,8 @@ ListClass.prototype = {
 	return this.list[index];
     },
     
-    get_by_id: function (elem) {
-	return this.get(this.search_index(elem, "by_id"));
+    get_by_id: function (id) {
+	return this.get(this.search_index(id, "by_id"));
     },
 
     add_many: function (xs) {
@@ -364,6 +364,16 @@ ListClass.prototype = {
 
     push: function (e) {
 	this.list.push(e);
+    },
+    
+    delete: function (i) {
+	this.list.splice(i, 1);
+    },
+
+    find_and_delete: function (elem) {
+	// Assume if its not object, its id
+	if (typeof elem !== "object") elem = this.get_by_id(elem);
+	this.delete(this.search_index(elem))
     },
 
     insertion_sort: function(to_insert, predicate) {

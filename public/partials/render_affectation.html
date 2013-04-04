@@ -1,8 +1,8 @@
 <div class="clearfix" ng-show="$index % 2 == 0"></div>
 <div class="span6 affect_report" style="width:600px;">
-  <div class="span2 pull-left"><button class="pull-left btn btn-warning btn-large span2" disabled ng-click="copy_affectation(affect.id)">Copier</button></div>
+  <div class="span2 pull-left"><button class="pull-left btn btn-warning btn-large span2" ng-click="copy_affectation(affect.id)">Copier</button></div>
   <div class="span2 offset1"><button class="align-center btn btn-info btn-large span2" style="margin: 0 auto;" ng-click="modify_affectation(affect.id)">Modifier</button></div>
-  <div class="span2 pull-right"> <button class="pull-right btn btn-danger btn-large span2" disabled ng-click="delete_affectation(affect.id)">Effacer</button></div>
+  <div class="span2 pull-right"> <button class="pull-right btn btn-danger btn-large span2" ng-click="delete_affectation(affect.id)">Effacer</button></div>
   <legend></legend>
   <h4 style="margin-left:5%">{{affect.get_supervisor().name}} - {{affect.get_client().name}} - {{affect.link_number}}</h4>
 
