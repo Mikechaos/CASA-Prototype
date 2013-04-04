@@ -3,8 +3,8 @@
 	  ng-click="attribute_elem_screen=true">Éléments Attribués</button>
   <button class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" ng-show="attribute_elem_screen" 
 	  ng-click="attribute_elem_screen=false">Dispatch</button>
-  <a class="btn btn-warning btn-large" style="margin-left:4%; margin-bottom:-1%;" href="#/day_details" 
-     ng-click="safeApply()" target="blank" style="font-size:16px">Rapports de la journée</a>
+  <a class="btn btn-warning btn-large" style="margin-left:4%; margin-bottom:-1%;" href="#/day_details?date={{date.fstDate.getTime()}}" 
+     ng-click="safeApply()" target="blank" style="font-size:16px">Horaire Imprimable</a>
 </legend>
 
 <!-- *** Dispatch screen *** -->
@@ -33,21 +33,22 @@
 	  <i class="icon-time" style="position: relative;margin: -8.2px 0 0 -24px;"></i>
 	</div>
       </div>
-      <!-- <div class="span12"> -->
 	<!-- Selection mode -->
-	<!-- <div class="span2" style="width:80px; margin-left:-10px;" ng-show="!affectation"> -->
-	<!--   <label style="float:left;"> Jusqu'au : </label> -->
-	<!-- </div> -->
-	<!-- <div class="span3 input-append" style="margin-left:-10px; margin-top:0;" ng-show="!affectation"> -->
-	<!--   <input type="text" ui-date="{ dateFormat: 'd MM, yy'}" ng-model="date.sndDate" style="padding-left:15px; width:135px;"/ > -->
-	<!--   <a href="" ng-click="nextWeek();" class="btn-success btn">Sem. Prochaine</a> -->
-	<!-- </div> -->
-      <!-- </div> -->
+	<div ng-show="!affectation && !schedule_view" class="span12">
+	  <div class="span2" style="width:80px; margin-left:-10px;">
+	    <label style="float:left;"> Jusqu'au : </label>
+	  </div>
+	  <div class="span3 input-append" style="margin-left:-10px; margin-top:0;">
+	    <input type="text" ui-date="{ dateFormat: 'd MM, yy'}" ng-model="date.sndDate" style="padding-left:15px; width:135px;"/ >
+	    <a href="" ng-click="nextWeek();" class="btn-success btn">Sem. Prochaine</a>
+	  </div>
+	</div>
     </div>
     <div class="span2">
-      <button href="" ng-click="set_mode(mode_enum.ADD);" class="btn btn-info" style="margin-top:10px;">Ajouter</button>
+      <button href="" ng-show="!affectation" ng-click="set_mode(mode_enum.ADD);" class="btn btn-info" style="margin-top:10px;">Ajouter</button>
       <!-- <button ng-click="set_mode(mode_enum.QUICK); quick_view = true;" class="btn btn-info change_date" style="margin-top:8px;">Affichage Rapide</button> -->
-      <button ng-click="set_mode(mode_enum.VIEW);" class="btn btn-info" style="margin-top:8px;"> Affichage</button>
+      <button ng-show="affectation || !schedule_view" ng-click="set_mode(mode_enum.SCHEDULE);" class="btn btn-info" style="margin-top:8px;"> Afficher l'horaire</button>
+      <button ng-show="affectation || schedule_view" ng-click="set_mode(mode_enum.INDIV);" class="btn btn-info" style="margin-top:8px;"> Affichage individuel</button>
     </div>
     <div class="span2">
 
@@ -88,14 +89,19 @@
 	</div>
       </div>
     </div>
+
     <!-- COMPLETE VIEW -->
-    <!-- <div class="clearfix"></div> -->
+    <div ng-show="!schedule_view" ng-repeat="affect in affectations | between:date.fstDate">
+      <div class="span12" ng-model="affect" cs-render-affectation="true"></div>
+    </div>
+    
+    <!-- SCHEDULE VIEW -->
     <div class="span12" style="border: 3px rgb(240, 240, 240) solid; border-radius:15px; width:1392px">
-      <div ng-show="!quick_view" 
-	   ng-repeat="affect in affectations | between:date.fstDate">
-	<div class="span3 affect_report" ng-model="affect" render-affectation="true"></div>
+      <div ng-repeat="affect in affectations | between:date.fstDate">
+	<div class="span3 affect_report" ng-model="affect" cs-render-schedule="true"></div>
       </div>
     </div>
+
   </div>
 
   <div class="row span12" style="margin-left:5%;">

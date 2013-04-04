@@ -28,8 +28,10 @@
 	// this.scope.data_promise = fetch_all_data;
 	// console.log(this.scope.data_promise);
 	// fetch_all_data.then(function () { console.log("hmm"); affectation_data().success(function () {console.log('wooh!')})});
+
+	this.scope.report_date = new Date;
+
 	return (this);
-	
     }
     
     CasaCtrl.prototype = {
@@ -68,6 +70,10 @@
 	    $scope.days[$scope.newAffectation.week_day()] = true;
 	    App.verify_day($scope.newAffectation.date);
 	    
+	});
+
+	$scope.$watch('date.fstDate', function (date) {
+	   $scope.$parent.report_date = date;
 	});
 	
 	$scope.clear_affectation = ng.bind(this, this.clear_affectation);
@@ -171,12 +177,6 @@
     
     function DateSelecterCtrl($scope) {
 
-	// adm_ prefix => add mode
-	this.addm_height = 45;
-
-	// selectm_ => select mode
-	this.selectm_height = 45;
-
 	// Date ui
 	$scope.today = function () {
 	    this.date.fstDate = new Date();
@@ -186,16 +186,21 @@
 	    this.date.sndDate = new Date();
 	    this.date.sndDate.setDate(this.date.sndDate.getDate() + 7);
 	};
-	$scope.mode_enum = {
-	    ADD : "set_add_mode",
-	    //QUICK : "set_quick_view_mode",
-	    VIEW : "set_view_mode",
-	};
 
+	var single_height = 45;
+	var double_height = 100;
+
+	$scope.mode_enum = {
+	    ADD : {fn: "set_add_mode", height: single_height},
+	    //QUICK : "set_quick_view_mode",
+	    SCHEDULE : {fn: "set_schedule_mode", height: single_height},
+	    INDIV : {fn: "set_indiv_mode", height: double_height},
+	};
+	console.log($scope.mode_enum);
 	$scope.set_mode = ng.bind( this, this.set_mode );
 
 	this.scope = $scope;
-	this.set_view_mode();
+	this.set_mode($scope.mode_enum.SCHEDULE);
 	// this.set_add_mode();
 
 
@@ -206,25 +211,25 @@
     DateSelecterCtrl.prototype = { 
 	
 	set_mode : function (mode) {
-	    // (mode === this.scope.mode_enum.ADD) ? this.set_add_mode() : this.set_select_mode();
-	    this[mode]();
+	    console.log(mode);
+	    this.scope.pane_height = mode.height;
+	    this[mode.fn]();
 	},
 	
 	set_add_mode : function () { 
-	    this.scope.pane_height = this.addm_height;
+
 	    this.scope.$parent.affectation = true;
 	},
-	set_view_mode: function (quick_view) {
-	    this.scope.pane_height = this.selectm_height;
+	set_view_mode: function (schedule_view) {
 	    this.scope.$parent.affectation = false;
-	    //this.scope.$parent.quick_view = quick_view;
+	    this.scope.$parent.schedule_view = schedule_view;
 	},
 
-	set_quick_view_mode : function () {
+	set_schedule_mode : function () {
 	    this.set_view_mode(true);
 	},
 
-	set_complete_view_mode : function () {
+	set_indiv_mode : function () {
 	    this.set_view_mode(false);
 	},
 
@@ -396,10 +401,18 @@
     function DayDetailsCtrl ($scope) {
 	console.log('triggered');
 	$scope.$parent.showingDayDetails = true;
-	$scope.day_affectations = [];
-	$scope.fetched_all.then(function () { $scope.safeApply(function () { $scope.day_affectations = App.affectations.get_todays()})});
-	
-    }
+	$scope.report_affectations = [];
+	$scope.fetched_all.then(function () {
+	    $scope.safeApply(function () {
+		var date = parseInt(window.location.hash.substr(window.location.hash.search(/\?date=/)+ new String('?date=').length));
+		console.log(new Date(date));
+		console.log(parseInt(date));
+		$scope.report_affectations = App.affectations.filter_affectations(new Date(date));
+		console.log($scope.report_affectations);
+	    });
+	});
+
+    };
 
     
     ng.module('casaApp.controllers', [])
