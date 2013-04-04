@@ -135,7 +135,6 @@
 	},
     	
 	save_modification: function () {
-	    console.log('modifying');
 	    this.put_affectation(this.scope.newAffectation)
 	    this.scope.mode = "INDIV";
 	    this.clean();
@@ -143,22 +142,28 @@
 	},
 
 	select_elem: function () {
-	    this.scope.newAffectation.elems.forEach(function (e) {console.log(e); e.selected = true });
+	    this.scope.newAffectation.elems.forEach(function (e) {e.selected = true });
 	},
 
-	modify_affectation: function (id) {
+	init_mod_or_copy_screen: function (affect, copy) {
+	    this.clean();
+	    this.init();
 	    this.scope.mode = "ADD";
-	    this.scope.modifying = true;
-	    this.scope.newAffectation = App.affectations.get_by_id(id);
+	    (copy === true)
+		? this.scope.newAffectation.copy(affect)
+		: this.scope.newAffectation = affect;
 	    this.scope.elems = this.scope.newAffectation.elems.list;
 	    this.select_elem();
 	},
 
+	modify_affectation: function (id) {
+	    this.scope.modifying = true;
+	    this.init_mod_or_copy_screen(App.affectations.get_by_id(id));
+	},
+
 	copy_affectation: function (id) {
-	    this.scope.mode = "ADD";
 	    this.scope.newAffectation = new Affectation;
-	    this.scope.newAffectation.copy(App.affectations.get_by_id(id));
-	    this.select_elem();
+	    this.init_mod_or_copy_screen(App.affectations.get_by_id(id), true);
 	},
 
 	delete_affectation: function (id) {

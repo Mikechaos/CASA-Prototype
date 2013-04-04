@@ -52,9 +52,9 @@ angular.module('casaApp.filters', []).
 
     }).
     filter('already_attr_elems', function () { // this will most definitly needs some refactoring
-	return function (elems, days, date, use_already_affected) {
+	return function (elems, days, date, use_already_affected, supervisor) {
 	    if (use_already_affected) return elems;
-	    return App.test(elems, days, date);
+	    return App.test(elems, days, date, supervisor);
 	    
 	};
     }).

@@ -602,14 +602,13 @@ var App = {
 	return attributed;
     },
 
-    test: function (elems, days, date) {
+    test: function (elems, days, date, supervisor_id) {
 	var diff = -(date.getDay());
 	var diff_array = [];
 	for (var i = 0; i < 7; ++i) {
 	    diff_array[i] = diff + i;
 	}
 	var attributed = [];
-
 	forEach (Date.days, function (d, i) {
 	    if (days[d] === true) {
 		attributed = attributed.concat(App.verify_day(new Date(date.getFullYear(), date.getMonth(), date.getDate() + diff_array[i])).list);
@@ -622,8 +621,9 @@ var App = {
 	    // Don't filter if it's selected
 	    if (!e.selected) {
 		forEach(attributed, function (affected) {
-		    
-		    return !((affected.elem.strElem === e.strElem && affected.elem.id === e.id) && (found = true))
+		    return !((affected.elem.strElem === e.strElem && affected.elem.id === e.id)
+			     && !(affected.elem.id === supervisor_id && affected.elem.strElem === 'Supervisor')
+			     && (found = true))
 		});
 	    }
 	    // inverted because we want to filter it only if we find (true) it (false = filtered)
