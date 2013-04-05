@@ -615,7 +615,6 @@ var App = {
 	var affected = this.affected_today;
 	App.affectations.get_todays().forEach(function (a) {
 	    a.elems.forEach(function (e) {
-		console.log(e);
 		affected.push(new ElemAffected(e, a.name))
 	    });
 	});
