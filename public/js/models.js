@@ -297,7 +297,6 @@ Affectation.prototype = {
 };
 
 function PostAffectation(a) {
-    this.state = 4; // Not usefull for now
     this.end_time = ""; // Not usefull for now
     this.user_id = 0;
     this.affectation_type = 0;
@@ -308,6 +307,7 @@ function PostAffectation(a) {
     this.notes = a.notes;
     this.link_number = a.link_number;
     this.client_id = a.client_id;
+    this.state = 1; // Not usefull for now
     
     this.elements = this.setElems(a);
 }
