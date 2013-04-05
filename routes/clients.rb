@@ -4,7 +4,7 @@ class MyApp < Sinatra::Application
     @title = "Tous les clients"
     @form_action = "/clients"
     @client = Client.new
-    @clients = Client.all
+    @clients = Client.order(:id).where('state < 4')
     @route_name = "clients"
     @clients.to_json
     # haml :reglages	
@@ -20,31 +20,32 @@ class MyApp < Sinatra::Application
   end
 
   post "/clients" do
-    Client.create(:name => params[:name],
-                  :address => params[:address],
-                  :phone => params[:phone],
-                  :state => params[:state],
-                  :ref_number => params[:ref_number],
-                  :contact => params[:contact],
-                  :city => params[:city],
-                  :postal_code => params[:postal_code],
-                  :casa_salesman => params[:casa_salesman],
-                  :notes => params[:notes])
+    client = Client.create(:name => params[:name],
+                           :address => params[:address],
+                           :phone => params[:phone],
+                           :state => params[:state],
+                           :ref_number => params[:ref_number],
+                           :contact => params[:contact],
+                           :city => params[:city],
+                           :postal_code => params[:postal_code],
+                           :casa_salesman => params[:casa_salesman],
+                           :notes => params[:notes],
+                           :state => params[:state])
     
     @client = Client.new
     @clients = Client.all
     @route_name = "clients"
+    client.to_json
     # haml :reglages
   end
 
   put "/clients/:id" do |id|
     puts params["client"]
     Client.find(:id => id).update(params["client"])
-    redirect "/clients"
   end
 
   delete "/clients/:id" do |id|
-    client = Client.find(:id => id).delete
-    redirect "/clients"
+    client = Client.find(:id => id).update(:state => 4)
+    client.to_json
   end
 end

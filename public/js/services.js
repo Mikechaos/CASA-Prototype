@@ -28,10 +28,10 @@ angular.module('casaApp.services', [])
 	var deferred = $q.defer();
 	$q.all([
 	    fetch(new EmployeesType),
-	    fetch(new Employee),
 	    fetch(new Client),
 	    fetch(new Truck),
 	    fetch(new Box),
+	    fetch(new Employee),
 	    fetch({route: '/affectations', strElem: 'Affectation'}),
 	]).then(function (array) {
 	    forEach(array, function (obj) {

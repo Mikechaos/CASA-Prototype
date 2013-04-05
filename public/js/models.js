@@ -18,7 +18,7 @@ function Element (elem) {
 	this.id = 0;
 	this.name = "";
 	this.type = 1;
-	this.state = 4;
+	this.state = 1;
 	this.notes = "";
     }
     this.selected=false;
@@ -28,6 +28,11 @@ function Element (elem) {
 Element.prototype = {
     // Override in inheritance
     render: function () {},
+
+    get_deletion_confirmation: function(text) {
+	text = text || this.name;
+	return confirm("Supprimer " + text + "?");
+    },
 };
 
 // Takes a string that matches constructor.name
@@ -76,7 +81,11 @@ Employee.prototype = {
 	    return e.id === type_id && e.strElem === "EmployeesType";
 	})).type;
 	return this.type;
-    }
+    },
+
+   // get_deletion_confirmation: function() {
+   //     return this.constructor.superClass.get_deletion_confirmation(this.name);
+   // },
 };
 
 function Supervisor (sup) {
@@ -90,6 +99,12 @@ function EmployeesType (emp_type) {
     if (typeof emp_type === "undefined") this.type = ""; // Hack. Type is used as name property here
     this.route = "/employees_types";
 }
+
+EmployeesType.prototype = {
+    get_deletion_confirmation: function() {
+       return this.constructor.superClass.get_deletion_confirmation(this.type);
+    },
+};
 
 
 function Truck (truck) {
@@ -372,8 +387,7 @@ ListClass.prototype = {
 
     find_and_delete: function (elem) {
 	// Assume if its not object, its id
-	if (typeof elem !== "object") elem = this.get_by_id(elem);
-	this.delete(this.search_index(elem))
+	this.delete(this.search_index(elem, "by_id"));
     },
 
     insertion_sort: function(to_insert, predicate) {
@@ -567,7 +581,7 @@ function ElemAffected(elem, name) {
 // ** Looks like it is fix. Will check that further down. Had done a mistake in Inherits.extend **
 // ** Confirmation, it is fix **
 
-Inherits.extend_multiple([["Employee"], ["Truck"], ["Box"], ["Job"], ["Client"], ["Supervisor", "Employee"]], "Element");
+Inherits.extend_multiple([["Employee"], ["Truck"], ["Box"], ["Job"], ["Client"], ["Supervisor", "Employee"], ["EmployeesType"]], "Element");
 Inherits.extend_multiple([["AffectationList"], ["ElementList"], ["AffectedList", "ElementList"]], "ListClass");
 
 // === Initialization === //

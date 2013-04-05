@@ -4,7 +4,7 @@ class MyApp < Sinatra::Application
     @title = "Tous les employés"
     @form_action = "/employees_types"
     @employee_type = Employees_types.new
-    @employees_types = Employees_types.all
+    @employees_types = Employees_types.order(:id).where('state < 4')
     @route_name = "employees_types"
     @employees_types.to_json
     # haml :reglages	
@@ -16,24 +16,23 @@ class MyApp < Sinatra::Application
     @title = "Fiche de #{@employee.name}"
     @form_action = "/employees_types/#{@employee.id}"
     @route_name = "employees_types"
-    haml :reglages
+    # haml :reglages
   end
 
   post "/employees_types" do
-    Employees_types.create(:type => params[:type])
+    employees_type = Employees_types.create(:type => params[:type], :state => params[:state])
     @employee_type = Employees_types.new
     @employees_types = Employees_types.all
     @route_name = 'employees_types'
-    # haml :reglages
+    employees_type.to_json
   end
 
   put "/employees_types/:id" do |id|
     Employees_types.find(:id => id).update(:type => params[:type])
-    redirect "/employees_types"
   end
 
   delete "/employees_types/:id" do |id|
-    employee = Employees_types.find(:id => id).delete
-    redirect "/employees_types"
+    employees_type = Employees_types.find(:id => id).update(:state => 4)
+    employees_type.to_json
   end
 end

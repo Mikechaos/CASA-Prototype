@@ -25,6 +25,7 @@
 	this.scope.root = '/#/';
 	this.scope.fetched_all = fetch_all;
 	this.scope.showingDayDetails = false;
+
 	// this.scope.data_promise = fetch_all_data;
 	// console.log(this.scope.data_promise);
 	// fetch_all_data.then(function () { console.log("hmm"); affectation_data().success(function () {console.log('wooh!')})});
@@ -97,7 +98,7 @@
 	    
 	};*/
 	this.scope = $scope;
-	this.http = $http;
+	this.http = $http
 	this.init();
 	
 	return (this);
@@ -172,15 +173,6 @@
 		this.request_delete_affectation(id);
 	    }
 	},
-	
-	request_affectation: function(method, params, route, callback_success, callback_error) {
-	    callback_success = callback_success || function () {};
-	    callback_error = callback_error || function () {};
-	    this.http({method: method,  url: route, params: params, headers: "application/x-www-form-urlencoded"})
-		.success(function (data, status) {callback_success(data, status)})
-		.error(function () {callback_error()});
-	    
-	},
 
 	post_affectation: function (a) {
 	    this.request_affectation('POST', new PostAffectation(a), '/affectations', function (data) {
@@ -191,6 +183,19 @@
 	put_affectation: function(a)
 	{
 	    this.request_affectation('PUT', new PostAffectation(a), '/affectations/' + a.id)
+	},
+
+	request_affectation: function(method, params, route, callback_success, callback_error) {
+	    callback_success = callback_success || function () {};
+	    callback_error = callback_error || function () {};
+	    this.http({method: method,  url: route, params: params, headers: "application/x-www-form-urlencoded"})
+		.success(function (data, status) {callback_success(data, status)})
+		.error(function () {callback_error()});
+	    
+	},
+
+	request_delete_elem: function (elem) {
+	    this.request_affectation();
 	},
 
 	request_delete_affectation: function (id) {
@@ -360,24 +365,59 @@
     function AddElems ($scope, $http) {
 
 	//console.log($http.post('/nimporrteou', 'test'));
+	this.http = $http
 	$scope.submit = ng.bind(this, this.submit($scope, $http));
+	$scope.delete_elem = ng.bind(this, this.delete_elem);
+	$scope.modify_elem = ng.bind(this, this.modify_elem);
+	$scope.submit_modification = ng.bind(this, this.submit_modification);
+	$scope.modifying = false;
 	this.scope = $scope;
     }
 
     AddElems.prototype = { 
 	submit: function ($scope, $http) {
 	    return function () {
+		// var save = this.save.bind(this);
 		var self = this;
-		$http({method: 'POST',  url: this.scope.newElem.route, params: this.scope.newElem, headers: "application/x-www-form-urlencoded"})
-		    .success(function (data, status) {self.save();})
-		    .error(function () {console.log('error')});
+
+		this.request_elem('POST', $scope.newElem, $scope.newElem.route, function (data) {
+		    self.save(data);
+		}, function (data, status) {
+		});
 	    }
 	},
 
-	save: function () {
-	    App.elems.push(this.scope.newElem);
+	delete_elem: function (elem) {
+	    if (!elem.get_deletion_confirmation()) return ;
+	    this.request_elem('DELETE', this.scope.newElem, this.scope.newElem.route + '/' + elem.id, function (data) {
+		App.elems.find_and_delete(elem);
+	    });
+	},
+
+	submit_modification: function () {
+	    var $scope = this.scope;
+	    this.request_elem('PUT', this.scope.newElem, this.scope.newElem.route + '/' + this.scope.newElem.id, function () {
+		$scope.newElem = new Global[$scope.newElem.strElem];
+		$scope.modifying = false;
+	    });
+	},
+
+	modify_elem: function (elem) {
+	    this.scope.newElem = elem;
+	    this.scope.modifying = true;
+	},
+
+	save: function (elem) {
+	    Element.createFromList(this.scope.newElem.strElem, [elem]);
 	    this.scope.newElem = new Global[this.scope.newElem.strElem];
-	    // console.log("superClass called");
+	},
+
+	request_elem: function(method, params, route, callback_success, callback_error) {
+	    callback_success = callback_success || function () {};
+	    callback_error = callback_error || function () {};
+	    this.http({method: method,  url: route, params: params, headers: "application/x-www-form-urlencoded"})
+		.success(function (data, status) {callback_success(data, status)})
+		.error(function () {callback_error()});
 	},
 
     };
@@ -385,26 +425,26 @@
     function EmployeesCtrl ($scope, $http) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new Employee;
-	$scope.employeesTypes = {};
+	console.log($scope);
+	// $scope.employeesTypes = {};
 	// $scope.employeesTypes
-	$scope.fetched_all.then(function () {
-	    $scope.employeesTypes = App.elems.filter_elements("EmployeesType");
-	    $scope.safeApply();	    
-	});
+	// $scope.fetched_all.then(function () {
+	//     $scope.employeesTypes = App.elems.filter_elements("EmployeesType");
+	//     $scope.safeApply();	    
+	// });
 
-	$scope.refresh_employees = function () {
-	    $scope.employeesTypes = App.elems.filter_elements("EmployeesType");
-	    $scope.safeApply();
-	};
+	// $scope.refresh_employees = function () {
+	//     $scope.employeesTypes = App.elems.filter_elements("EmployeesType");
+	//     $scope.safeApply();
+	// };
 
 	this.scope = $scope;
     }
 
     EmployeesCtrl.prototype = {
-	save: function () {
+	save: function (data) {
 	    this.scope.newElem.set_string_type();
-	    App.elems.push(this.scope.newElem.employees_type_id === 0 ? new Supervisor(this.scope.newElem) : this.scope.newElem);
-	    this.scope.newElem = new Employee;
+	    this.constructor.superClass.save.call(this, data);
 	},
 	// submit: function () {
 	//     this.superClass.submit.call(this)
@@ -420,10 +460,10 @@
     }
 
     EmployeesTypesCtrl.prototype = {
-	save: function () {
-	    this.constructor.superClass.save.call(this);
-	    this.scope.refresh_employees();
-	}
+	// save: function () {
+	//     this.constructor.superClass.save.call(this);
+	//     // this.scope.refresh_employees();
+	// }
     };
 
     function JobsCtrl ($scope, $http) {
@@ -467,16 +507,12 @@
     Inherits.multiple([[EmployeesCtrl], [EmployeesTypesCtrl], [JobsCtrl], [ClientsCtrl], [TrucksCtrl], [BoxesCtrl]], AddElems);
 
     function DayDetailsCtrl ($scope) {
-	console.log('triggered');
 	$scope.$parent.showingDayDetails = true;
 	$scope.report_affectations = [];
 	$scope.fetched_all.then(function () {
 	    $scope.safeApply(function () {
 		var date = parseInt(window.location.hash.substr(window.location.hash.search(/\?date=/)+ new String('?date=').length));
-		console.log(new Date(date));
-		console.log(parseInt(date));
 		$scope.report_affectations = App.affectations.filter_affectations(new Date(date));
-		console.log($scope.report_affectations);
 	    });
 	});
 

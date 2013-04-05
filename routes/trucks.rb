@@ -5,7 +5,7 @@ class MyApp < Sinatra::Application
     @title = "Tous les employés"
     @form_action = "/trucks"
     @truck = Truck.new
-    @trucks = Truck.all
+    @trucks = Truck.order(:id).where('state < 4')
     @route_name = "trucks"
     @trucks.to_json
     # haml :reglages	
@@ -21,20 +21,20 @@ class MyApp < Sinatra::Application
   end
 
   post "/trucks" do
-    Truck.create(:name => params[:name], :notes => params[:notes], :state => params[:state])
+    truck = Truck.create(:name => params[:name], :notes => params[:notes], :state => params[:state])
     @truck = Truck.new
     @trucks = Truck.all
     @route_name = 'trucks'
+    truck.to_json
     # haml :reglages
   end
 
   put "/trucks/:id" do |id|
     Truck.find(:id => id).update(:name => params[:name], :supervisor => params[:supervisor])
-    redirect "/trucks"
   end
 
   delete "/trucks/:id" do |id|
-    truck = Truck.find(:id => id).delete
-    redirect "/trucks"
+    truck = Truck.find(:id => id).update(:state => 4)
+    truck.to_json
   end
 end

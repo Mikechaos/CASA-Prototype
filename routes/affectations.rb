@@ -5,8 +5,9 @@ class MyApp < Sinatra::Application
     @title = "Tous les employés"
     @form_action = "/affectations"
     @affectation = Affectation.new
-    @affectations = Affectation.order(:id).all
+    @affectations = Affectation.order(:id).where('state < 4').all
     @route_name = "affectations"
+    Affectation.all.each {|a| a.update(:state => 1)}
     @affectations.to_json
     # haml :reglages	
   end
@@ -58,7 +59,7 @@ class MyApp < Sinatra::Application
   end
 
   delete "/affectations/:id" do |id|
-    del = affectation = Affectation.find(:id => id).delete
+    del = affectation = Affectation.find(:id => id).update(:state => 4)
     del.to_json
     # redirect "/affectations"
   end
