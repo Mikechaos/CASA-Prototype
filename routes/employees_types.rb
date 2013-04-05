@@ -28,7 +28,7 @@ class MyApp < Sinatra::Application
   end
 
   put "/employees_types/:id" do |id|
-    Employees_types.find(:id => id).update(:type => params[:type])
+    Employees_types.find(:id => id).update(:type => params[:type], :state => params[:state]).to_json
   end
 
   delete "/employees_types/:id" do |id|

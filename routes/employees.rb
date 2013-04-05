@@ -22,7 +22,7 @@ class MyApp < Sinatra::Application
 
   post "/employees" do
     emp = Employee.create(:name => params[:name], 
-                          :supervisor => (params[:employees_type_id] == "0"), 
+                          :supervisor => (params[:supervisor]), 
                           :employees_type_id => params[:employees_type_id], 
                           :notes => params[:notes], 
                           :state => params[:state])
@@ -35,7 +35,7 @@ class MyApp < Sinatra::Application
 
   put "/employees/:id" do |id|
     Employee.find(:id => id).update(:name => params[:name], 
-                                    :supervisor => (params[:employees_type_id] == "0"), 
+                                    :supervisor => (params[:supervisor]), 
                                     :employees_type_id => params[:employees_type_id], 
                                     :notes => params[:notes], 
                                     :state => params[:state]).to_json

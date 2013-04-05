@@ -30,7 +30,7 @@ class MyApp < Sinatra::Application
   end
 
   put "/boxes/:id" do |id|
-    Box.find(:id => id).update(:name => params[:name], :supervisor => params[:supervisor])
+    Box.find(:id => id).update(:name => params[:name], :notes => params[:notes], :state => params[:state]).to_json
   end
 
   delete "/boxes/:id" do |id|

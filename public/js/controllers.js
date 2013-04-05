@@ -396,13 +396,20 @@
 
 	submit_modification: function () {
 	    var $scope = this.scope;
+	    var self = this;
 	    this.request_elem('PUT', this.scope.newElem, this.scope.newElem.route + '/' + this.scope.newElem.id, function () {
+
+		// Swap strElem if can_be_supervisor changed. Not the right place for this. Will use dynamic dispatch
+		if ($scope.newElem.supervisor === true) $scope.newElem.strElem = "Supervisor";
+		else if ($scope.newElem.strElem === 'Supervisor') $scope.newElem.strElem = "Employee";
+		
 		$scope.newElem = new Global[$scope.newElem.strElem];
 		$scope.modifying = false;
 	    });
 	},
 
 	modify_elem: function (elem) {
+	    window.scrollTo(0,0);
 	    this.scope.newElem = elem;
 	    this.scope.modifying = true;
 	},
@@ -425,18 +432,11 @@
     function EmployeesCtrl ($scope, $http) {
 	AddElems.call(this, $scope, $http);
 	$scope.newElem = new Employee;
-	console.log($scope);
-	// $scope.employeesTypes = {};
-	// $scope.employeesTypes
-	// $scope.fetched_all.then(function () {
-	//     $scope.employeesTypes = App.elems.filter_elements("EmployeesType");
-	//     $scope.safeApply();	    
-	// });
 
-	// $scope.refresh_employees = function () {
-	//     $scope.employeesTypes = App.elems.filter_elements("EmployeesType");
-	//     $scope.safeApply();
-	// };
+	$scope.can_be_supervisor = [{value: true, text: "Oui"}, {value:false, text: "Non"}];
+	// $scope.watch("newElem.employees_type_id", function(old_val, new_val) (
+	//     $scope.safeApply(
+	// );
 
 	this.scope = $scope;
     }
@@ -444,12 +444,10 @@
     EmployeesCtrl.prototype = {
 	save: function (data) {
 	    this.scope.newElem.set_string_type();
+	    if (this.scope.newElem.supervisor === true) this.scope.newElem.strElem = "Supervisor";
+	    else this.scope.newElem.strElem = "Employee";
 	    this.constructor.superClass.save.call(this, data);
 	},
-	// submit: function () {
-	//     this.superClass.submit.call(this)
-	//     this.scope.newElem = new Employee;
-	// },
     };
     
 
@@ -460,10 +458,7 @@
     }
 
     EmployeesTypesCtrl.prototype = {
-	// save: function () {
-	//     this.constructor.superClass.save.call(this);
-	//     // this.scope.refresh_employees();
-	// }
+
     };
 
     function JobsCtrl ($scope, $http) {

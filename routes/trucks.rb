@@ -30,7 +30,7 @@ class MyApp < Sinatra::Application
   end
 
   put "/trucks/:id" do |id|
-    Truck.find(:id => id).update(:name => params[:name], :supervisor => params[:supervisor])
+    Truck.find(:id => id).update(:name => params[:name], :notes => params[:notes], :state => params[:state]).to_json
   end
 
   delete "/trucks/:id" do |id|

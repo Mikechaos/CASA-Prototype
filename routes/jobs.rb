@@ -30,7 +30,7 @@ class MyApp < Sinatra::Application
   end
 
   put "/jobs/:id" do |id|
-    Job.find(:id => id).update(:name => params[:name], :phone => params[:phone], :note => params[:note])
+    Job.find(:id => id).update(:name => params[:name], :client_id => params[:client_id], :notes => params[:notes], :state => params[:state]).to_json
   end
 
   delete "/jobs/:id" do |id|

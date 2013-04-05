@@ -49,14 +49,20 @@ angular.module('casaApp.filters', []).
 	return function (elems, strClass) {
 	    return elems.filter_elements(strClass);
 	};
+    }).
+    filter('supervisors', function () {
+	return function (elems) {
+	    //console.log(elems.filter_supervisors());
+	    return elems.list
+	};
 
     }).
     filter('already_attr_elems', function () { // this will most definitly needs some refactoring
-	return function (elems, days, date, use_already_affected, supervisor) {
-	    if (use_already_affected) return elems;
-	    return App.test(elems, days, date, supervisor);
-	    
-	};
+	    return function (elems, days, date, use_already_affected, supervisor) {
+		if (use_already_affected) return elems;
+		return App.test(elems, days, date, supervisor);
+		
+	    };
     }).
     filter('between', function () {
     	return function (affectations, fst_date, snd_date) {return affectations.filter_affectations(fst_date, snd_date)};

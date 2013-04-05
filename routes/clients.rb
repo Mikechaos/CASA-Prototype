@@ -40,8 +40,17 @@ class MyApp < Sinatra::Application
   end
 
   put "/clients/:id" do |id|
-    puts params["client"]
-    Client.find(:id => id).update(params["client"])
+    Client.find(:id => id).update(:name => params[:name],
+                                  :address => params[:address],
+                                  :phone => params[:phone],
+                                  :state => params[:state],
+                                  :ref_number => params[:ref_number],
+                                  :contact => params[:contact],
+                                  :city => params[:city],
+                                  :postal_code => params[:postal_code],
+                                  :casa_salesman => params[:casa_salesman],
+                                  :notes => params[:notes],
+                                  :state => params[:state]).to_json
   end
 
   delete "/clients/:id" do |id|

@@ -17,9 +17,10 @@ function Element (elem) {
     } else {
 	this.id = 0;
 	this.name = "";
-	this.type = 1;
+	this.type = "";
 	this.state = 1;
 	this.notes = "";
+	this.supervisor = false;
     }
     this.selected=false;
 }
@@ -43,7 +44,7 @@ Element.createFromList = function (classStr, list, deferred) {
     forEach(list, function (e) {
 	// Little hack. Poor style, but benenifts in the situation
 	// ** Added static inheritance so it will be fix **
-	c_str = e.employees_type_id == 0 ? "Supervisor" : classStr;
+	c_str = e.supervisor === true ? "Supervisor" : classStr;
 	App.elems.push(new Global[c_str](e))
     });
     // console.log("Done " + classStr, (new Date).getSeconds(), App.elems);
@@ -62,10 +63,11 @@ Element.render = function (count) {
 function Employee (emp) {
     Element.call(this, emp);
     if (typeof emp !== "undefined") {
+	this.supervisor = emp.supervisor;
 	this.employees_type_id = emp.employees_type_id;
 	this.set_string_type();
     } else {
-	this.employees_type_id = 0; // employee_type_id
+	this.employees_type_id = this.employees_type_id || 2; // if already defined by Supervisor constructor
     }
     this.route = "/employees";
 }
@@ -89,8 +91,9 @@ Employee.prototype = {
 };
 
 function Supervisor (sup) {
-    Employee.call(this, sup);
     this.employees_type_id = 0;
+    Employee.call(this, sup);
+    this.supervisor = true;
     this.route = "/employees";
 }
 
@@ -361,6 +364,7 @@ function ListClass () {
 
 ListClass.prototype = {
     get: function (index) {
+	if (this.list[index] === undefined) return {};
 	return this.list[index];
     },
     
@@ -477,6 +481,10 @@ ElementList.prototype = {
     filter_predicate: function (e, strClass) {
 	return e.strElem === strClass;
     },
+
+    filter_supervisors: function () {
+	return this.list.filter(function (e) {return e.supervisor === true;});
+    },
 };
 
 function AffectedList() {
@@ -561,9 +569,9 @@ AffectationList.prototype =  {
 
 };
 
-function ElemAffected(elem, name) {
-    this.elem = elem;
-    this.affect_name = name;
+function ElemAffected(elem, a) {
+    this.elem = elem || {};
+    this.affect_name = "";
 };
 
 
@@ -607,6 +615,7 @@ var App = {
 	var affected = this.affected_today;
 	App.affectations.get_todays().forEach(function (a) {
 	    a.elems.forEach(function (e) {
+		console.log(e);
 		affected.push(new ElemAffected(e, a.name))
 	    });
 	});
@@ -620,7 +629,7 @@ var App = {
 	var attributed = this.attributed;
 	forEach(this.affectations.filter_affectations(day), function (a) {
 	    a.elems.forEach(function (e) {
-		attributed.push(new ElemAffected(e, a.name));
+		attributed.push(new ElemAffected(e, a));
 	    });
 	});
 	return attributed;
