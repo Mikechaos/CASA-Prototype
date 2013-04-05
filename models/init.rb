@@ -22,7 +22,6 @@ DB << "SET CLIENT_ENCODING TO 'UTF8';"
 
 Sequel::Model.plugin :json_serializer
 
-require_relative 'BaseModel'
 require_relative 'employee'
 require_relative 'employees_type'
 require_relative 'job'
