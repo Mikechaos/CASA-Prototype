@@ -230,7 +230,9 @@
 	<hr>
 	  <div class="row" style="clear: both; margin-bottom: 85px;">
 	    <a href="" class="btn btn-danger" ng-click="clear_affectation()" style="margin-left:33%; margin-top:25px;">Clear</a>
-	    <a href="" ng-show="!modifying" class="btn btn-success" ng-click="save_affectation()" style="margin-left:2%; margin-top:25px;">Sauvegarder</a>
+	    <a href="" ng-show="!modifying" class="btn btn-success" ng-click="save_affectation('clear_all')" style="margin-left:2%; margin-top:25px;">Sauvegarder</a>
+	    <a href="" ng-show="!modifying" class="btn btn-success" ng-click="save_affectation('clear_keep_team')" title="Sauvegarde l'affectation mes préserve l'équipe"
+	       style="margin-left:2%; margin-top:25px;">Nouveau Client</a>
 	    <a href="" ng-show="modifying" class="btn btn-success" ng-click="save_modification()" style="margin-left:2%; margin-top:25px;">Confirmer</a>
 	  </div>
 	</div>

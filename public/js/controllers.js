@@ -106,7 +106,7 @@
     };
     
     DispatchCtrl.prototype = {
-	save_affectation: function () {
+	save_affectation: function (clearing_callback) {
 	    // Copy affectation over other date selected
 	    //this.scope.days[this.scope.newAffectation.week_day()] = false;
 	    var diff = -(Date.days.indexOf(this.scope.newAffectation.week_day()));
@@ -127,14 +127,24 @@
 	    	}
 	    	++i;
 	    });
-	    var supervisor_id = this.scope.newAffectation.supervisor_id
 	    App.verify_today();
-	    // If we just save the affect, means we keep the same team
+
+	    this[clearing_callback]();
+	    
+	},
+    	
+	clear_keep_team: function () {
+	    var supervisor_id = this.scope.newAffectation.supervisor_id
 	    this.init_general();
 	    this.scope.newAffectation.elems.list = [].concat(this.scope.elems)
 	    this.scope.newAffectation.supervisor_id = supervisor_id;
 	},
-    	
+
+	clear_all: function () {
+	    this.clean();
+	    this.init();
+	},
+
 	save_modification: function () {
 	    this.put_affectation(this.scope.newAffectation)
 	    this.scope.mode = "INDIV";
@@ -236,11 +246,6 @@
 	    forEach(this.scope.elements.list, function(e, i) {
 		e.selected = false;
 	    });
-	},
-
-	clear_affectation: function () {
-	    this.clean();
-	    this.init();
 	},
     };
 
