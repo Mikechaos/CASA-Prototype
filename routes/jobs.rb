@@ -5,7 +5,6 @@ class MyApp < Sinatra::Application
     @form_action = "/jobs"
     @job = Job.new
     @jobs = Job.order(:id).where('state < 4').all
-    Job.all.each {|a| a.update(:state => 1)}
     @route_name = "jobs"
     @jobs.to_json
     # haml :reglages	

@@ -7,7 +7,6 @@ class MyApp < Sinatra::Application
     @affectation = Affectation.new
     @affectations = Affectation.order(:id).where('state < 4').all
     @route_name = "affectations"
-    Affectation.all.each {|a| a.update(:state => 1)}
     @affectations.to_json
     # haml :reglages	
   end
