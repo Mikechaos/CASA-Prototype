@@ -200,7 +200,9 @@
 
 	request_delete_affectation: function (id) {
 	    this.request_affectation('DELETE', {}, '/affectations/' + id, function (data) {
-		// console.log(data);
+		console.log(data);
+	    }, function (data, status) {
+		console.log(data, status);
 	    });
 	},
 
