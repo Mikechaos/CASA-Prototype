@@ -1,0 +1,135 @@
+<!-- GENERAL INFO -->
+<div ng-include src="'partials/copy_button_affectation.html'"></div>
+<div class="pane well well-large">
+  <fieldset>
+    <div class="span3">
+      <label>Chef de chantier : </label>
+      <select ng-model="newAffectation.supervisor_id" 
+	      ng-options="sup.id as sup.name for sup in elements | elems:'Supervisor' | already_attr_elems:days:newAffectation.date:use_already_affected:newAffectation.supervisor_id | remove_affected:newAffectation.elems"></select>
+    </div>
+    <div class="span12" style="margin-left:0px;">
+      <!-- <div class="span3"> -->
+      <!-- 	<label>Jobs :</label> -->
+      <!-- 	<select ng-model="newAffectation.job" ng-options="job.name for job in elements | elems:'Job'"></select> -->
+      <!-- </div> -->
+      <div class="span3">
+	<label>Client :</label>
+	<select type="text" ng-model="newAffectation.client_id" ng-options="client.id as client.name for client in elements | elems:'Client'"></select>
+	<!-- <label>Superviseur : </label> -->
+	<!-- <select ng-model="supervisor"  ng-options="supervisor.name for supervisor in (emps | subset_emp:true)"></select> -->
+      </div>
+      <div class="span3">
+	<label>Bon de service :</label>
+	<input type="text" ng-model="newAffectation.link_number">
+      </div>
+    </div>
+    <div class="span8">
+      <label>Notes : </label>
+      <textarea style="width: 92%; height: 100%;" cols="8" rows="5" ng-model="newAffectation.notes"></textarea>
+    </div>
+  </fieldset>
+</div>
+<hr>
+
+<!-- SELECT TEAM -->
+<div id="modal_elements_id" class="modal-elements" ng-controller="ElementsSelectionCtrl" style="width:90%;">
+  <legend style="width:225px; float:left;"> Équipe : </legend>
+  <div>  <!-- ng-show="!team_confirmed"> -->
+    <button style="float:left; margin-left:45px; margin-top:8px;" class="btn btn-info" ng-click="open()">Sélectionner votre équipe</button>
+    <button style="float:left; margin-left:45px; margin-top:8px;" class="btn btn-danger" ng-click="clear_team()">Effacer l'équipe</button>
+    <label class="checkbox inline" for="use_already_affected_checkbox" style="margin-left:15px;">
+      <input id="use_already_affected_checkbox" type="checkbox" ng-model="$parent.use_already_affected">
+      Utiliser des éléments déjà affectés
+    </label>
+  </div>
+  <div style="clear:both";></div>
+  <div modal="shouldBeOpen" close="close()" options="opts">
+    <div class="modal-header">
+      <h4>Ajouter des Éléments</h4>
+    </div>
+    <div class="modal-body tabbable">
+      <ul>
+	<ul class="nav nav-tabs">
+	  <li class="active"><a href="#tab1" data-toggle="tab">Supervisors</a></li>
+	  <li><a href="#tab2" data-toggle="tab">Employee</a></li>
+	  <li><a href="#tab3" data-toggle="tab">Camions</a></li>
+	  <li><a href="#tab4" data-toggle="tab">Coffres</a></li>
+	</ul>
+	<div class="tab-content">
+
+	  <div ng-repeat="class in elements_class" class="tab-pane {{hack[$index].active}}" id="tab{{$index + 1}}">
+	    <div class="row modal-checkboxes" 
+		 ng-repeat="elem in elements | elems:elements_class[$index].name | already_attr_elems:days:newAffectation.date:use_already_affected | remove_supervisor:newAffectation.supervisor_id">
+	      <div class="squaredFour span1" style="margin-bottom:8px;">
+		<input type="checkbox" ng-checked="elem.selected" id="modal_{{elements_class[$parent.$index].name}}{{elem.id}}" ng-model="elem.selected" ng-change="change(elem);" />
+		<label for="modal_{{elements_class[$parent.$index].name}}{{elem.id}}"></label>
+	      </div>
+	      <div class="span3 modal-label" style="margin-top:0px; margin-left:-40px;">{{elem.name}} </div>
+	    </div>
+	  </div>
+	</div>
+      </ul>
+    </div>
+    <div class="modal-footer row">
+      <button class="btn btn-success" ng-click="process();close()">Appliquer</button>
+    </div>
+  </div>
+</div>
+
+<!-- DISPLAY TEAM -->
+
+<!-- Will be transform in a directive -->
+
+<div class="row span3" ng-show="(newAffectation.elems | elems:'Supervisor').length > 0">
+  <legend>Superviseur(s)</legend>
+  <div style="margin-left: 75px" class="pane well well-large employeeOnJob">
+    <div class="row modal-checkboxes" ng-repeat="sup in newAffectation.elems | elems:'Supervisor'">
+      <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{sup.name}}</div>
+    </div>
+  </div>  
+</div>
+
+<!-- Will be transform in a directive -->
+<div class="row span3" ng-show="(newAffectation.elems | elems:'Employee').length > 0">
+  <legend>Employé(s)</legend>
+  <div style="margin-left: 75px" class="pane well well-large employeeOnJob">
+    <div class="row modal-checkboxes" ng-repeat="emp in newAffectation.elems | elems:'Employee'">
+      <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{emp.name}}</div>
+    </div>
+  </div>  
+</div>
+
+<!-- Will be transform in a directive -->
+<div class="row span3" ng-show="(newAffectation.elems | elems:'Truck').length > 0">
+  <legend>Camion(s)</legend>
+  <div style="margin-left: 75px" class="pane well well-large employeeOnJob">
+    <div class="row modal-checkboxes" ng-repeat="truck in newAffectation.elems | elems:'Truck'">
+      <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{truck.name}}</div>
+    </div>
+  </div>  
+</div>
+
+<!-- Will be transform in a directive -->
+<div class="row span3" ng-show="(newAffectation.elems | elems:'Box').length > 0">
+  <legend>Coffre(s)</legend>
+  <div style="margin-left: 75px" class="pane well well-large employeeOnJob">
+    <div class="row modal-checkboxes" ng-repeat="box in newAffectation.elems | elems:'Box'">
+      <div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{box.name}}</div>
+    </div>
+  </div>  
+</div>
+<div style="clear:both"></div>
+<!-- <button ng-click="team_confirmed = true;" 
+     ng-show="team_applied && !team_confirmed" style="margin-left:40%;" class="btn btn-success">Confirmer</button> -->
+<hr>
+<div class="row" style="clear: both; margin-bottom: 85px;">
+  <a href="" ng-show="!modifying" class="btn btn-danger" ng-click="clear_all()" style="margin-left:33%; margin-top:25px;">Effacer</a>
+  <a href="" ng-show="modifying" class="btn btn-danger" ng-click="cancel_modification()" style="margin-left:33%; margin-top:25px;">Annuler</a>
+  <a href="" ng-show="!modifying" class="btn btn-success" ng-click="save_affectation('clear_all')" style="margin-left:2%; margin-top:25px;">Sauvegarder</a>
+  <a href="" ng-show="!modifying" class="btn btn-success" ng-click="save_affectation('clear_keep_team')" 
+     title="Sauvegarde l'affectation mes préserve l'équipe"
+     style="margin-left:2%; margin-top:25px;">Nouveau Client</a>
+  <a href="" ng-show="modifying" class="btn btn-success" ng-click="save_modification()" style="margin-left:2%; margin-top:25px;">Confirmer</a>
+  <a href="" ng-show="modifying" class="btn btn-danger" ng-click="reset_affectation()" title="Réinitialise l'affectation avant les modifications" 
+     style="margin-left:2%; margin-top:25px;">Réinitialiser</a>
+</div>

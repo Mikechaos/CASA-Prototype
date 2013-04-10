@@ -42,7 +42,18 @@ angular.module('casaApp.directives', []).
 	    },
 
 	};
-    });
+    })
+    .directive('csAddAffectation', function() {
+	return {
+	    templateUrl: 'partials/add_affectation.html',
+	    compile: function(element, attrs) {
+		return function postLink(scope, element, attrs, controller) {
+		};
+	    },
+
+	};
+    })
+   
 
 // .directive('paneElem' function factory() {
 

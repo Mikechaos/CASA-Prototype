@@ -61,16 +61,19 @@
 	$scope.newAffectation = new Affectation();
 	$scope.affected_elems = App.affected_today;
 	$scope.attributed_given_day = App.attributed;
-
 	// Reset day buttons
-	$scope.$watch('newAffectation.date', function () {
+	$scope.$watch('newAffectation.date', function (new_val, old_val) {
 	    forEach(Date.days, function (d) {
 		$scope.days[d] = false;
 	    });
 	    $scope.days[$scope.newAffectation.week_day()] = true;
 	    var affected = App.verify_day($scope.newAffectation.date);
-	    if (affected.is_include($scope.newAffectation.get_supervisor()) || $scope.newAffectation.supervisor_id === undefined )
-		$scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor', $scope.newAffectation.date, affected).id;
+	    // If date changes and we are not just adding new client (so date is the same as previous)
+	    //if (Date.compare(new_val, old_val) !== 0) {
+	    if ($scope.keep_team !== true) {
+		if (affected.is_include($scope.newAffectation.get_supervisor()) || $scope.newAffectation.supervisor_id === undefined )
+		    $scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor', $scope.newAffectation.date, affected).id;
+	    }
 	    
 	});
 
@@ -80,6 +83,7 @@
 	
 	$scope.$parent.fetch_all_promise.then(function () {
 	    $scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor').id;
+	    $scope.newAffectation.client_id = App.get_first('Client').id;
 	});
 
 	$scope.save_affectation = ng.bind(this, this.save_affectation);
@@ -144,7 +148,7 @@
 	clear_keep_team: function () {
 	    var supervisor_id = this.scope.newAffectation.supervisor_id
 	    var date = this.scope.newAffectation.date;
-
+	    this.scope.keep_team = true;
 	    this.init_general();
 	    this.scope.newAffectation.date = new Date(date);
 	    this.scope.newAffectation.elems.list = [].concat(this.scope.elems)
@@ -152,6 +156,7 @@
 	},
 
 	clear_all: function () {
+	    this.scope.keep_team = false;
 	    this.clean();
 	    this.init();
 	},
@@ -168,7 +173,7 @@
 	},
 
 	reset_affectation: function () {
-	    console.log(this.scope.before_modif_affect);
+	    // console.log(this.scope.before_modif_affect);
 	    this.scope.newAffectation = this.scope.before_modif_affect;
 	},
 
@@ -244,7 +249,6 @@
 	},
 
 	init_general: function () {
-	    this.scope.newAffectation = new Affectation();
 	    this.scope.days = {
 		Dimanche: false,
 		Lundi: false,
@@ -254,6 +258,7 @@
 		Vendredi: false,
 		Samedi: false,
 	    };
+	    this.scope.newAffectation = new Affectation();
 	},
 
 	init: function () {
