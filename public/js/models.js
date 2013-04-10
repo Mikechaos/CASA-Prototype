@@ -658,14 +658,15 @@ var App = {
 	return elem;
     },
 
-    get_first_not_affected: function (strElem) {
+    get_first_not_affected: function (strElem, date) {
 	var elem = false;
-	var affected_today = this.affected_today;
+	var affected = this.affected_today;
+	if (date !== undefined) affected = this.verify_day(date);
 	this.elems.forEach(function (e) {
-	    if (e.strElem !== strElem || affected_today.is_affected(e)) return true;
+	    if (e.strElem !== strElem || affected.is_affected(e)) return true;
 	    elem = e; return false
 	});
-	//console.log('get_first_not', elem, affected_today);
+	// console.log('get_first_not', elem, affected);
 	return elem;
     },
 

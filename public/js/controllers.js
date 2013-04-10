@@ -69,6 +69,7 @@
 	    });
 	    $scope.days[$scope.newAffectation.week_day()] = true;
 	    App.verify_day($scope.newAffectation.date);
+	    $scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor', $scope.newAffectation.date).id;
 	    
 	});
 
@@ -77,7 +78,6 @@
 	});
 	
 	$scope.$watch('App.affected_today', function () {
-	    console.log(App.get_first_not_affected('Supervisor').id);
 	    $scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor').id;
 	});
 
