@@ -658,9 +658,8 @@ var App = {
 	var elem = false;
 	var affected_today = this.affected_today;
 	this.elems.forEach(function (e) {
-	    if (e.id === 25) console.log(e, e.strElem !== strElem, affected_today.is_affected(e));
 	    if (e.strElem !== strElem || affected_today.is_affected(e)) return true;
-	    elem = e; console.log(e, affected_today); return false
+	    elem = e; return false
 	});
 	return elem;
     },
