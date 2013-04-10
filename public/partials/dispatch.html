@@ -112,7 +112,7 @@
 	    <div class="span3">
 	      <label>Chef de chantier : </label>
 	      <select ng-model="newAffectation.supervisor_id" 
-		      ng-options="sup.id as sup.name for sup in elements | elems:'Supervisor' | already_attr_elems:days:newAffectation.date:use_already_affected:newAffectation.supervisor_id"></select>
+		      ng-options="sup.id as sup.name for sup in elements | elems:'Supervisor' | already_attr_elems:days:newAffectation.date:use_already_affected:newAffectation.supervisor_id | remove_affected:newAffectation.elems"></select>
 	    </div>
 	    <div class="span12" style="margin-left:0px;">
 	      <!-- <div class="span3"> -->
@@ -145,7 +145,7 @@
 	    <button style="float:left; margin-left:45px; margin-top:8px;" class="btn btn-info" ng-click="open()">Sélectionner votre équipe</button>
 	    <button style="float:left; margin-left:45px; margin-top:8px;" class="btn btn-danger" ng-click="clear_team()">Effacer l'équipe</button>
 	    <label class="checkbox inline" for="use_already_affected_checkbox" style="margin-left:15px;">
-	      <input id="use_already_affected_checkbox" type="checkbox" ng-model="use_already_affected">
+	      <input id="use_already_affected_checkbox" type="checkbox" ng-model="$parent.use_already_affected">
 	      Utiliser des éléments déjà affectés
 	    </label>
 	  </div>
@@ -166,7 +166,7 @@
 
 		  <div ng-repeat="class in elements_class" class="tab-pane {{hack[$index].active}}" id="tab{{$index + 1}}">
 		    <div class="row modal-checkboxes" 
-			 ng-repeat="elem in elements | elems:elements_class[$index].name | already_attr_elems:days:newAffectation.date:use_already_affected">
+			 ng-repeat="elem in elements | elems:elements_class[$index].name | already_attr_elems:days:newAffectation.date:use_already_affected | remove_supervisor:newAffectation.supervisor_id">
 		      <div class="squaredFour span1" style="margin-bottom:8px;">
 			<input type="checkbox" ng-checked="elem.selected" id="modal_{{elements_class[$parent.$index].name}}{{elem.id}}" ng-model="elem.selected" ng-change="change(elem);" />
 			<label for="modal_{{elements_class[$parent.$index].name}}{{elem.id}}"></label>

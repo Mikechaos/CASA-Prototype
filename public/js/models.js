@@ -41,6 +41,10 @@ Element.prototype = {
 	text = text || this.name;
 	return confirm("Supprimer " + text + "?");
     },
+
+    eql: function (elem) {
+	return this.id === elem.id && this.strElem === elem.strElem;
+    },
 };
 
 // Takes a string that matches constructor.name
@@ -661,6 +665,7 @@ var App = {
 	    if (e.strElem !== strElem || affected_today.is_affected(e)) return true;
 	    elem = e; return false
 	});
+	//console.log('get_first_not', elem, affected_today);
 	return elem;
     },
 

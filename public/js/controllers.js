@@ -90,7 +90,6 @@
 	$scope.reset_affectation = ng.bind(this, this.reset_affectation);
 	$scope.cancel_modification = ng.bind(this, this.cancel_modification);
 	$scope.clear_team = ng.bind(this, this.clear_team);
-	console.log($scope.reset_affectation);
 	$scope.quick_view = false;
 
 	$scope.filter = {};

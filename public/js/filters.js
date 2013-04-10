@@ -60,9 +60,38 @@ angular.module('casaApp.filters', []).
     filter('already_attr_elems', function () { // this will most definitly needs some refactoring
 	    return function (elems, days, date, use_already_affected, supervisor) {
 		if (use_already_affected) return elems;
-		return App.test(elems, days, date, supervisor);
+		var ret = App.test(elems, days, date, supervisor);
+		if (ret.length === 0) ret = [{id:-1, name:"Plus de superviseur disponible", strElem: 'Supervisor'}];
+		return ret;
 		
 	    };
+    }).
+    filter('remove_supervisor', function () {
+	return function (elems, supervisor_id) {
+	    var supervisor = App.elems.get_by_id({id: supervisor_id, strElem: "Supervisor"})
+	    // if (supervisor.selected) supervisor.selected = false;
+	    var index;
+	    if ((index = search_index(elems, {id:supervisor_id, strElem:"Supervisor"}, function (current, searched) {return current.eql(searched)})) !== false) {
+		elems.splice(index, 1);
+	    }
+	    return elems;
+	};
+    }).
+    filter('remove_affected', function () {
+	return function (elems, affected) {
+	    if (affected.list.length === 0) return elems;
+	    var filtered = elems.filter((function (e) {
+		var found = false;
+
+		affected.forEach(function (a) {
+		    return !((a.strElem === e.strElem && a.id === e.id)
+			     && (found = true))
+		});
+		// inverted because we want to filter it only if we find (true) it (false = filtered)
+		return !found;
+	    }));
+	};
+	return filtered;
     }).
     filter('between', function () {
     	return function (affectations, fst_date, snd_date) {return affectations.filter_affectations(fst_date, snd_date)};
