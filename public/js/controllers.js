@@ -59,7 +59,7 @@
 				{name: "Box", screen: "Coffres"}];
 	$scope.date.sndDate = new Date($scope.date.today.getFullYear(), $scope.date.today.getMonth(), $scope.date.today.getDate() + 7),
 	$scope.newAffectation = new Affectation();
-	$scope.affected_elems = App.affected_today
+	$scope.affected_elems = App.affected_today;
 	$scope.attributed_given_day = App.attributed;
 
 	// Reset day buttons
@@ -76,13 +76,21 @@
 	   $scope.$parent.report_date = date;
 	});
 	
+	$scope.$watch('App.affected_today', function () {
+	    console.log(App.get_first_not_affected('Supervisor').id);
+	    $scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor').id;
+	});
+
 	$scope.save_affectation = ng.bind(this, this.save_affectation);
-	$scope.clear_affectation = ng.bind(this, this.clear_affectation);
+	$scope.clear_all = ng.bind(this, this.clear_all);
 	$scope.delete_affectation = ng.bind(this, this.delete_affectation);
 	$scope.copy_affectation = ng.bind(this, this.copy_affectation);
 	$scope.modify_affectation = ng.bind(this, this.modify_affectation);
 	$scope.save_modification = ng.bind(this, this.save_modification);
-
+	$scope.reset_affectation = ng.bind(this, this.reset_affectation);
+	$scope.cancel_modification = ng.bind(this, this.cancel_modification);
+	$scope.clear_team = ng.bind(this, this.clear_team);
+	console.log($scope.reset_affectation);
 	$scope.quick_view = false;
 
 	$scope.filter = {};
@@ -135,7 +143,10 @@
     	
 	clear_keep_team: function () {
 	    var supervisor_id = this.scope.newAffectation.supervisor_id
+	    var date = this.scope.newAffectation.date;
+
 	    this.init_general();
+	    this.scope.newAffectation.date = new Date(date);
 	    this.scope.newAffectation.elems.list = [].concat(this.scope.elems)
 	    this.scope.newAffectation.supervisor_id = supervisor_id;
 	},
@@ -144,12 +155,27 @@
 	    this.clean();
 	    this.init();
 	},
+	
+	clear_team: function () {
+	    this.clean();
+	    this.scope.elems = this.scope.newAffectation.elems.list = [];
+	},
+
+	cancel_modification: function () {
+	    this.scope.mode = "INDIV";
+	    this.clear_all();
+	    
+	},
+
+	reset_affectation: function () {
+	    console.log(this.scope.before_modif_affect);
+	    this.scope.newAffectation = this.scope.before_modif_affect;
+	},
 
 	save_modification: function () {
-	    this.put_affectation(this.scope.newAffectation)
+	    this.put_affectation(this.scope.newAffectation);
 	    this.scope.mode = "INDIV";
-	    this.clean();
-	    this.init();
+	    this.clear_all();
 	},
 
 	select_elem: function () {
@@ -165,6 +191,7 @@
 		: this.scope.newAffectation = affect;
 	    this.scope.elems = this.scope.newAffectation.elems.list;
 	    this.select_elem();
+	    this.scope.before_modif_affect = new Affectation().copy(this.scope.newAffectation)
 	},
 
 	modify_affectation: function (id) {

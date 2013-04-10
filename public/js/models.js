@@ -4,6 +4,13 @@
 
 // === ELEMENT ===  //
 
+var STATE = {
+    ACTIVE: 1,
+    INACTIVE: 2,
+    UNDEFINED: 3,
+    DELETED: 4,
+}
+
 // Abstract interface for underlying elements
 function Element (elem) {
     this.strElem = this.constructor.name;
@@ -18,7 +25,7 @@ function Element (elem) {
 	this.id = 0;
 	this.name = "";
 	this.type = "";
-	this.state = 1;
+	this.state = STATE.ACTIVE;
 	this.notes = "";
 	this.supervisor = false;
     }
@@ -45,7 +52,7 @@ Element.createFromList = function (classStr, list, deferred) {
 	// Little hack. Poor style, but benenifts in the situation
 	// ** Added static inheritance so it will be fix **
 	c_str = e.supervisor === true ? "Supervisor" : classStr;
-	App.elems.push(new Global[c_str](e))
+	App.elems.insertion_sort(new Global[c_str](e))
     });
     // console.log("Done " + classStr, (new Date).getSeconds(), App.elems);
     //deferred.resolve();
@@ -147,19 +154,45 @@ function Client (client) {
     this.route = "/clients";
 }
 
-
-function Affectation () {
+function BaseAffectation () {
     this.date = new Date();
     this.date_format = this.format_date(this.date);
-    this.start_time = { time : "06:00AM"};
-    this.client_id = 1;
-    this.supervisor_id = 1
+    this.start_time = { time : "06:00AM"};    
+    this.supervisor_id = App.get_first_not_affected('Supervisor').id;
+    this.client_id = App.get_first('Client').id;
     this.link_number = "";
-
     this.elems = new ElementList;
-
     this.notes = "";
     this.height = Affectation.DEF_HEIGHT;
+    this.state = STATE.ACTIVE;
+
+}
+
+
+function Delivery (d) {
+    BaseAffectation.call(this, d);
+    this.client_ids = [this.client_id];
+    this.notes = [];
+    
+};
+
+Delivery.prototype = {
+    
+};
+
+function Note (note) {
+    this.id = Note_id.get_next_id();
+};
+
+
+var Note_id = {
+    id: 0,
+
+    get_next_id: function () {return ++this.id;},
+}
+
+function Affectation () {
+    BaseAffectation.call(this);
     //this.render();
 }
 
@@ -275,6 +308,7 @@ Affectation.prototype = {
 		this[prop] = new Date(c[prop].getFullYear(), c[prop].getMonth(), c[prop].getDate());
 	    }
 	}
+	return this;
     },
 
     is_today: function() {
@@ -321,6 +355,8 @@ PostAffectation.prototype = {
 	return elements;
     },
 };
+
+
 
 /* Role : Encapsulate information needed for rendering.
  * Serve as a template model
@@ -397,6 +433,7 @@ ListClass.prototype = {
     insertion_sort: function(to_insert, predicate) {
 	predicate = predicate || this.sort_predicate;
 	if (typeof predicate === "string") predicate = this[predicate];
+	
 	insertion_sort(this.list, to_insert, predicate);
     },
 
@@ -427,7 +464,7 @@ ListClass.prototype = {
     },
     
     sort_predicate: function (is_smaller, elem) {
-	return (is_smaller < elem) ? true : false
+	return is_smaller < elem
     },
 
     by_id: function (elem, searched_id) {
@@ -485,6 +522,10 @@ ElementList.prototype = {
     filter_supervisors: function () {
 	return this.list.filter(function (e) {return e.supervisor === true;});
     },
+
+    sort_predicate: function (to_insert, in_place) {
+	return to_insert.name > in_place.name && to_insert.strElem === in_place.strElem;
+    },
 };
 
 function AffectedList() {
@@ -494,11 +535,11 @@ function AffectedList() {
 
 AffectedList.prototype = {
     is_affected: function (elem) {
-	
+	return this.is_include(elem);
     },
     
-    eql_predicate: function (searched, current) {
-	return searched.elem.id === current.elem.id;
+    eql_predicate: function (current, searched) {
+	return searched.id === current.elem.id && searched.strElem === current.elem.strElem;
     },
 
     verify_affect: function (a) {
@@ -564,7 +605,7 @@ AffectationList.prototype =  {
     },
 
     sort_for_long_affect_predicate: function (is_smaller, elem) {
-	return (is_smaller <= elem) ? true : false
+	return is_smaller <= elem
     },
 
 };
@@ -604,6 +645,26 @@ var App = {
     affected_today: new AffectedList,
     attributed: new AffectedList,
 
+    get_first: function (strElem) {
+	var elem = false;
+	this.elems.forEach(function (e) {
+	    if (e.strElem !== strElem) return true;
+	    elem = e; return false
+	});
+	return elem;
+    },
+
+    get_first_not_affected: function (strElem) {
+	var elem = false;
+	var affected_today = this.affected_today;
+	this.elems.forEach(function (e) {
+	    if (e.id === 25) console.log(e, e.strElem !== strElem, affected_today.is_affected(e));
+	    if (e.strElem !== strElem || affected_today.is_affected(e)) return true;
+	    elem = e; console.log(e, affected_today); return false
+	});
+	return elem;
+    },
+
     insert_affect: function (affect) {
 	var predicate = affect.height > Affectation.DEF_HEIGHT ? "sort_for_long_affect_predicate" : "sort_predicate";
 	this.affectations.insertion_sort(affect, predicate);
@@ -612,25 +673,30 @@ var App = {
 
     verify_today: function () {
 	this.affected_today.clear();
-	var affected = this.affected_today;
-	App.affectations.get_todays().forEach(function (a) {
-	    a.elems.forEach(function (e) {
-		affected.push(new ElemAffected(e, a.name))
-	    });
-	});
+	// forEach is pass a func
+	// console.log('today');
+	App.affectations.get_todays().forEach(this.add_affected.bind(this, this.affected_today));
 	
-	return affected
+	return this.affected_today;
+    },
+
+    add_affected: function (affected, a) {
+ 	// console.log(arguments);
+	a.elems.forEach(function (e) {
+	    affected.push(new ElemAffected(e, a.name));
+	});
+	affected.push(new ElemAffected(a.get_supervisor(), a.name));
+	// console.log(affected);
     },
 
     // returns the list of affected element
     verify_day: function (day) {
 	this.attributed.clear();
 	var attributed = this.attributed;
-	forEach(this.affectations.filter_affectations(day), function (a) {
-	    a.elems.forEach(function (e) {
-		attributed.push(new ElemAffected(e, a));
-	    });
-	});
+	forEach(this.affectations.filter_affectations(day), this.add_affected.bind(this, this.attributed));
+	if (day.getDate() === new Date().getDate() 
+	    && day.getMonth() === new Date().getMonth() 
+	    && day.getFullYear() === new Date().getFullYear()) this.affected_today = this.attributed;
 	return attributed;
     },
 

@@ -143,6 +143,7 @@
 	  <legend style="width:225px; float:left;"> Équipe : </legend>
 	  <div>  <!-- ng-show="!team_confirmed"> -->
 	    <button style="float:left; margin-left:45px; margin-top:8px;" class="btn btn-info" ng-click="open()">Sélectionner votre équipe</button>
+	    <button style="float:left; margin-left:45px; margin-top:8px;" class="btn btn-danger" ng-click="clear_team()">Effacer l'équipe</button>
 	    <label class="checkbox inline" for="use_already_affected_checkbox" style="margin-left:15px;">
 	      <input id="use_already_affected_checkbox" type="checkbox" ng-model="use_already_affected">
 	      Utiliser des éléments déjà affectés
@@ -229,11 +230,15 @@
 	     ng-show="team_applied && !team_confirmed" style="margin-left:40%;" class="btn btn-success">Confirmer</button> -->
 	<hr>
 	  <div class="row" style="clear: both; margin-bottom: 85px;">
-	    <a href="" class="btn btn-danger" ng-click="clear_affectation()" style="margin-left:33%; margin-top:25px;">Clear</a>
+	    <a href="" ng-show="!modifying" class="btn btn-danger" ng-click="clear_all()" style="margin-left:33%; margin-top:25px;">Effacer</a>
+	    <a href="" ng-show="modifying" class="btn btn-danger" ng-click="cancel_modification()" style="margin-left:33%; margin-top:25px;">Annuler</a>
 	    <a href="" ng-show="!modifying" class="btn btn-success" ng-click="save_affectation('clear_all')" style="margin-left:2%; margin-top:25px;">Sauvegarder</a>
-	    <a href="" ng-show="!modifying" class="btn btn-success" ng-click="save_affectation('clear_keep_team')" title="Sauvegarde l'affectation mes préserve l'équipe"
+	    <a href="" ng-show="!modifying" class="btn btn-success" ng-click="save_affectation('clear_keep_team')" 
+	       title="Sauvegarde l'affectation mes préserve l'équipe"
 	       style="margin-left:2%; margin-top:25px;">Nouveau Client</a>
 	    <a href="" ng-show="modifying" class="btn btn-success" ng-click="save_modification()" style="margin-left:2%; margin-top:25px;">Confirmer</a>
+	    <a href="" ng-show="modifying" class="btn btn-danger" ng-click="reset_affectation()" title="Réinitialise l'affectation avant les modifications" 
+	       style="margin-left:2%; margin-top:25px;">Réinitialiser</a>
 	  </div>
 	</div>
     </div>
