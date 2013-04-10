@@ -661,6 +661,8 @@ var App = {
     get_first_not_affected: function (strElem, date) {
 	var elem = false;
 	var affected = this.affected_today;
+	// date = date || new Date;
+	// console.log(date);
 	if (date !== undefined) affected = this.verify_day(date);
 	this.elems.forEach(function (e) {
 	    if (e.strElem !== strElem || affected.is_affected(e)) return true;

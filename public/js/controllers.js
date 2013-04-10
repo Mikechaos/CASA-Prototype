@@ -31,7 +31,7 @@
 	// fetch_all_data.then(function () { console.log("hmm"); affectation_data().success(function () {console.log('wooh!')})});
 
 	this.scope.report_date = new Date;
-
+	this.scope.fetch_all_promise = fetch_all;
 	return (this);
     }
     
@@ -68,8 +68,9 @@
 		$scope.days[d] = false;
 	    });
 	    $scope.days[$scope.newAffectation.week_day()] = true;
-	    App.verify_day($scope.newAffectation.date);
-	    $scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor', $scope.newAffectation.date).id;
+	    var affected = App.verify_day($scope.newAffectation.date);
+	    if (affected.is_include($scope.newAffectation.get_supervisor()) || $scope.newAffectation.supervisor_id === undefined )
+		$scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor', $scope.newAffectation.date, affected).id;
 	    
 	});
 
@@ -77,7 +78,7 @@
 	   $scope.$parent.report_date = date;
 	});
 	
-	$scope.$watch('App.affected_today', function () {
+	$scope.$parent.fetch_all_promise.then(function () {
 	    $scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor').id;
 	});
 

@@ -61,7 +61,7 @@ angular.module('casaApp.filters', []).
 	    return function (elems, days, date, use_already_affected, supervisor) {
 		if (use_already_affected) return elems;
 		var ret = App.test(elems, days, date, supervisor);
-		if (ret.length === 0) ret = [{id:-1, name:"Plus de superviseur disponible", strElem: 'Supervisor'}];
+		if (ret.length === 0 && supervisor !== undefined) ret = [{id:-1, name:"Plus de superviseur disponible", strElem: 'Supervisor'}];
 		return ret;
 		
 	    };
@@ -90,8 +90,8 @@ angular.module('casaApp.filters', []).
 		// inverted because we want to filter it only if we find (true) it (false = filtered)
 		return !found;
 	    }));
+	    return filtered;
 	};
-	return filtered;
     }).
     filter('between', function () {
     	return function (affectations, fst_date, snd_date) {return affectations.filter_affectations(fst_date, snd_date)};
