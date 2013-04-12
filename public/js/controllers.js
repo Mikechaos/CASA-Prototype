@@ -70,9 +70,10 @@
 	    var affected = App.verify_day($scope.newAffectation.date);
 	    // If date changes and we are not just adding new client (so date is the same as previous)
 	    //if (Date.compare(new_val, old_val) !== 0) {
-	    if ($scope.keep_team !== true) {
-		if (affected.is_include($scope.newAffectation.get_supervisor()) || $scope.newAffectation.supervisor_id === undefined )
+	    if ($scope.keep_team !== true && $scope.mode !== 'MODIFY') {
+		if (affected.is_include($scope.newAffectation.get_supervisor()) || $scope.newAffectation.supervisor_id === undefined ) {
 		    $scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor', $scope.newAffectation.date, affected).id;
+		}
 	    }
 	    
 	});
@@ -98,6 +99,13 @@
 	$scope.quick_view = false;
 
 	$scope.filter = {};
+	
+	$scope.$watch('mode', function (after, before) {
+	    if (before == 'MODIFY') {
+		$scope.reset_affectation();
+		$scope.clear_all();
+	    }
+	});
 
 	/*
 	$scope.validation_error = false;
@@ -167,14 +175,14 @@
 	},
 
 	cancel_modification: function () {
+	    this.reset_affectation();
 	    this.scope.mode = "INDIV";
 	    this.clear_all();
 	    
 	},
 
 	reset_affectation: function () {
-	    // console.log(this.scope.before_modif_affect);
-	    this.scope.newAffectation = this.scope.before_modif_affect;
+	    this.scope.newAffectation.copy(this.scope.before_modif_affect);
 	},
 
 	save_modification: function () {
@@ -188,9 +196,8 @@
 	},
 
 	init_mod_or_copy_screen: function (affect, copy) {
-	    this.clean();
-	    this.init();
-	    this.scope.mode = "ADD";
+	    this.clear_all();
+	    this.scope.mode = "MODIFY";
 	    (copy === true)
 		? this.scope.newAffectation.copy(affect)
 		: this.scope.newAffectation = affect;
@@ -299,6 +306,7 @@
 
 	$scope.mode_enum = {
 	    ADD : {name: "ADD", fn: "set_add_mode", height: single_height},
+	    MODIFY: {name: "ADD", fn: "set_add_mode", height: single_height},
 	    //QUICK : "set_quick_view_mode",
 	    SCHEDULE : {name: "SCHEDULE", fn: "set_schedule_mode", height: single_height},
 	    INDIV : {name: "INDIV", fn: "set_indiv_mode", height: double_height},
