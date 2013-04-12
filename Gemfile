@@ -4,3 +4,4 @@ gem "haml", ">= 3.1.4"
 gem "sequel", "3.20.0"
 gem "pg", "0.15.0"
 gem "bcrypt-ruby", "3.0.1"
+gem 'thin'
