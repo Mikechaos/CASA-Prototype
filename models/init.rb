@@ -16,7 +16,7 @@ require 'sequel'
 
 ## PROD DB ##
 
- DB = Sequel.connect('postgres://klbjgybznoivis:ZDle9i-xDesjTPceGWI1AptPzF@ec2-107-22-165-15.compute-1.amazonaws.com:5432/dforhe0nga07t7')
+DB = Sequel.connect('postgres://klbjgybznoivis:ZDle9i-xDesjTPceGWI1AptPzF@ec2-107-22-165-15.compute-1.amazonaws.com:5432/dforhe0nga07t7')
 
 DB << "SET CLIENT_ENCODING TO 'UTF8';"
 
@@ -30,4 +30,5 @@ require_relative 'client'
 require_relative 'truck'
 require_relative 'box'
 require_relative 'affectation'
+require_relative 'delivery'
 

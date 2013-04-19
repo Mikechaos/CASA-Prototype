@@ -1,6 +1,8 @@
 <div style="height:{{affect.height}}px; font-size:10px; padding: 0 10px 0 10px;">
   <div class="pull-left">{{affect.date_format}}</div><div class="pull-right">{{affect.start_time.time}}</div>
-  <table class="table table-condensed" style="text-align:center; ">
+
+  <!-- AFFECTATION -->
+  <table ng-show="affect.strClass == 'Affectation'" class="table table-condensed" style="text-align:center; ">
     <tr>
       <th>{{affect.get_client().name}}</th>
     </tr>
@@ -25,5 +27,41 @@
     <tr>
       <td>{{affect.notes}}</td>
     </tr>
+  </table>
+
+  <!-- DELIVERY -->
+  <table ng-show="affect.strClass == 'Delivery'" class="table table-condensed" style="text-align:center; ">
+    <tbody>
+      <tr>
+	<td><strong>{{affect.link_number}}</strong></td>
+      </tr>
+      <tr>
+	<td><strong>{{affect.get_supervisor().name}}</strong></td>
+      </tr>
+      <tr ng-repeat="elem in affect.elems | elems:'Supervisor'">
+	<td id="sup{{$index}}">{{elem.name}}</td>
+      </tr>
+      <tr ng-repeat="elem in affect.elems | elems:'Employee'">
+	<td id="emp{{$index}}">{{elem.name}}</td>
+      </tr>
+      <tr ng-repeat="elem in affect.elems | elems:'Truck'">
+	<td id="truck{{$index}}">{{elem.name}}</td>
+      </tr>
+      <tr id="id_box1" ng-repeat="elem in affect.elems | elems:'Box'">
+	<td id="box{{$index}}">{{elem.name}}</td>
+      </tr>
+    </tbody>
+    <tbody ng-repeat="client in affect.clients">
+      <tr>
+	{{$index}}
+  	<td id="client_type{{$index}}">{{client.type}}</td>
+      </tr>
+      <tr>
+  	<td id="client_name{{$index}}">{{affect.get_client($index).name}}</td>
+      </tr>
+      <tr>
+  	<td id="client_note{{$index}}">{{client.note}}</td>
+      </tr>
+    </tbody>
   </table>
 </div>

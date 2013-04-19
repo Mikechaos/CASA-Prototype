@@ -78,7 +78,8 @@ function Employee (emp) {
 	this.employees_type_id = emp.employees_type_id;
 	this.set_string_type();
     } else {
-	this.employees_type_id = this.employees_type_id || 2; // if already defined by Supervisor constructor
+	this.employees_type_id = this.employees_type_id || // if already defined by Supervisor constructor
+	    App.elems.search_index(null, function (elem, e) {return elem.strElem === 'EmployeesType' && elem.type === "installateur"});
     }
     this.route = "/employees";
 }
@@ -172,81 +173,8 @@ function BaseAffectation () {
 
 }
 
-
-function Delivery (d) {
-    BaseAffectation.call(this, d);
-    this.client_ids = [this.client_id];
-    this.notes = [];
-    
-};
-
-Delivery.prototype = {
-    
-};
-
-function Note (note) {
-    this.id = Note_id.get_next_id();
-};
-
-
-var Note_id = {
-    id: 0,
-
-    get_next_id: function () {return ++this.id;},
-}
-
-function Affectation () {
-    BaseAffectation.call(this);
-    //this.render();
-}
-
-Affectation.createFromList = function (data_base_affectations) {
-    // console.log("Started affectations", (new Date).getSeconds(), App.elems);
-    forEach (data_base_affectations, function (dba) {
-	a = new Affectation;
-	a.id = dba.id
-	a.date = new Date(dba.day);
-	a.date_format = a.format_date(a.date);
-	a.start_time = { time : dba.start_time};
-	a.supervisor_id = dba.supervisor_id;
-	a.client_id = dba.client_id;
-	a.link_number = dba.link_number;
-	
-	a.state = dba.state
-	a.end_time = dba.end_time; // Not usefull for now
-	a.user_id = dba.user_id;
-	a.affectation_type = dba.affectation_type;
-	a.notes = dba.notes;
-	dba.elements = eval(dba.elements);
-	forEach(dba.elements, function (e) {
-	    a.elems.push(App.elems.get(App.elems.search_index(e, function (elem, e) {return e.id === elem.id && e.strElem === elem.strElem})));
-	});
-	a.height = Affectation.get_height(a);
-	App.insert_affect(a);
-    });
-    
-    // console.log("Done affectations", (new Date).getSeconds());
-};
-
-Affectation.DEF_HEIGHT = 520;
-Affectation.MAX_LINES = 23;
-Affectation.MAX_CHARS_PER_LINE = 38;
-Affectation.INIT_HEIGHT = 4 // Number of line initially => one for date, one for client, one for link number and one for Supervisor
-Affectation.PADDING = 11; // Need it so a doubled affectatation is precisely the same size as two single
-
-// If height is over 20 lines (little formula, pretty simple)
-Affectation.get_height = function (a) {
-    return Affectation.get_line_count(a) > Affectation.MAX_LINES ?
-	Affectation.DEF_HEIGHT * 2 + Affectation.PADDING :
-	Affectation.DEF_HEIGHT;
-};
-
-Affectation.get_line_count = function (a) {
-    return Affectation.INIT_HEIGHT + a.elems.list.length + Math.ceil(a.notes.length / Affectation.MAX_CHARS_PER_LINE);
-};
-
-Affectation.prototype = {
-    
+BaseAffectation.prototype = {
+  
     is_between_dates: function (fst, snd) {
     	return Date.compare(this.date, fst) != -1 && Date.compare(this.date, snd) != 1;
     },
@@ -331,26 +259,128 @@ Affectation.prototype = {
 	if (supervisor === undefined) supervisor = {};
 	return supervisor;
     },
+};
+
+
+function Delivery (d) {
+    BaseAffectation.call(this, d);
+    this.clients = [];
+    this.add_client(App.get_first('Client').id);
+    this.strClass = 'Delivery';
+    
+};
+
+Delivery.prototype = {
+    add_client: function (client_id, note, type) {
+	note = note || "";
+	type = type || "Livraison";
+	this.clients.push({client_id: client_id, note: note, type: type});
+    },
+
+    get_client: function (client_index) {
+	if (client_index === undefined) return {};
+	var client = App.elems.get_by_id({id: this.clients[client_index].client_id, strElem: "Client"})
+	if (client === undefined) client = {};
+	return client;
+    },
 
 };
 
-function PostAffectation(a) {
-    this.end_time = ""; // Not usefull for now
-    this.user_id = 0;
-    this.affectation_type = 0;
+Delivery.createFromList = function (data_base_affectations) {
+    // console.log("Started affectations", (new Date).getSeconds(), App.elems);
+    forEach (data_base_affectations, function (dba) {
+	a = new Delivery;
+	a.id = dba.id
+	a.date = new Date(dba.day);
+	a.date_format = a.format_date(a.date);
+	a.start_time = { time : dba.start_time};
+	a.supervisor_id = dba.supervisor_id;
+	a.clients = eval(dba.clients);
+	a.link_number = dba.link_number;
+	
+	a.state = dba.state
+	a.user_id = dba.user_id;
+	a.affectation_type = dba.affectation_type;
+	dba.elements = eval(dba.elements);
+	var find_elem = function (e) {
+	    a.elems.push(App.elems.get(App.elems.search_index(e, function (elem, e) {return e.id === elem.id && e.strElem === elem.strElem})));
+	};
+	forEach(dba.elements, find_elem);
+	// forEach(dba.clients, findPelem);
+	a.height = Affectation.get_height(a);
+	App.insert_affect(a);
+    });
+    
+    // console.log("Done affectations", (new Date).getSeconds());
+};
 
+function Affectation () {
+    BaseAffectation.call(this);
+    //this.render();
+    this.strClass = 'Affectation';
+}
+
+Affectation.createFromList = function (data_base_affectations) {
+    // console.log("Started affectations", (new Date).getSeconds(), App.elems);
+    forEach (data_base_affectations, function (dba) {
+	a = new Affectation;
+	a.id = dba.id
+	a.date = new Date(dba.day);
+	a.date_format = a.format_date(a.date);
+	a.start_time = { time : dba.start_time};
+	a.supervisor_id = dba.supervisor_id;
+	a.client_id = dba.client_id;
+	a.link_number = dba.link_number;
+	
+	a.state = dba.state
+	a.end_time = dba.end_time; // Not usefull for now
+	a.user_id = dba.user_id;
+	a.affectation_type = dba.affectation_type;
+	a.notes = dba.notes;
+	dba.elements = eval(dba.elements);
+	forEach(dba.elements, function (e) {
+	    a.elems.push(App.elems.get(App.elems.search_index(e, function (elem, e) {return e.id === elem.id && e.strElem === elem.strElem})));
+	});
+	a.height = Affectation.get_height(a);
+	App.insert_affect(a);
+    });
+    
+    // console.log("Done affectations", (new Date).getSeconds());
+};
+
+Affectation.DEF_HEIGHT = 520;
+Affectation.MAX_LINES = 23;
+Affectation.MAX_CHARS_PER_LINE = 38;
+Affectation.INIT_HEIGHT = 4 // Number of line initially => one for date, one for client, one for link number and one for Supervisor
+Affectation.PADDING = 11; // Need it so a doubled affectatation is precisely the same size as two single
+
+// If height is over 20 lines (little formula, pretty simple)
+Affectation.get_height = function (a) {
+    return Affectation.get_line_count(a) > Affectation.MAX_LINES ?
+	Affectation.DEF_HEIGHT * 2 + Affectation.PADDING :
+	Affectation.DEF_HEIGHT;
+};
+
+Affectation.get_line_count = function (a) {
+    return Affectation.INIT_HEIGHT + a.elems.list.length + Math.ceil(a.notes.length / Affectation.MAX_CHARS_PER_LINE);
+};
+
+Affectation.prototype = {
+  
+};
+
+function BasePostAffectation (a) {
     this.supervisor_id = a.supervisor_id
     this.start_time = a.start_time.time;
     this.day = a.date.getTime();
-    this.notes = a.notes;
     this.link_number = a.link_number;
-    this.client_id = a.client_id;
-    this.state = 1; // Not usefull for now
+    this.state = 1;
+    this.user_id = 0;
     
     this.elements = this.setElems(a);
-}
+};
 
-PostAffectation.prototype = {
+BasePostAffectation.prototype = {
     setElems: function (a) {
 	var elements = [];
 	a.elems.forEach(function (e) {
@@ -360,6 +390,19 @@ PostAffectation.prototype = {
     },
 };
 
+function PostAffectation(a) {
+    BasePostAffectation.call(this, a);
+    this.end_time = ""; // Not usefull for now
+    this.affectation_type = 0;
+    this.client_id = a.client_id;
+    this.notes = a.notes;
+}
+
+
+function PostDelivery(a) {
+    BasePostAffectation.call(this, a);
+    this.clients = a.clients;
+}
 
 
 /* Role : Encapsulate information needed for rendering.
@@ -636,6 +679,9 @@ function ElemAffected(elem, a) {
 
 Inherits.extend_multiple([["Employee"], ["Truck"], ["Box"], ["Job"], ["Client"], ["Supervisor", "Employee"], ["EmployeesType"]], "Element");
 Inherits.extend_multiple([["AffectationList"], ["ElementList"], ["AffectedList", "ElementList"]], "ListClass");
+Inherits.extend_multiple([["Affectation"], ["Delivery"]], "BaseAffectation");
+Inherits.extend_multiple([["PostAffectation"], ["PostDelivery"]], "BasePostAffectation");
+
 
 // === Initialization === //
 

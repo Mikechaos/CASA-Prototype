@@ -43,7 +43,7 @@
 
 
     // DISPATCH CONTROLLER
-    function DispatchCtrl($scope, $http) {
+    function DispatchCtrl($scope, $http, $location) {
 
 	$scope.elems = [];
 	//$scope.jobs = job_data;
@@ -51,32 +51,18 @@
 	$scope.date = {
 	    today: new Date(),
 	    fstDate: new Date(),
-	    sndDate: 0,
+	    // sndDate: 0,
+	    sndDate: new Date(),
 	}
 	$scope.elements_class = [{name: "Supervisor", screen: "Superviseurs"},
 				{name: "Employee", screen: "Employés"},
 				{name: "Truck", screen: "Camions"},
 				{name: "Box", screen: "Coffres"}];
-	$scope.date.sndDate = new Date($scope.date.today.getFullYear(), $scope.date.today.getMonth(), $scope.date.today.getDate() + 7),
-	$scope.newAffectation = new Affectation();
+	// $scope.date.sndDate = new Date($scope.date.today.getFullYear(), $scope.date.today.getMonth(), $scope.date.today.getDate() + 7),
+	// $scope.newAffectation = new Affectation();
 	$scope.affected_elems = App.affected_today;
 	$scope.attributed_given_day = App.attributed;
 	// Reset day buttons
-	$scope.$watch('newAffectation.date', function (new_val, old_val) {
-	    forEach(Date.days, function (d) {
-		$scope.days[d] = false;
-	    });
-	    $scope.days[$scope.newAffectation.week_day()] = true;
-	    var affected = App.verify_day($scope.newAffectation.date);
-	    // If date changes and we are not just adding new client (so date is the same as previous)
-	    //if (Date.compare(new_val, old_val) !== 0) {
-	    if ($scope.keep_team !== true && $scope.mode !== 'MODIFY') {
-		if (affected.is_include($scope.newAffectation.get_supervisor()) || $scope.newAffectation.supervisor_id === undefined ) {
-		    $scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor', $scope.newAffectation.date, affected).id;
-		}
-	    }
-	    
-	});
 
 	$scope.$watch('date.fstDate', function (date) {
 	   $scope.$parent.report_date = date;
@@ -95,6 +81,7 @@
 	$scope.save_modification = ng.bind(this, this.save_modification);
 	$scope.reset_affectation = ng.bind(this, this.reset_affectation);
 	$scope.cancel_modification = ng.bind(this, this.cancel_modification);
+	$scope.post_affectation = ng.bind(this, this.post_affectation);
 	$scope.clear_team = ng.bind(this, this.clear_team);
 	$scope.quick_view = false;
 
@@ -106,7 +93,15 @@
 		$scope.clear_all();
 	    }
 	});
+	
+	$scope.newAffect = function (type) {
+	    $scope.newAffectation = new Global[type];
+	};
 
+	$scope.$watch('$location.$$url', function (n, o) {
+	    // console.log(n, o, $location);
+	    $scope.clear_all();
+	});
 	/*
 	$scope.validation_error = false;
 	$scope.alert: {	
@@ -134,14 +129,14 @@
 	    for (var i = 0; i < 7; ++i) {
 		diff_array[i] = diff + i;
 	    }
-
 	    var $scope = this.scope
 	    var self = this;
 	    forEach (Date.days, function (d, i) {
 	    	if ($scope.days[d] === true) {
-		    var affect = new Affectation();
+		    var affect = new Global[$scope.newAffectation.strClass];
 		    affect.copy($scope.newAffectation);
 	    	    affect.date.setDate($scope.newAffectation.date.getDate() + diff_array[i]);
+		    console.log(self.post_affectation);
 		    affect.id = self.post_affectation(affect);
 	    	    // App.insert_affect(affect);
 	    	}
@@ -223,17 +218,6 @@
 	    }
 	},
 
-	post_affectation: function (a) {
-	    this.request_affectation('POST', new PostAffectation(a), '/affectations', function (data) {
-		Affectation.createFromList([data]);
-	    });
-	},
-
-	put_affectation: function(a)
-	{
-	    this.request_affectation('PUT', new PostAffectation(a), '/affectations/' + a.id)
-	},
-
 	request_affectation: function(method, params, route, callback_success, callback_error) {
 	    callback_success = callback_success || function () {};
 	    callback_error = callback_error || function () {};
@@ -243,16 +227,9 @@
 	    
 	},
 
+
 	request_delete_elem: function (elem) {
 	    this.request_affectation();
-	},
-
-	request_delete_affectation: function (id) {
-	    this.request_affectation('DELETE', {}, '/affectations/' + id, function (data) {
-		// console.log(data);
-	    }, function (data, status) {
-		// console.log(data, status);
-	    });
 	},
 
 	init_general: function () {
@@ -265,7 +242,15 @@
 		Vendredi: false,
 		Samedi: false,
 	    };
-	    this.scope.newAffectation = new Affectation();
+	    this.newAffectation();
+	    // var strClass = this.scope.newAffectation.strClass || 'Affectation';
+	    // console.log(strClass);
+	    // this.scope.newAffectation = new Global[strClass];
+	},
+	
+	newAffectation: function (type) {
+	    type = type || 'Affectation';
+	    this.scope.newAffectation = new Global[type];
 	},
 
 	init: function () {
@@ -286,8 +271,76 @@
 		e.selected = false;
 	    });
 	},
+
+
+	check_days: function () {
+	    var $scope = this.scope;
+	    forEach(Date.days, function (d) {
+		$scope.days[d] = false;
+	    });
+	    this.scope.days[this.scope.newAffectation.week_day()] = true;
+	},
+
+	check_supervisor: function () {
+	    var affected = App.verify_day(this.scope.newAffectation.date);
+	    // If date changes and we are not just adding new client and we are not modifying/copying existing job
+	    // we get first supervisor not affected on day to display in supervisor dropdown
+	    console.log(this.scope.keep_team, this.scope.mode, this.scope.newAffectation, this.scope);
+	    if (this.scope.keep_team !== true && this.scope.mode !== 'MODIFY') {
+		if (affected.is_include(this.scope.newAffectation.get_supervisor()) || this.scope.newAffectation.supervisor_id === undefined ) {
+		    this.scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor', this.scope.newAffectation.date, affected).id;
+		}
+	    }
+	},
+
+	// dateChanged: function() {
+	//     console.log(this);
+	//     this.check_days.call(this);
+	//     console.log('date change', this.scope.newAffectation.week_day(), this.scope.newAffectation);
+	//     this.check_supervisor.call(this);
+	// },
+	
     };
 
+    function AffectationCtrl($scope, $http) {
+	$scope.$parent.dateChanged = ng.bind(this, this.dateChanged);
+	console.log($scope.dateChanged);
+	$scope.$watch('newAffectation.date', this.dateChanged.bind(this));
+	this.scope = $scope;
+    }
+
+    AffectationCtrl.prototype = {
+
+	post_affectation: function (a) {
+	    this.request_affectation('POST', new PostAffectation(a), '/affectations', function (data) {
+	    	Affectation.createFromList([data]);
+	    });
+	},
+
+	put_affectation: function(a)
+	{
+	    this.request_affectation('PUT', new PostAffectation(a), '/affectations/' + a.id)
+	},
+
+	request_delete_affectation: function (id) {
+	    this.request_affectation('DELETE', {}, '/affectations/' + id, function (data) {
+		// console.log(data);
+	    }, function (data, status) {
+		// console.log(data, status);
+	    });
+	},
+
+	newAffectation: function () {
+	    this.scope.newAffectation = new Affectation;
+	},
+
+	dateChanged: function() {
+	    console.log(this);
+	    this.check_days.call(this);
+	    console.log('date change', this.scope.newAffectation.week_day(), this.scope.newAffectation);
+	    this.check_supervisor.call(this);
+	},
+    };
     
     function DateSelecterCtrl($scope) {
 
@@ -298,7 +351,7 @@
 
 	$scope.nextWeek = function () {
 	    this.date.sndDate = new Date();
-	    this.date.sndDate.setDate(this.date.sndDate.getDate() + 7);
+	    // this.date.sndDate.setDate(this.date.sndDate.getDate() + 7);
 	};
 
 	var single_height = 45;
@@ -326,6 +379,60 @@
 	return (this);
 
     };
+
+    function DeliveryCtrl($scope, $http) {
+	$scope.newAffectation = new Delivery;
+
+	// $scope.fetch_all_promise.then(function() {
+	//     $scope.newAffectation.add_client(App.get_first('Client').id);
+	// });
+	$scope.add_client = ng.bind(this, this.add_client);
+	// $scope.post_affectation = ng.bind(this, this.post_affectation);
+	$scope.save_affectation = ng.bind(this, this.save_affectation);
+	console.log($scope.dateChanged);
+	$scope.$watch('newAffectation.date', this.dateChanged.bind(this));
+	$scope.alert_not_functional = {
+	    "type": "error",
+	    "title": "Pas encore prêt!<br>",
+	    "content": "Seule l'interface est actuellement fonctionnelle. Cela vous permet de voir ce que ça aura l'air et de me partager si ça vous convient!",
+	};
+
+	this.scope = $scope;
+	this.http = $http
+    };
+
+    DeliveryCtrl.prototype = {
+	add_client: function () {
+	    //this.scope.newAffectation.add_client(App.get_first('Client').id);
+
+	    this.scope.newAffectation.add_client(App.get_first('Client').id);
+	    console.log(this.scope);
+	},
+
+	post_affectation: function (a) {
+	    this.request_affectation('POST', new PostDelivery(a), '/deliveries', function (data) {
+	    	Delivery.createFromList([data]);
+	    });
+	    console.log("posting a delivery");
+	},
+
+	save_affectation: function (clearing_callback) {
+	    console.log('delivery save', this);
+	    this.__proto__.__proto__.save_affectation.call(this, clearing_callback); // hack
+	},
+	
+	newAffectation: function () {
+	    this.scope.newAffectation = new Delivery;
+	},
+
+	dateChanged: function() {
+	    this.check_days.call(this);
+	    console.log('date change', this.scope.newAffectation.week_day(), this.scope.newAffectation);
+	    this.check_supervisor.call(this);
+	},
+
+    };
+    Inherits.multiple([[DeliveryCtrl], [AffectationCtrl]], DispatchCtrl);
 
     DateSelecterCtrl.prototype = { 
 	
@@ -418,6 +525,7 @@
 	$scope.modify_elem = ng.bind(this, this.modify_elem);
 	$scope.submit_modification = ng.bind(this, this.submit_modification);
 	$scope.modifying = false;
+	$scope.alerts = [];
 	this.scope = $scope;
     }
 
@@ -429,9 +537,14 @@
 
 		this.request_elem('POST', $scope.newElem, $scope.newElem.route, function (data) {
 		    self.save(data);
-		}, function (data, status) {
+		}, function (data, status, headers, config) {
+		    $scope.alert.push({
+			"type": "error",
+			"title": "Erreur lors de l'ajout<br>",
+			"content": "Data => " + data + "<br>Status => " + status + "<br>Headers => " + headers + "<br>Config => " + config,
+		    });
 		});
-	    }
+	    };
 	},
 
 	delete_elem: function (elem) {
@@ -564,6 +677,8 @@
     ng.module('casaApp.controllers', [])
 	.controller('CasaCtrl', CasaCtrl)
 	.controller('DispatchCtrl', DispatchCtrl)
+	.controller('DeliveryCtrl', DeliveryCtrl)
+	.controller('AffectationCtrl', AffectationCtrl)
 	.controller('ElementsSelectionCtrl', ElementsSelectionCtrl)
 	.controller('DateSelecterCtrl', DateSelecterCtrl)
 	.controller('RenderCtrl', RenderCtrl)

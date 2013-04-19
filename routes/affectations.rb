@@ -53,7 +53,7 @@ class MyApp < Sinatra::Application
                                          :state => params[:state],
                                          :day => params[:day],
                                          :start_time => params[:start_time],
-                                         :end_time => params[:end_time]})
+                                         :end_time => params[:end_time]}).to_json
     # redirect "/affectations"
   end
 

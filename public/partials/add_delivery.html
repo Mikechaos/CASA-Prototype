@@ -1,0 +1,65 @@
+<div class="alert fade " bs-alert="alert_not_functional">Pas encore fonctionnel!</div>
+<div ng-include src="'partials/copy_button_affectation.html'"></div>
+
+<div class="pane well well-large">
+  <fieldset>
+     <div class="span12" style="margin-left:0px;">
+       <div class="row">
+	 <div class="span7">
+	   <label>Bon de service :</label>
+	   <input type="text" ng-model="newAffectation.link_number">
+	 </div>
+       </div>
+       <div class="row">
+	 <div class="span3">
+	   <label>Livreur : </label>
+	   <select ng-options="sup.id as sup.name for sup in elements | elems:'Supervisor' | already_attr_elems:days:newAffectation.date:use_already_affected:newAffectation.supervisor_id | remove_affected:newAffectation.elems"
+		   ng-model="newAffectation.supervisor_id"></select>
+	 </div>
+	 <div class="span3">
+	   <label>&nbsp;</label>
+	   <button class="btn btn-info" ng-click="add_client();">Ajouter un client</button>
+	 </div>
+       </div>
+     </div>
+     <div class="row" ng-repeat="client in newAffectation.clients">
+       <hr style="width:125px">
+       <div class="span3">
+	 <label>Client :</label>
+	 <select type="text" ng-model="newAffectation.clients[$index].client_id" 
+		 ng-options="client.id as client.name for client in elements | elems:'Client'"></select>
+       </div>
+       <div class="span3">
+	 <label>Type :</label>
+	 <select type="text" ng-model="newAffectation.clients[$index].type">
+	   <option value="Livraison" selected>Livraison</option>
+	   <option value="Ramassage">Ramassage</option>
+	 </select>
+       </div>
+       <div class="span7">
+	 <label>Notes : </label>
+	 <input type="text" ng-model="newAffectation.clients[$index].note">
+       </div>
+     </div>
+  </fieldset>
+</div>
+<hr>
+
+<!-- SELECT TEAM -->
+<div cs-team-selection="true"></div>
+
+<!-- DISPLAY TEAM -->
+<div ng-include="'partials/display_team.html'"></div>
+
+<hr>
+<div class="row" style="clear: both; margin-bottom: 85px;">
+  <a href="" ng-show="mode == 'ADD'" class="btn btn-danger" ng-click="clear_all()" style="margin-left:33%; margin-top:25px;">Effacer</a>
+  <a href="" ng-show="mode == 'MODIFY'" class="btn btn-danger" ng-click="cancel_modification()" style="margin-left:33%; margin-top:25px;">Annuler</a>
+  <a href="" ng-show="!modifying" class="btn btn-success" ng-click="save_affectation('clear_all')" style="margin-left:2%; margin-top:25px;">Sauvegarder</a>
+  <a href="" ng-show="!modifying" class="btn btn-success" ng-click="save_affectation('clear_keep_team')" 
+     title="Sauvegarde l'affectation mes préserve l'équipe"
+     style="margin-left:2%; margin-top:25px;">Nouveau Client</a>
+  <a href="" ng-show="modifying" class="btn btn-success" ng-click="save_modification()" style="margin-left:2%; margin-top:25px;">Confirmer</a>
+  <a href="" ng-show="mode == 'MODIFY'" class="btn btn-danger" ng-click="reset_affectation()" title="Réinitialise l'affectation avant les modifications" 
+     style="margin-left:2%; margin-top:25px;">Réinitialiser</a>
+</div>

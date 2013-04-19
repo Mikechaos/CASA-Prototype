@@ -53,6 +53,39 @@ angular.module('casaApp.directives', []).
 
 	};
     })
+    .directive('csTeamSelection', function() {
+	return {
+	    templateUrl: 'partials/team_selection.html',
+	    compile: function(element, attrs) {
+		return function postLink(scope, element, attrs, controller) {
+		};
+	    },
+
+	};
+    })
+    .directive('csTeamDisplay', function() {
+	return {
+	    template:
+		'<div class="span3" ng-show="(newAffectation.elems | elems:type.strElem).length > 0">'
+		+ '<legend style="width:185px;">{{type.title}}</legend>'
+		+ '<div style="margin-left:75px;" class="pane well well-large employeeOnJob">'
+		    + '<div class="row modal-checkboxes" ng-repeat="elem in newAffectation.elems | elems:type.strElem">'
+		      + '<div class="span2 modal-label" style="margin-top:0px; margin-left:-15px;">{{elem.name}}</div>'
+		    + '</div>'
+   		  + '</div>'
+		+ '</div>',
+	    scope: true, // Isolated scope -> not shared between all components
+	    compile: function(element, attrs) {
+		return function postLink(scope, element, attrs, controller) {
+		    scope.type = {};
+		    attrs.$observe('csTeamDisplay', function (obj) {
+			scope.type = angular.fromJson(obj);
+		    });
+		};
+	    },
+
+	};
+    })
    
 
 // .directive('paneElem' function factory() {

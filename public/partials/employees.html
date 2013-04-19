@@ -7,7 +7,8 @@
     </ul>
     <div class="tab-content">
       <div class="tab-pane active" id="emp">
-	<div class="span6 forms">
+	<div class="alert fade " bs-alert="alert" ng-repeat="alert in alerts"></div>
+	<div class="span4 forms">
 	  <legend> Ajouter un nouvel employé</legend>
 	  <form>
 	    <label>Nom :</label>
@@ -23,7 +24,7 @@
 	    <button ng-show="modifying" class="btn btn-success" ng-click="submit_modification()">Confirmer</button>
 	  </form>
 	</div>
-	<div class="span6" ng-show="((elements | elems:'Employee').length + (elements | elems:'Supervisor').length) > 0">
+	<div class="span8" ng-show="((elements | elems:'Employee').length + (elements | elems:'Supervisor').length) > 0">
 	  <table class="table table-striped table-bordered">
 	    <tr>
 	      <th>&nbsp;</th>
@@ -55,6 +56,7 @@
       
       <!-- EMPLOYEE'S TYPE -->
       <div class="tab-pane" id="type" ng-controller="EmployeesTypesCtrl">
+	<div class="alert fade " bs-alert="alert" ng-repeat="alert in alerts"></div>
 	<div class="span6 forms">
 	  <legend> Ajouter un nouveau type d'employé</legend>
 	  <form>

@@ -33,16 +33,16 @@
 	  <i class="icon-time" style="position: relative;margin: -8.2px 0 0 -24px;"></i>
 	</div>
       </div>
-	<!-- Selection mode -->
-	<div ng-show="!affectation && !schedule_view" class="span12">
-	  <div class="span2" style="width:80px; margin-left:-10px;">
-	    <label style="float:left;"> Jusqu'au : </label>
-	  </div>
-	  <div class="span3 input-append" style="margin-left:-10px; margin-top:0;">
-	    <input type="text" ui-date="{ dateFormat: 'd MM, yy'}" ng-model="date.sndDate" style="padding-left:15px; width:135px;"/ >
-	    <a href="" ng-click="nextWeek();" class="btn-success btn">Sem. Prochaine</a>
-	  </div>
-	</div>
+      <!-- Selection mode -->
+      <div ng-show="!affectation && !schedule_view" class="span12">
+	<!-- <div class="span2" style="width:80px; margin-left:-10px;"> -->
+	<!--   <label style="float:left;"> Jusqu'au : </label> -->
+	<!-- </div> -->
+	<!-- <div class="span3 input-append" style="margin-left:-10px; margin-top:0;"> -->
+	<!--   <input type="text" ui-date="{ dateFormat: 'd MM, yy'}" ng-model="date.sndDate" style="padding-left:15px; width:135px;"/ > -->
+	<!--   <a href="" ng-click="nextWeek();" class="btn-success btn">Sem. Prochaine</a> -->
+	<!-- </div> -->
+      </div>
     </div>
     <div class="span2">
       <button href="" ng-show="!affectation" ng-click="set_mode(mode_enum.ADD);" class="btn btn-info" style="margin-top:10px;">Ajouter</button>
@@ -93,12 +93,22 @@
 
   <!-- ADDING AFFECTATION -->
   <div class="row span12" style="margin-left:5%;">
-    <div class="affectation" ng-show="affectation">
-      <!-- <div cs-add-affectation="newAffectation"></div> -->
-      <div ng-include src="'partials/add_affectation.html'"></div>
+    <div class="affectation tabbable" ng-show="affectation">
+      <ul>
+	<ul class="nav nav-tabs">
+	  <li class="active"><a ng-click="newAffect('Affectation')" href="#affectation_tab" data-toggle="tab">Affectation</a></li>
+	  <li><a ng-click="newAffect('Delivery')" href="#delivery_tab" data-toggle="tab">Livraison</a></li>
+	</ul>
+	<div class="tab-content" style="overflow:visible">
+	  <!-- <div cs-add-affectation="newAffectation"></div> -->
+	  <div ng-include src="'partials/add_affectation.html'" ng-controller="AffectationCtrl" class="tab-pane active" id="affectation_tab"></div>
+	  <div ng-include src="'partials/add_delivery.html'" ng-controller="DeliveryCtrl" class="tab-pane" id="delivery_tab">
+	  </div>
+	</div>
+      </ul>
     </div>
   </div>
-</div>
+</div>  
 
 <!-- ATTRIBUTED ELEMENT SCREEN -->
 <div class="AttributedElement" ng-show="attribute_elem_screen">
