@@ -54,10 +54,6 @@
 	    // sndDate: 0,
 	    sndDate: new Date(),
 	}
-	$scope.elements_class = [{name: "Supervisor", screen: "Superviseurs"},
-				{name: "Employee", screen: "Employés"},
-				{name: "Truck", screen: "Camions"},
-				{name: "Box", screen: "Coffres"}];
 	// $scope.date.sndDate = new Date($scope.date.today.getFullYear(), $scope.date.today.getMonth(), $scope.date.today.getDate() + 7),
 	// $scope.newAffectation = new Affectation();
 	$scope.affected_elems = App.affected_today;
@@ -67,22 +63,17 @@
 	$scope.$watch('date.fstDate', function (date) {
 	   $scope.$parent.report_date = date;
 	});
-	
-	$scope.$parent.fetch_all_promise.then(function () {
-	    $scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor').id;
-	    $scope.newAffectation.client_id = App.get_first('Client').id;
-	});
 
-	$scope.save_affectation = ng.bind(this, this.save_affectation);
-	$scope.clear_all = ng.bind(this, this.clear_all);
+	$scope.elements_class = [{name: "Supervisor", screen: "Superviseurs"},
+				 {name: "Employee", screen: "Employés"},
+				 {name: "Truck", screen: "Camions"},
+				 {name: "Box", screen: "Coffres"}];
+
 	$scope.delete_affectation = ng.bind(this, this.delete_affectation);
 	$scope.copy_affectation = ng.bind(this, this.copy_affectation);
 	$scope.modify_affectation = ng.bind(this, this.modify_affectation);
 	$scope.save_modification = ng.bind(this, this.save_modification);
 	$scope.reset_affectation = ng.bind(this, this.reset_affectation);
-	$scope.cancel_modification = ng.bind(this, this.cancel_modification);
-	$scope.post_affectation = ng.bind(this, this.post_affectation);
-	$scope.clear_team = ng.bind(this, this.clear_team);
 	$scope.quick_view = false;
 
 	$scope.filter = {};
@@ -95,19 +86,23 @@
 	});
 	
 	$scope.newAffect = function (type) {
-	    $scope.newAffectation = new Global[type];
+	    var event = (type === 'Delivery') ? 'newDelivery' : 'newAffectation';
+	    $scope.$broadcast(event);
 	};
 
 	$scope.$watch('$location.$$url', function (n, o) {
 	    // console.log(n, o, $location);
 	    $scope.clear_all();
 	});
+
+	$scope.active_screen = {affectation: "active", delivery: ""};
 	/*
 	$scope.validation_error = false;
 	$scope.alert: {	
 	    "type": "error",
 	    "title": "Erreur de validation!",
-	    "content": "Dans l'état actuel des choses, vous essayez d'attribuer des employés déjà attribués à cette affectaction. Essayez de déselectionner certaines journées"
+	    "content": "Dans l'état actuel des choses, vous essayez d'attribuer des employés déjà attribués à cette affectaction. 
+	    Essayez de déselectionner certaines journées"
 	};
 	$scope.$watch('days', function () {
 	    
@@ -171,7 +166,7 @@
 
 	cancel_modification: function () {
 	    this.reset_affectation();
-	    this.scope.mode = "INDIV";
+	    this.scope.$parent.mode = "INDIV";
 	    this.clear_all();
 	    
 	},
@@ -192,7 +187,7 @@
 
 	init_mod_or_copy_screen: function (affect, copy) {
 	    this.clear_all();
-	    this.scope.mode = "MODIFY";
+	    this.scope.$parent.mode = "MODIFY";
 	    (copy === true)
 		? this.scope.newAffectation.copy(affect)
 		: this.scope.newAffectation = affect;
@@ -266,12 +261,33 @@
 	    this.scope.modifying = false;
 	},
 
+	init_first: function ($scope) {
+	    $scope.save_affectation = ng.bind(this, this.save_affectation);
+	    $scope.clear_all = ng.bind(this, this.clear_all);
+	    $scope.post_affectation = ng.bind(this, this.post_affectation);
+	    $scope.clear_team = ng.bind(this, this.clear_team);
+	    $scope.cancel_modification = ng.bind(this, this.cancel_modification);
+
+	    var init = this.init.bind(this);
+	    // var set_client = this.add_client.bind(this);
+	    $scope.$parent.fetch_all_promise.then(function () {
+		init();
+		$scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor').id;
+		$scope.newAffectation.client_id = App.get_first('Client').id;
+		//set_client();
+	    });
+	},
+
+	set_affect_screen: function (screen) {
+	    for (prop in this.scope.active_screen) { this.scope.active_screen[prop] = ""}
+	    this.scope.active_screen[screen] = 'active';
+	},
+
 	clean: function () {
 	    forEach(this.scope.elements.list, function(e, i) {
 		e.selected = false;
 	    });
 	},
-
 
 	check_days: function () {
 	    var $scope = this.scope;
@@ -302,11 +318,22 @@
 	
     };
 
+    // function BaseAffectationCtrl($scope, $http) {
+
+    // }
+    
+    // BaseAffectationCtrl.prototype = {
+	
+    // };
+
     function AffectationCtrl($scope, $http) {
 	$scope.$parent.dateChanged = ng.bind(this, this.dateChanged);
-	console.log($scope.dateChanged);
 	$scope.$watch('newAffectation.date', this.dateChanged.bind(this));
+	$scope.save_affectation = ng.bind(this, this.save_affectation);
+	// $scope.$on('newAffectation', this.newAffectation.bind(this));
 	this.scope = $scope;
+	this.http = $http;
+	this.init_first($scope);
     }
 
     AffectationCtrl.prototype = {
@@ -330,6 +357,10 @@
 	    });
 	},
 
+	clear_affectation: function () {
+	    this.clear_all();
+	},
+
 	newAffectation: function () {
 	    this.scope.newAffectation = new Affectation;
 	},
@@ -340,8 +371,70 @@
 	    console.log('date change', this.scope.newAffectation.week_day(), this.scope.newAffectation);
 	    this.check_supervisor.call(this);
 	},
+
+	add_client: function () {
+	    this.scope.newAffectation.client_id = App.get_first('Client').id;
+	},
     };
     
+    function DeliveryCtrl($scope, $http) {
+	$scope.newAffectation = new Delivery;
+
+	// $scope.post_affectation = ng.bind(this, this.post_affectation);
+	$scope.save_affectation = ng.bind(this, this.save_affectation);
+	$scope.$watch('newAffectation.date', this.dateChanged.bind(this));
+	$scope.alert_not_functional = {
+	    "type": "error",
+	    "title": "Pas encore prêt!<br>",
+	    "content": "Seule l'interface est actuellement fonctionnelle. Cela vous permet de voir ce que ça aura l'air et de me partager si ça vous convient!",
+	};
+
+	// $scope.$on('newAffectation', this.clear_delivery.bind(this));
+	this.scope = $scope;
+	this.init_first($scope);
+	this.http = $http
+    };
+
+    DeliveryCtrl.prototype = {
+	add_client: function () {
+	    //this.scope.newAffectation.add_client(App.get_first('Client').id);
+
+	    this.scope.newAffectation.add_client(App.get_first('Client').id);
+	    console.log(this.scope);
+	},
+
+	post_affectation: function (a) {
+	    this.request_affectation('POST', new PostDelivery(a), '/deliveries', function (data) {
+	    	Delivery.createFromList([data]);
+	    });
+	    console.log("posting a delivery");
+	},
+
+	save_affectation: function (clearing_callback) {
+	    console.log('delivery save', this);
+	    this.__proto__.__proto__.save_affectation.call(this, clearing_callback); // hack
+	},	
+
+	clear_delivery: function () {
+	    this.clear_all();
+	},
+
+	newAffectation: function () {
+	    // this.clear_all();
+	    this.scope.newAffectation = new Delivery;
+	    // console.log('$on new Delivery', type);
+	},
+
+	dateChanged: function() {
+	    this.check_days.call(this);
+	    console.log('date change', this.scope.newAffectation.week_day(), this.scope.newAffectation);
+	    this.check_supervisor.call(this);
+	},
+
+    };
+    Inherits.multiple([[DeliveryCtrl], [AffectationCtrl]], DispatchCtrl);
+
+
     function DateSelecterCtrl($scope) {
 
 	// Date ui
@@ -379,60 +472,6 @@
 	return (this);
 
     };
-
-    function DeliveryCtrl($scope, $http) {
-	$scope.newAffectation = new Delivery;
-
-	// $scope.fetch_all_promise.then(function() {
-	//     $scope.newAffectation.add_client(App.get_first('Client').id);
-	// });
-	$scope.add_client = ng.bind(this, this.add_client);
-	// $scope.post_affectation = ng.bind(this, this.post_affectation);
-	$scope.save_affectation = ng.bind(this, this.save_affectation);
-	console.log($scope.dateChanged);
-	$scope.$watch('newAffectation.date', this.dateChanged.bind(this));
-	$scope.alert_not_functional = {
-	    "type": "error",
-	    "title": "Pas encore prêt!<br>",
-	    "content": "Seule l'interface est actuellement fonctionnelle. Cela vous permet de voir ce que ça aura l'air et de me partager si ça vous convient!",
-	};
-
-	this.scope = $scope;
-	this.http = $http
-    };
-
-    DeliveryCtrl.prototype = {
-	add_client: function () {
-	    //this.scope.newAffectation.add_client(App.get_first('Client').id);
-
-	    this.scope.newAffectation.add_client(App.get_first('Client').id);
-	    console.log(this.scope);
-	},
-
-	post_affectation: function (a) {
-	    this.request_affectation('POST', new PostDelivery(a), '/deliveries', function (data) {
-	    	Delivery.createFromList([data]);
-	    });
-	    console.log("posting a delivery");
-	},
-
-	save_affectation: function (clearing_callback) {
-	    console.log('delivery save', this);
-	    this.__proto__.__proto__.save_affectation.call(this, clearing_callback); // hack
-	},
-	
-	newAffectation: function () {
-	    this.scope.newAffectation = new Delivery;
-	},
-
-	dateChanged: function() {
-	    this.check_days.call(this);
-	    console.log('date change', this.scope.newAffectation.week_day(), this.scope.newAffectation);
-	    this.check_supervisor.call(this);
-	},
-
-    };
-    Inherits.multiple([[DeliveryCtrl], [AffectationCtrl]], DispatchCtrl);
 
     DateSelecterCtrl.prototype = { 
 	

@@ -294,7 +294,7 @@ Delivery.createFromList = function (data_base_affectations) {
 	a.date = new Date(dba.day);
 	a.date_format = a.format_date(a.date);
 	a.start_time = { time : dba.start_time};
-	a.supervisor_id = dba.supervisor_id;
+	a.supervisor_id = dba.deliverer_id;
 	a.clients = eval(dba.clients);
 	a.link_number = dba.link_number;
 	

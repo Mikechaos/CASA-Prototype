@@ -96,13 +96,14 @@
     <div class="affectation tabbable" ng-show="affectation">
       <ul>
 	<ul class="nav nav-tabs">
-	  <li class="active"><a ng-click="newAffect('Affectation')" href="#affectation_tab" data-toggle="tab">Affectation</a></li>
-	  <li><a ng-click="newAffect('Delivery')" href="#delivery_tab" data-toggle="tab">Livraison</a></li>
+	  <li class="{{active_screen.affectation}}"><a ng-click="newAffect('Affectation')" href="#affectation_tab" data-toggle="tab">Affectation</a></li>
+	  <li class="{{active_screen.delivery}}"><a ng-click="newAffect('Delivery')" href="#delivery_tab" data-toggle="tab">Livraison</a></li>
 	</ul>
 	<div class="tab-content" style="overflow:visible">
 	  <!-- <div cs-add-affectation="newAffectation"></div> -->
-	  <div ng-include src="'partials/add_affectation.html'" ng-controller="AffectationCtrl" class="tab-pane active" id="affectation_tab"></div>
-	  <div ng-include src="'partials/add_delivery.html'" ng-controller="DeliveryCtrl" class="tab-pane" id="delivery_tab">
+	  <div ng-include src="'partials/add_affectation.html'" ng-controller="AffectationCtrl" class="tab-pane {{active_screen.affectation}}"
+	       id="affectation_tab"></div>
+	  <div ng-include src="'partials/add_delivery.html'" ng-controller="DeliveryCtrl" class="tab-pane {{active_screen.delivery}}" id="delivery_tab">
 	  </div>
 	</div>
       </ul>
