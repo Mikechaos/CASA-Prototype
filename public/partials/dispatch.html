@@ -19,8 +19,8 @@
 	<div class="span3 input-append" style="margin-left:-10px; margin-top:0;">
 	  <input type="text"  ui-date="{ dateFormat: 'd MM, yy'}" ng-show="!affectation" 
 		 ng-model="date.fstDate" style="padding-left:15px; width:135px;"></input>
-	  <input type="text" ui-date="{ dateFormat: 'd MM, yy'}"  ng-show="affectation" 
-		 ng_model="newAffectation.date" style="padding-left:15px; width:135px;"></input>
+	  <input type="text" ui-date="{ dateFormat: 'd MM, yy'}"  ng-show="affectation"
+	  	 ng_model="$parent.newAffectation_date" style="padding-left:15px; width:135px;"></input>
 	  <a href="" ng-click="today();" class="btn-success btn">Aujourd'hui</a>
 	</div>
 	
@@ -29,9 +29,11 @@
 	  <label for="start_time_affect_id"> Heure de départ :</label>
 	</div>
 	<div class="control-group span2" ng-show="affectation">
-	  <input id="start_time_affect_id" style="width:85px; margin-top:-10px; margin-left:-27px;" type="text" ng-model="newAffectation.start_time.time" bs-timepicker>
+	  <input id="start_time_affect_id" style="width:85px; margin-top:-10px; margin-left:-27px;" type="text" 
+		 ng-model="$parent.newAffectation_time" bs-timepicker>
 	  <i class="icon-time" style="position: relative;margin: -8.2px 0 0 -24px;"></i>
 	</div>
+
       </div>
       <!-- Selection mode -->
       <div ng-show="!affectation && !schedule_view" class="span12">
@@ -54,7 +56,7 @@
     </div>
   </div>
 
-  <div ng-controller="RenderCtrl" ng-show="!affectation">
+  <div ng-show="!affectation">
     
     <!-- COMPLETE VIEW -->
     <form ng-show="!schedule_view && !affectation" style="margin-left:5%;" class="form-search filter_dispatch well span12 clearfix" style="clear:both;">
@@ -92,18 +94,18 @@
   </div>
 
   <!-- ADDING AFFECTATION -->
-  <div class="row span12" style="margin-left:5%;">
-    <div class="affectation tabbable" ng-show="affectation">
+  <div class="row span12" style="margin-left:5%;" ng-controller="BaseAffectationCtrl">
+    <div class="affectation tabbable" ng-show="$parent.affectation">
       <ul>
 	<ul class="nav nav-tabs">
-	  <li class="{{active_screen.affectation}}"><a ng-click="newAffect('Affectation')" href="#affectation_tab" data-toggle="tab">Affectation</a></li>
-	  <li class="{{active_screen.delivery}}"><a ng-click="newAffect('Delivery')" href="#delivery_tab" data-toggle="tab">Livraison</a></li>
+	  <li class="{{active_screen.Affectation}}"><a ng-click="newAffect('Affectation')" href="#affectation_tab" data-toggle="tab">Affectation</a></li>
+	  <li class="{{active_screen.Delivery}}"><a ng-click="newAffect('Delivery')" href="#delivery_tab" data-toggle="tab">Livraison</a></li>
 	</ul>
 	<div class="tab-content" style="overflow:visible">
 	  <!-- <div cs-add-affectation="newAffectation"></div> -->
-	  <div ng-include src="'partials/add_affectation.html'" ng-controller="AffectationCtrl" class="tab-pane {{active_screen.affectation}}"
+	  <div ng-include src="'partials/add_affectation.html'" ng-controller="AffectationCtrl" class="tab-pane {{active_screen.Affectation}}"
 	       id="affectation_tab"></div>
-	  <div ng-include src="'partials/add_delivery.html'" ng-controller="DeliveryCtrl" class="tab-pane {{active_screen.delivery}}" id="delivery_tab">
+	  <div ng-include src="'partials/add_delivery.html'" ng-controller="DeliveryCtrl" class="tab-pane {{active_screen.Delivery}}" id="delivery_tab">
 	  </div>
 	</div>
       </ul>

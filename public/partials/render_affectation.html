@@ -1,42 +1,89 @@
 <div class="clearfix" ng-show="$index % 2 == 0"></div>
-<div ng-show="affect.strClass != 'Delivery'" class="span6 affect_report" style="width:600px;">
-  <div class="span2 pull-left"><button class="pull-left btn btn-info btn-large span2" ng-click="copy_affectation(affect.id)">Copier</button></div>
-  <div class="span2 offset1"><button class="align-center btn btn-info btn-large span2" style="margin: 0 auto;" ng-click="modify_affectation(affect.id)">Modifier</button></div>
-  <div class="span2 pull-right"> <button class="pull-right btn btn-danger btn-large span2" ng-click="delete_affectation(affect.id)">Effacer</button></div>
-  <legend></legend>
-  <h4 style="margin-left:5%">{{affect.get_supervisor().name}} - {{affect.get_client().name}} - {{affect.link_number}}</h4>
+<div class="span6 affect_report" style="width:600px;">
+  <div class="span2 pull-left">
+    <button class="pull-left btn btn-info btn-large span2" ng-click="dispatch_action(affect, 'copy_affect')">Copier</button>
+  </div>
+  <div class="span2 offset1"><button class="btn btn-info btn-large span2" style="margin: 0 auto;" 
+				     ng-click="dispatch_action(affect, 'modify_affect')">Modifier</button>
+  </div>
+  <div class="span2 pull-right">
+    <button class="pull-right btn btn-danger btn-large span2" ng-click="dispatch_action(affect, 'delete_affect')">
+      Effacer
+    </button>
+  </div>
+  <div ng-show="affect.strClass == 'Affectation'" >
+    <legend></legend>
+    <h4 style="margin-left:5%">{{affect.get_supervisor().name}} - {{affect.get_client().name}} - {{affect.link_number}}</h4>
 
-  <table class="table">
-    <tr>
-      <th>Date</th>
-      <th>Heure de début</th>
-    </tr>
-    
-    <tr>
-      <td>{{affect.date_format}}</td>
-      <td>{{affect.start_time.time}}</td>
-    </tr>
-  </table>
-  <table class="table">
-    <tr>
-      <th class="span2">Numero de référence</th>
-      <th class="span2">Téléphone</th>
-      <th class="span2">Ville</th>
-      <th class="span3">Adresse</th>
-      <!-- <th>Notes</th> -->
-    </tr>
+    <table class="table">
+      <tr>
+	<th>Date</th>
+	<th>Heure de début</th>
+      </tr>
+      
+      <tr>
+	<td>{{affect.date_format}}</td>
+	<td>{{affect.start_time.time}}</td>
+      </tr>
+    </table>
+    <table class="table">
+      <tr>
+	<th class="span2">Numero de référence</th>
+	<th class="span2">Téléphone</th>
+	<th class="span2">Ville</th>
+	<th class="span3">Adresse</th>
+	<!-- <th>Notes</th> -->
+      </tr>
 
-    <tr>
-      <td>{{affect.get_client().ref_number}}</td>
-      <td>{{affect.get_client().phone}}</td>
-      <td>{{affect.get_client().city}}</td>
-      <td>{{affect.get_client().address}}</td>
-      <!-- <td>{{affect.get_client().notes}}</td> -->
-    </tr>
-  </table>
+      <tr>
+	<td>{{affect.get_client().ref_number}}</td>
+	<td>{{affect.get_client().phone}}</td>
+	<td>{{affect.get_client().city}}</td>
+	<td>{{affect.get_client().address}}</td>
+	<!-- <td>{{affect.get_client().notes}}</td> -->
+      </tr>
+    </table>
+  </div> <!-- Close ng-show Affectations -->
+  <div ng-show="affect.strClass == 'Delivery'">
+    <legend></legend>
+    <h4 style="margin-left:5%">{{affect.get_supervisor().name}} - {{affect.get_client().name}} - {{affect.link_number}}</h4>
+  <table class="table">
+       <tr>
+	 <th>Date</th>
+	 <th>Heure de début</th>
+       </tr>
+
+       <tr>
+	 <td>{{affect.date_format}}</td>
+	 <td>{{affect.start_time.time}}</td>
+       </tr>
+     </table>
+     <table class="table">
+       <tr>
+	 <th class="span4">Clients</th>
+	 <th class="span4">Notes</th>
+	 <th class="span2">Numero de référence</th>
+	 <th class="span2">Téléphone</th>
+	 <th class="span2">Ville</th>
+	 <th class="span3">Adresse</th>
+       </tr>
+
+       <tr ng-repeat="client in affect.clients">
+	 <td><strong>{{affect.get_client($index).name}}
+	     <span ng-show="client.type == 'Ramassage'">(R)</span><span ng-show="client.type == 'Livraison'">(L)</span></strong>
+	 </td>
+	 <td>{{client.note}}</td>
+	 <td>{{affect.get_client($index).ref_number}}</td>
+	 <td>{{affect.get_client($index).phone}}</td>
+	 <td>{{affect.get_client($index).city}}</td>
+	 <td>{{affect.get_client($index).address}}</td>
+	 <!-- <td>{{affect.get_client().notes}}</td> -->
+       </tr>
+     </table>
+  </div>
   <div class="render_elements_indiv">
 
-    <div class="span3" style="">
+    <div ng-show="(affect.elems | elems:'Supervisor').length > 0" class="span3" style="">
       <table class="table">
 	<tr>
 	  <th>Superviseur(s)</th>
@@ -48,7 +95,7 @@
 
       </table>
     </div>
-    <div class="span3" style="">
+    <div ng-show="(affect.elems | elems:'Employee').length > 0" class="span3" style="">
       <table class="table">
 	<tr>
 	  <th>Employé(s)</th>
@@ -60,7 +107,7 @@
 
       </table>
     </div>
-    <div class="span3" style="">
+    <div ng-show="(affect.elems | elems:'Truck').length > 0" class="span3" style="">
 
       <table class="table">
 	<tr>
@@ -73,7 +120,7 @@
 
       </table>
     </div>
-    <div class="span3" style="">
+    <div ng-show="(affect.elems | elems:'Box').length > 0" class="span3" style="">
       <table class="table">
 	<tr>
 	  <th>Coffre(s)</th>

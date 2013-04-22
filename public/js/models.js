@@ -267,6 +267,8 @@ function Delivery (d) {
     this.clients = [];
     this.add_client(App.get_first('Client').id);
     this.strClass = 'Delivery';
+    this.route = '/deliveries';
+    this.post_fn = 'PostDelivery';
     
 };
 
@@ -308,6 +310,7 @@ Delivery.createFromList = function (data_base_affectations) {
 	forEach(dba.elements, find_elem);
 	// forEach(dba.clients, findPelem);
 	a.height = Affectation.get_height(a);
+	a.strClass = "Delivery";
 	App.insert_affect(a);
     });
     
@@ -318,6 +321,8 @@ function Affectation () {
     BaseAffectation.call(this);
     //this.render();
     this.strClass = 'Affectation';
+    this.route = '/affectations';
+    this.post_fn = 'PostAffectation';
 }
 
 Affectation.createFromList = function (data_base_affectations) {
@@ -342,6 +347,7 @@ Affectation.createFromList = function (data_base_affectations) {
 	    a.elems.push(App.elems.get(App.elems.search_index(e, function (elem, e) {return e.id === elem.id && e.strElem === elem.strElem})));
 	});
 	a.height = Affectation.get_height(a);
+	a.strClass = "Affectation";
 	App.insert_affect(a);
     });
     
@@ -644,6 +650,10 @@ AffectationList.prototype =  {
 		return new RegExp('(^|\\s)' + elem_name).test(elem.name);
 	    });
 	}));
+    },
+
+    by_id: function (obj, affect) {
+	return obj.id === affect.id && obj.strClass === affect.strClass;
     },
 
     get_todays: function () {
