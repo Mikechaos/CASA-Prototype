@@ -137,7 +137,6 @@ angular.module('casaApp.filters', []).
 	    forEach(types, function (t) {
 		var id = emp_t[search_index(emp_t, t, function (e, t) { return e.type === t})].id
 		elems = element.list.filter(function (e) {return e.employees_type_id === id});
-		console.log(elems);
 	    });
 
 	    return elems;

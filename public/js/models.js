@@ -301,11 +301,8 @@ Delivery.prototype = {
 	forEach(types, function (t) {
 	    ids.push(emp_t[search_index(emp_t, t, function (e, t) { return e.type === t})].id);
 	});
-	console.log(ids);
 	App.elems.forEach(function (e) {
-	    console.log(e.employees_type_id);
 	    if (ids.indexOf(e.employees_type_id) == -1 || affected.is_affected(e)) return true;
-	    console.log(e);
 	    elem = e; return false
 	});
 	return elem.id;

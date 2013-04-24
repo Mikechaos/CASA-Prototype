@@ -130,9 +130,8 @@ function insertion_sort(array, x, predicate) {
 }
 
 function deepCopy(obj) {
-    if (typeof obj !== "object") return obj;
+    if (typeof obj !== "object" || obj === null) return obj;
     if (obj.constructor === RegExp) return obj;
-
     var retVal = new obj.constructor();
     for (var key in obj) {
         if (!obj.hasOwnProperty(key)) continue;

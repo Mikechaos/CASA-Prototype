@@ -16,13 +16,15 @@
 	  <label style="float:left;"> En date du : </label>
 	</div>
 	<!-- <input type="text" class="datepicker " value="2013-02-28" style="padding-left:15px;"> -->
-	<div class="span3 input-append" style="margin-left:-10px; margin-top:0;">
-	  <input type="text"  ui-date="{ dateFormat: 'd MM, yy'}" ng-show="!affectation" 
+	<div ng-show="!affectation" class="span3 input-append" style="margin-left:-10px; margin-top:0;">
+	  <input type="text"  ui-date="{ dateFormat: 'd MM, yy'}"  
 		 ng-model="date.fstDate" style="padding-left:15px; width:135px;">
 	  <a href="" ng-show="!affectation" ng-click="today();" class="btn-success btn">Aujourd'hui</a>
-	  <input type="text" ui-date="{ dateFormat: 'd MM, yy'}"  ng-show="affectation"
+	</div>
+	<div ng-show="affectation" class="span3 input-append" style="margin-left:-10px; margin-top:0;">
+	  <input type="text" ui-date="{ dateFormat: 'd MM, yy'}"
 	  	 ng_model="$parent.newAffectation_date" style="padding-left:15px; width:135px;">
-	  <a href="" ng-show="affectation" ng-click="today_affect_btn();" class="btn-success btn">Aujourd'hui</a>
+	  <a href="" ng-click="today_affect_btn();" class="btn-success btn">Aujourd'hui</a>
 	</div>
 	
 	<!-- Add mode -->
