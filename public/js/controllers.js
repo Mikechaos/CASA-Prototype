@@ -67,8 +67,9 @@
 	$scope.filter = {};
 
 	// hack needed because of the hierarchy of the controllers...
-	// $scope.newAffectation_date = new Date;
-	// $scope.newAffectation_time = "06:00AM";
+	$scope.today_affect_btn = function () {
+	    $scope.newAffectation_date = new Date();
+	};
 	$scope.$watch('newAffectation_date', function (date) {
 	    $scope.$broadcast('set_date', date);
 	});
@@ -83,6 +84,7 @@
     DispatchCtrl.prototype = {
 
 	dispatch_action: function (affect, action_type) {
+	    console.log(affect);
 	    this.scope.$broadcast('report_action', affect, action_type);
 	},
 
@@ -281,7 +283,7 @@
 	save_modification: function () {
 	    this.scope.before_modif_affect.copy(this.scope.newAffectation);
 	    this.put_affectation(this.scope.newAffectation);
-	    console.log('Test', this.scope.before_modif_affect);
+	    // console.log('Test', this.scope.before_modif_affect);
 	    this.scope.$parent.$parent.mode = "INDIV";
 	    this.clear_all();
 	    this.scope.safeApply();
@@ -289,7 +291,7 @@
 
 	init_mod_or_copy_screen: function (affect, copy) {
 	    this.clear_all();
-	    this.scope.$parent.set_affect_screen(affect.strClass);
+	    this.set_affect_screen(affect.strClass);
 	    this.scope.$parent.$parent.mode = "MODIFY";
 	    (copy === true)
 		? this.scope.newAffectation.copy(affect)
@@ -300,6 +302,8 @@
 	},
 
 	reset_affectation: function () {
+	    console.log(this.scope.before_modif_affect);
+	    this.scope.newAffectation.clients = [];
 	    this.scope.newAffectation.copy(this.scope.before_modif_affect);
 	},
 
@@ -419,12 +423,14 @@
     function DeliveryCtrl($scope, $http) {
 	$scope.strClass = 'Delivery';
 	// $scope.post_affectation = ng.bind(this, this.post_affectation);
-	$scope.add_client = ng.bind(this, this.add_client);
 	$scope.alert_not_functional = {
 	    "type": "error",
 	    "title": "Pas encore prêt!<br>",
 	    "content": "Seule l'interface est actuellement fonctionnelle. Cela vous permet de voir ce que ça aura l'air et de me partager si ça vous convient!",
 	};
+
+	$scope.add_client = ng.bind(this, this.add_client);
+	$scope.delete_client = ng.bind(this, this.delete_client);
 
 	// $scope.$on('newAffectation', this.clear_delivery.bind(this));
 	this.scope = $scope;
@@ -435,6 +441,10 @@
     DeliveryCtrl.prototype = {
 	add_client: function () {
 	    this.scope.newAffectation.add_client(App.get_first('Client').id);
+	},
+
+	delete_client: function (index) {
+	    this.scope.newAffectation.delete_client(index);
 	},
 
 	post_affectation: function (a) {
@@ -472,7 +482,7 @@
 
 	// Date ui
 	$scope.today = function () {
-	    this.date.fstDate = new Date();
+	    this.$parent.date.fstDate = new Date();
 	}
 
 	$scope.nextWeek = function () {

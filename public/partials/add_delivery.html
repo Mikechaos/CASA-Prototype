@@ -36,6 +36,10 @@
 	   <option value="Ramassage">Ramassage</option>
 	 </select>
        </div>
+       <div class="span1" ng-show="$index != 0" style="margin-left: -40px; margin-top: 4px;">
+	 <label>&nbsp;</label>
+	 <button class="close" ng-click="delete_client($index)">&times;</button>
+       </div>
        <div class="span7">
 	 <label>Notes : </label>
 	 <input type="text" ng-model="newAffectation.clients[$index].note">
@@ -56,9 +60,6 @@
   <a href="" ng-show="mode == 'ADD'" class="btn btn-danger" ng-click="clear_all()" style="margin-left:33%; margin-top:25px;">Effacer</a>
   <a href="" ng-show="mode == 'MODIFY'" class="btn btn-danger" ng-click="cancel_modification()" style="margin-left:33%; margin-top:25px;">Annuler</a>
   <a href="" ng-show="!modifying" class="btn btn-success" ng-click="save_affectation('clear_all')" style="margin-left:2%; margin-top:25px;">Sauvegarder</a>
-  <a href="" ng-show="!modifying" class="btn btn-success" ng-click="save_affectation('clear_keep_team')" 
-     title="Sauvegarde l'affectation mes préserve l'équipe"
-     style="margin-left:2%; margin-top:25px;">Nouveau Client</a>
   <a href="" ng-show="modifying" class="btn btn-success" ng-click="save_modification()" style="margin-left:2%; margin-top:25px;">Confirmer</a>
   <a href="" ng-show="mode == 'MODIFY'" class="btn btn-danger" ng-click="reset_affectation()" title="Réinitialise l'affectation avant les modifications" 
      style="margin-left:2%; margin-top:25px;">Réinitialiser</a>

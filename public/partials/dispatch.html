@@ -19,9 +19,10 @@
 	<div class="span3 input-append" style="margin-left:-10px; margin-top:0;">
 	  <input type="text"  ui-date="{ dateFormat: 'd MM, yy'}" ng-show="!affectation" 
 		 ng-model="date.fstDate" style="padding-left:15px; width:135px;"></input>
+	  <a href="" ng-show="!affectation" ng-click="today();" class="btn-success btn">Aujourd'hui</a>
 	  <input type="text" ui-date="{ dateFormat: 'd MM, yy'}"  ng-show="affectation"
 	  	 ng_model="$parent.newAffectation_date" style="padding-left:15px; width:135px;"></input>
-	  <a href="" ng-click="today();" class="btn-success btn">Aujourd'hui</a>
+	  <a href="" ng-show="affectation" ng-click="today_affect_btn();" class="btn-success btn">Aujourd'hui</a>
 	</div>
 	
 	<!-- Add mode -->
@@ -79,7 +80,7 @@
       </div>
     </form>
     <div ng-show="!schedule_view && !affectation" class="span12" style="width: 1450px">
-      <div ng-repeat="affect in affectations | between:date.fstDate:date.sndDate | affect_by_fields:filter.supervisor:filter.element:filter.client:filter.link">
+      <div ng-repeat="affect in affectations | between:date.fstDate | affect_by_fields:filter.supervisor:filter.element:filter.client:filter.link">
 	<div ng-model="affect" cs-render-affectation="true"></div>
       </div>
     </div>

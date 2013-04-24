@@ -39,17 +39,6 @@
 	<td><strong>{{affect.get_supervisor().name}}</strong></td>
       </tr>
     </tbody>
-    <tbody ng-repeat="client in affect.clients">
-      <tr>
-  	<td id="client_name{{$index}}"><strong>{{affect.get_client($index).name}}</strong></td>
-      </tr>
-      <tr>
-  	<td id="client_type{{$index}}">{{client.type}}</td>
-      </tr>
-      <tr ng-show="client.note != ''">
-  	<td id="client_note{{$index}}">{{client.note}}</td>
-      </tr>
-    </tbody>
     <tbody style="border-top:3px solid #dddddd;">
       <tr ng-repeat="elem in affect.elems | elems:'Supervisor'">
 	<td>{{elem.name}}</td>
@@ -62,6 +51,17 @@
       </tr>
       <tr id="id_box1" ng-repeat="elem in affect.elems | elems:'Box'">
 	<td>{{elem.name}}</td>
+      </tr>
+    </tbody>
+    <tbody style="border-top:6px solid #CCCCCC;" ng-repeat="client in affect.clients">
+      <tr>
+  	<td id="client_name{{$index}}"><strong>{{affect.get_client($index).name}}</strong></td>
+      </tr>
+      <tr>
+  	<td id="client_type{{$index}}">{{client.type}}</td>
+      </tr>
+      <tr ng-show="client.note != ''">
+  	<td id="client_note{{$index}}">{{client.note}}</td>
       </tr>
     </tbody>
   </table>

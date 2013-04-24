@@ -234,11 +234,12 @@ BaseAffectation.prototype = {
     // Modification to existent Object
     copy: function (c) {
 	for (prop in c) {
-	    if (typeof c[prop] === "function" || this.hasOwnProperty(prop) === false) continue;
-	    this[prop] = c[prop];
+	    // if (typeof c[prop] === "function" || this.hasOwnProperty(prop) === false) continue;
 	    if (prop === "date") {
 		this[prop] = new Date(c[prop].getFullYear(), c[prop].getMonth(), c[prop].getDate());
+		continue;
 	    }
+	    this[prop] = deepCopy(c[prop]);
 	}
 	return this;
     },
@@ -284,6 +285,10 @@ Delivery.prototype = {
 	var client = App.elems.get_by_id({id: this.clients[client_index].client_id, strElem: "Client"})
 	if (client === undefined) client = {};
 	return client;
+    },
+
+    delete_client: function (client_index) {
+	if (client_index !== undefined) this.clients.splice(client_index, 1);	
     },
 
 };
