@@ -129,6 +129,20 @@ angular.module('casaApp.filters', []).
 	    return affectations;
 	}
     })
+    .filter('filter_deliverer', function () {
+	return function (element) {
+	    var types = ['Livreur'];
+	    var elems = [];
+	    var emp_t = App.elems.filter_elements('EmployeesType')
+	    forEach(types, function (t) {
+		var id = emp_t[search_index(emp_t, t, function (e, t) { return e.type === t})].id
+		elems = element.list.filter(function (e) {return e.employees_type_id === id});
+		console.log(elems);
+	    });
+
+	    return elems;
+	};
+    })
     .filter('affect_by_elements', function () {
 	return function (element) {
 	    

@@ -333,9 +333,13 @@
 	    // console.log(this.scope.keep_team, this.scope.mode, this.scope.newAffectation, this.scope);
 	    if (this.scope.keep_team !== true && this.scope.mode !== 'MODIFY') {
 		if (affected.is_include(this.scope.newAffectation.get_supervisor()) || this.scope.newAffectation.supervisor_id === undefined ) {
-		    this.scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor', this.scope.newAffectation.date, affected).id;
+		   this.set_supervisor();
 		}
 	    }
+	},
+	
+	set_supervisor: function () {
+	    this.scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor', this.scope.newAffectation.date, affected).id;
 	},
 
 	// REPORT ACTIONS
@@ -445,6 +449,10 @@
 
 	delete_client: function (index) {
 	    this.scope.newAffectation.delete_client(index);
+	},
+
+	set_supervisor: function () {
+	    this.scope.newAffectation.supervisor_id = this.scope.newAffectation.get_first_deliverer_not_affected();
 	},
 
 	post_affectation: function (a) {

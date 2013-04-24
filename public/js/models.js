@@ -270,6 +270,7 @@ function Delivery (d) {
     this.strClass = 'Delivery';
     this.route = '/deliveries';
     this.post_fn = 'PostDelivery';
+    this.supervisor_id = this.get_first_deliverer_not_affected();
     
 };
 
@@ -289,6 +290,26 @@ Delivery.prototype = {
 
     delete_client: function (client_index) {
 	if (client_index !== undefined) this.clients.splice(client_index, 1);	
+    },
+    
+    get_first_deliverer_not_affected: function () {
+	var affected = App.verify_day(this.date);
+	var elem = false;
+	var ids = [];
+	var types = ['Livreur'];
+	var emp_t = App.elems.filter_elements('EmployeesType')
+	forEach(types, function (t) {
+	    ids.push(emp_t[search_index(emp_t, t, function (e, t) { return e.type === t})].id);
+	});
+	console.log(ids);
+	App.elems.forEach(function (e) {
+	    console.log(e.employees_type_id);
+	    if (ids.indexOf(e.employees_type_id) == -1 || affected.is_affected(e)) return true;
+	    console.log(e);
+	    elem = e; return false
+	});
+	return elem.id;
+
     },
 
 };
@@ -584,6 +605,8 @@ ElementList.prototype = {
     sort_predicate: function (to_insert, in_place) {
 	return to_insert.name > in_place.name && to_insert.strElem === in_place.strElem;
     },
+
+    
 };
 
 function AffectedList() {
