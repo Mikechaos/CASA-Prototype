@@ -84,7 +84,6 @@
     DispatchCtrl.prototype = {
 
 	dispatch_action: function (affect, action_type) {
-	    console.log(affect);
 	    this.scope.$broadcast('report_action', affect, action_type);
 	},
 
@@ -298,11 +297,13 @@
 		: this.scope.newAffectation = affect;
 	    this.scope.elems = this.scope.newAffectation.elems.list;
 	    this.select_elem();
+	    
+	    this.scope.$parent.$parent.newAffectation_date = this.scope.newAffectation.date;
+	    this.scope.$parent.$parent.newAffectation_time = this.scope.newAffectation.start_time.time;
 	    this.scope.before_modif_affect = new Global[affect.strClass]().copy(this.scope.newAffectation)
 	},
 
 	reset_affectation: function () {
-	    console.log(this.scope.before_modif_affect);
 	    this.scope.newAffectation.clients = [];
 	    this.scope.newAffectation.copy(this.scope.before_modif_affect);
 	},
@@ -320,7 +321,7 @@
 
 	check_days: function () {
 	    var $scope = this.scope;
-	    forEach(Date.days, function (d) {
+ 	    forEach(Date.days, function (d) {
 		$scope.days[d] = false;
 	    });
 	    this.scope.days[this.scope.newAffectation.week_day()] = true;
