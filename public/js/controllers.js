@@ -333,12 +333,12 @@
 	    // console.log(this.scope.keep_team, this.scope.mode, this.scope.newAffectation, this.scope);
 	    if (this.scope.keep_team !== true && this.scope.mode !== 'MODIFY') {
 		if (affected.is_include(this.scope.newAffectation.get_supervisor()) || this.scope.newAffectation.supervisor_id === undefined ) {
-		   this.set_supervisor();
+		   this.set_supervisor(affected);
 		}
 	    }
 	},
 	
-	set_supervisor: function () {
+	set_supervisor: function (affected) {
 	    this.scope.newAffectation.supervisor_id = App.get_first_not_affected('Supervisor', this.scope.newAffectation.date, affected).id;
 	},
 

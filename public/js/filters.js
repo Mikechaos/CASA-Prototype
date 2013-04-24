@@ -101,19 +101,19 @@ angular.module('casaApp.filters', []).
 	    // (function filter_by_field (array) {
 	    if (supervisor !== undefined && supervisor.length !== 0) {
 		affectations = affectations.filter(function (a) {
-		    return new RegExp('(^|\\s)' + supervisor).test(a.get_supervisor().name);
+		    return new RegExp('(^|\\s)' + supervisor, 'i').test(a.get_supervisor().name);
 		});
 	    }
 	    if (link_number !== undefined && link_number.length !== 0) {
 		affectations = affectations.filter(function (a) {
-		    return new RegExp('(^|\\s)' + link_number).test(a["link_number"]);
+		    return new RegExp('(^|\\s)' + link_number, 'i').test(a["link_number"]);
 		});
 	    }
 	    // })(affectations);
 	    // (function filter_by_client (array) {
 	    if (client !== undefined && client.length !== 0) {
 	    	affectations = affectations.filter(function (a) {
-	    	    return new RegExp('(^|\\s)' + client).test(a.get_client().name);
+	    	    return new RegExp('(^|\\s)' + client, 'i').test(a.get_client().name);
 	    	});
 	    }
 	    // })(affectations);
@@ -121,7 +121,7 @@ angular.module('casaApp.filters', []).
 	    if (element !== undefined && element.length !== 0) {
 	    	affectations = affectations.filter(function (a) {
 	    	    return a.elems.is_include(element, function (elem, elem_name) {
-	    		return new RegExp('(^|\\s)' + elem_name).test(elem.name);
+	    		return new RegExp('(^|\\s)' + elem_name, 'i').test(elem.name);
 	    	    });
 	    	});
 	    }
