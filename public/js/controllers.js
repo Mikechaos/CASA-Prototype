@@ -825,8 +825,16 @@
 		};
 	    });
 	});
+	$scope.login_error = {
+	    "type": "error",
+	    "title": "Erreur de connexion",
+	    "content": "Mot de passe incorrect.",
+	};
 
+	$scope.login_alert = false;
 	$scope.login = ng.bind(this, this.login);
+	$scope.close_login_alert = function () { $scope.login_alert = false; }
+	
 	this.scope = $scope;
 	this.rootScope = $rootScope;
     };
@@ -843,6 +851,9 @@
 		this.scope.$parent.$parent.user_id = this.scope.user.id;
 		this.scope.location.path('/dispatch');
 		
+	    } else {
+		this.scope.login_alert = true;
+		this.scope.user.password = '';
 	    }
 	},
     };

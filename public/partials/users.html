@@ -11,12 +11,16 @@
 </div>
 
 <!-- LOGIN -->
-<div class="span4 forms" ng-controller="LoginCtrl">
-  <form>
-    <label>Utilisateur</label>
-    <select ng-model="user.id" ng-options="user.id as user.name for user in users"></select>
-    <label>Mot de passe</label>
-    <input type="password" ng-model="user.password">
-    <button class="btn btn-success" ng-click="login();">Se connecter</button>
-  </form>
+<div class="span4" ng-controller="LoginCtrl">
+  {{login_alert}}
+  <div class="alert" ng-show="login_alert" bs-alert="login_error"></div>
+  <div class="forms">
+    <form>
+      <label>Utilisateur</label>
+      <select ng-model="user.id" ng-options="user.id as user.name for user in users"></select>
+      <label>Mot de passe</label>
+      <input type="password" ng-model="user.password">
+      <button class="btn btn-success" ng-click="login();">Se connecter</button>
+    </form>
+  </div>
 </div>
