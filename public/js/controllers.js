@@ -3,14 +3,17 @@
 /* Controllers */
 
 
-(function (ng, app, $http, fetch_all) {
+(function (ng, app, $http, $route, fetch_all) {
 
     // CASA CONTROLLER
-    function CasaCtrl($scope, fetch_all)
+    function CasaCtrl($scope, $http, $route, $location, fetch_all)
     {
+	$scope.init_location = $location.path();
+	$location.path("/login");
 	$scope.elements = App.elems;
 	this.scope = $scope;
 	
+	$scope.User_class = USER_CLASS
 
 	$scope.safeApply = function(fn) {
 	    var phase = this.$root.$$phase;
@@ -25,19 +28,58 @@
 	this.scope.root = '/#/';
 	this.scope.fetched_all = fetch_all;
 	this.scope.showingDayDetails = false;
+	this.scope.location = $location;
 
+	$scope.http_request = ng.bind(this, this.http_request);
+
+	$scope.logout = function () {
+	    $scope.http_request('POST', {}, '/logout', function () {
+		$scope.user_connected = false; $scope.user_id = 0;
+		$location.path('/login');
+	    });
+	};
+
+	$scope.get_user = ng.bind(App, App.get_user);
+	$scope.required_type = function (min) {return $scope.get_user($scope.user_id).type < min};
+	
+	// Get if user is connected
+	fetch_all.then(function () {
+	    $scope.http_request('GET', {}, '/session', function (data) {
+		if (data.session_id != '') {
+		    console.log('connected');
+		    $scope.user_connected = true;
+		    $scope.user_id = parseInt(data.session_id);
+		    if ($scope.init_location === '/login') $scope.init_location = '/dispatch';
+		    $location.path($scope.init_location);
+		    // console.log('user_id', $scope.get_user($scope.user_id))
+		    
+		} else {
+		    console.log('not connected');
+		    $scope.user_connected = false;
+		    $scope.user_id = 0;
+		    console.log($location.path());
+		}
+	    }, function (data) {console.log('error', data);});
+	});
 	// this.scope.data_promise = fetch_all_data;
 	// console.log(this.scope.data_promise);
 	// fetch_all_data.then(function () { console.log("hmm"); affectation_data().success(function () {console.log('wooh!')})});
 
 	this.scope.report_date = new Date;
 	this.scope.fetch_all_promise = fetch_all;
+	this.http = $http;
 	return (this);
     }
     
     CasaCtrl.prototype = {
 	
-	// Method definition
+	http_request: function(method, params, route, callback_success, callback_error) {
+	    callback_success = callback_success || function () {};
+	    callback_error = callback_error || function () {};
+	    this.http({method: method,  url: route, params: params, headers: "application/x-www-form-urlencoded"})
+		.success(function (data, status) {callback_success(data, status)})
+		.error(function () {callback_error()});
+	},
 	
     };
 
@@ -764,6 +806,67 @@
 
     };
 
+    function SessionCtrl ($scope, $http) {
+	this.http = $http;
+	this.scope = $scope;
+    }
+
+    SessionCtrl.prototype = {
+
+    };
+
+    function LoginCtrl ($scope, $rootScope) {
+	$scope.fetch_all_promise.then(function () {
+	    $scope.safeApply(function () {
+		$scope.users = App.users
+		$scope.user = {
+		    id: $scope.users[0].id,
+		    password: "",
+		};
+	    });
+	});
+
+	$scope.login = ng.bind(this, this.login);
+	this.scope = $scope;
+	this.rootScope = $rootScope;
+    };
+
+    LoginCtrl.prototype = {
+	login: function () {
+	    this.scope.http_request('GET', this.scope.user, '/users/' + App.get_user(this.scope.user.id).name, this.connect.bind(this), 
+				    function (data) {console.log('error', data)});
+	},
+
+	connect: function (data) {
+	    if (data === "true") {
+		this.scope.$parent.$parent.user_connected = true;
+		this.scope.$parent.$parent.user_id = this.scope.user.id;
+		this.scope.location.path('/dispatch');
+		
+	    }
+	},
+    };
+
+    function RegisterCtrl ($scope) {
+
+	$scope.user = {
+	    name: 'Mike',
+	    password: 'Mike',
+	};
+
+	$scope.register_user = ng.bind(this, this.register_user);
+	this.scope = $scope;
+	// $scope.register_user();
+    }
+
+    RegisterCtrl.prototype = {
+	register_user: function () {
+	    this.scope.http_request('POST', this.scope.user, '/users', 
+				    function (data) {console.log(data)}, 
+				    function (data) {console.log('error', data)});
+	}
+    };
+
     
     ng.module('casaApp.controllers', [])
 	.controller('CasaCtrl', CasaCtrl)
@@ -782,7 +885,10 @@
 	.controller('EmployeesCtrl', EmployeesCtrl)
 	.controller('EmployeesTypesCtrl', EmployeesTypesCtrl)
 	.controller('UsersCtrl', function(){})
-	.controller('DayDetailsCtrl', DayDetailsCtrl);
+	.controller('DayDetailsCtrl', DayDetailsCtrl)
+	.controller('SessionCtrl', SessionCtrl)
+	.controller('RegisterCtrl', RegisterCtrl)
+	.controller('LoginCtrl', LoginCtrl)
     
 }(angular, casaApp));
 

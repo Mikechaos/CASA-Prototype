@@ -129,6 +129,8 @@ function insertion_sort(array, x, predicate) {
     else array.splice(i_tmp, 1, x, tmp);
 }
 
+
+// Deep Copy all an object's properties
 function deepCopy(obj) {
     if (typeof obj !== "object" || obj === null) return obj;
     if (obj.constructor === RegExp) return obj;
@@ -138,6 +140,10 @@ function deepCopy(obj) {
         retVal[key] = deepCopy(obj[key]);
     }
     return retVal;
+}
+
+function get_params(params) {
+    //parseInt(window.location.hash.substr(window.location.hash.search(/\?date=/)+ new String('?date=')
 }
 
 Date.prototype.getFullDate = function(days) {

@@ -14,6 +14,8 @@ var casaApp = angular.module('casaApp', ['casaApp.filters', 'casaApp.services', 
 	    .when('/boxes', {templateUrl: 'partials/boxes.html', controller: 'AddElems'})
 	    .when('/utilisateurs', {templateUrl: 'partials/user.html', controller: 'AddElems'})
 	    .when('/day_details', {templateUrl: 'partials/day_details.html', controller: 'DayDetailsCtrl'})
+	    .when('/login', {templateUrl: 'partials/users.html?page=login', controller: 'SessionCtrl'})
+	    // .when('/logout', {templateUrl: 'partials/users.html?page=logout', controller: 'SessionCtrl'})
 	    .otherwise({redirectTo: '/dispatch'});
 
     }]);

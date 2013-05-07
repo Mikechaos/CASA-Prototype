@@ -21,11 +21,11 @@
 #  end
 
 #   get "/login" do
-#     haml :login
+#     # haml :login
 #   end
 
 #   post "/login" do
-#     session[:user_id] = User.authentificate(params)
+#     session[:user_id] = User.authenticate(params)
 #   end
 
 #   get "/logout" do
@@ -33,12 +33,12 @@
 #   end
 
 #   get "/register" do
-#     haml :register
+#     # haml :register
 #   end
 
 #   post "/register" do
 #     user = User.register(params)
 
-#     redirect '/register'
+#     # redirect '/register'
 #   end
 # end

@@ -11,6 +11,35 @@ var STATE = {
     DELETED: 4,
 }
 
+
+var USER_CLASS = {
+    ADMIN: 1,
+    DISPATCH: 2,
+    SUPERVISOR: 4,
+    BASIC_USER: 10
+};
+
+function User(user) {
+    user = user || {};
+    this.id = user.id || 0;
+    this.name = user.name || "";
+    this.state = user.state || 1;
+    this.type = user.type || 10;
+    this.strElem = "User";
+    this.route = "/users";
+};
+
+User.createFromList = function (userList) {
+    forEach(userList, function (user) {
+	App.users.push(new User(user));
+    });
+    console.log(userList);
+    return App.users;
+};
+
+User.prototype = {
+};
+
 // Abstract interface for underlying elements
 function Element (elem) {
     this.strElem = this.constructor.name;
@@ -79,7 +108,7 @@ function Employee (emp) {
 	this.set_string_type();
     } else {
 	this.employees_type_id = this.employees_type_id || // if already defined by Supervisor constructor
-	    App.elems.search_index(null, function (elem, e) {return elem.strElem === 'EmployeesType' && elem.type === "installateur"});
+	App.elems.search_index(null, function (elem, e) {return elem.strElem === 'EmployeesType' && elem.type === "installateur"});
     }
     this.route = "/employees";
 }
@@ -97,9 +126,9 @@ Employee.prototype = {
 	return this.type;
     },
 
-   // get_deletion_confirmation: function() {
-   //     return this.constructor.superClass.get_deletion_confirmation(this.name);
-   // },
+    // get_deletion_confirmation: function() {
+    //     return this.constructor.superClass.get_deletion_confirmation(this.name);
+    // },
 };
 
 function Supervisor (sup) {
@@ -117,7 +146,7 @@ function EmployeesType (emp_type) {
 
 EmployeesType.prototype = {
     get_deletion_confirmation: function() {
-       return this.constructor.superClass.get_deletion_confirmation(this.type);
+	return this.constructor.superClass.get_deletion_confirmation(this.type);
     },
 };
 
@@ -174,7 +203,7 @@ function BaseAffectation () {
 }
 
 BaseAffectation.prototype = {
-  
+    
     is_between_dates: function (fst, snd) {
     	return Date.compare(this.date, fst) != -1 && Date.compare(this.date, snd) != 1;
     },
@@ -395,7 +424,7 @@ Affectation.get_line_count = function (a) {
 };
 
 Affectation.prototype = {
-  
+    
 };
 
 function BasePostAffectation (a) {
@@ -547,7 +576,7 @@ ListClass.prototype = {
 	return searched_id === elem.id;
     }
 
-  
+    
 };
 
 // ELEMENT_LIST //
@@ -730,6 +759,8 @@ var App = {
     affected_today: new AffectedList,
     attributed: new AffectedList,
 
+    users: new Array,
+
     get_first: function (strElem) {
 	var elem = false;
 	this.elems.forEach(function (e) {
@@ -816,19 +847,10 @@ var App = {
 	    return !found;
 	}))
     },
-};
 
-
-function User (user) {
-    this.user = user;
-};
-
-User.createFromList = function (userList) {
-    var users = [];
-    forEach(userList, function (user) {
-	users.push(new User(user));
-    });
-    return users;
+    get_user: function (id) {
+	return this.users[(search_index(this.users, id, function (u) { return u.id === id}))];
+    },
 };
 
 

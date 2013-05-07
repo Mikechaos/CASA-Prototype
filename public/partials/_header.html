@@ -9,14 +9,15 @@
       <a class="brand" href="#/dispatch">CASA</a>
       <div class="nav-collapse collapse">
         <ul class="nav">
-          <li class="active"><a href="{{root}}dispatch">Dispatch</a></li>
-          <li class="active"><a href="{{root}}clients">Clients</a></li>
-          <li class="active"><a href="{{root}}jobs">Jobs</a></li>
-          <li class="active"><a href="{{root}}employees">Employés</a></li>
-          <li class="active"><a href="{{root}}trucks">Camions</a></li>
-          <li class="active"><a href="{{root}}boxes">Coffres</a></li>
-          <li class="active"><a href="{{root}}utilisateurs">Utilisateurs</a></li>
-          <li class="active"><a href="{{root}}">Logout</a></li>
+          <li ng-show="user_connected" class="active"><a href="{{root}}dispatch">Dispatch</a></li>
+          <li ng-show="user_connected" class="active"><a href="{{root}}clients">{{get_user(user_id).type}}Clients</a></li>
+          <!-- <li ng-show="user_connected" class="active"><a href="{{root}}jobs">Jobs</a></li> -->
+          <li ng-show="user_connected" class="active"><a href="{{root}}employees">Employés</a></li>
+          <li ng-show="user_connected" class="active"><a href="{{root}}trucks">Camions</a></li>
+          <li ng-show="user_connected" class="active"><a href="{{root}}boxes">Coffres</a></li>
+          <li ng-show="user_connected" class="active"><a href="{{root}}utilisateurs">Utilisateurs</a></li>
+          <li ng-show="!user_connected" class="active"><a href="{{root}}login">Login</a></li>
+          <li ng-show="user_connected"><a href="#" ng-click="logout()">Logout</a></li>
         </ul>
         <form class="navbar-form pull-right">
           

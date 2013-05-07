@@ -34,11 +34,14 @@ angular.module('casaApp.services', [])
 	    fetch(new Box),
 	    fetch({route: '/affectations', strElem: 'Affectation'}),
 	    fetch({route: '/deliveries', strElem: 'Affectation'}),
+	    fetch(new User),
 	]).then(function (array) {
+	    User.createFromList(array.pop().fetched);
 	    forEach(array, function (obj) {
 		if (obj.strElem !== "Affectation")
 		    Element.createFromList(obj.strElem, obj.fetched);
 	    });
+
 	    Delivery.createFromList(array.pop().fetched);
 	    Affectation.createFromList(array.pop().fetched);
 	    deferred.resolve();
