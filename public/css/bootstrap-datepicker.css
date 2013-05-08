@@ -302,6 +302,17 @@
 
 .ui-datepicker-calendar td a.ui-state-default.report-not-done {
     color: red;
+    background: black;
+}
+
+.ui-datepicker-calendar td a.ui-state-default.report-not-done.ui-state-hover {
+    color: red;
+    background: #dadada;
+}
+
+.ui-datepicker-calendar td a.ui-state-default.report-not-done.ui-state-active {
+    background: #ffffff;
+    border: 1px black solid;
 }
 
 .ui-datepicker-calendar td a.ui-state-default.report-done {

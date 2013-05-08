@@ -126,12 +126,14 @@
 		var month = $(this).parent().attr('data-month');
 		$('.ui-datepicker-calendar td a.ui-state-default').each (function (e) {
 		    $(this).addClass('report-not-done');
+		    $(this).parent().addClass('report-not-done');
 		    year = year || $(this).parent().attr('data-year');
 		    month = month || $(this).parent().attr('data-month');
 		    //console.log($(this).html());
 		    //console.log($(this).parent().attr('data-month'));
 		    if (verify_day_reports(year + '/' + month + '/' + $(this).html())) {
 		    	$(this).removeClass('report-not-done');
+		    	$(this).parent().removeClass('report-not-done');
 		    	$(this).addClass('report-done');
 		    }
 		});
