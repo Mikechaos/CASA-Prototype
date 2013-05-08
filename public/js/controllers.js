@@ -888,7 +888,7 @@
 		this.scope.$parent.$parent.user_connected = true;
 		this.scope.$parent.$parent.user_id = this.scope.user.id;
 		this.scope.location.path('/dispatch');
-		if ($scope.get_user_type() === USER_CLASS.RECEPTIONNISTE) set_reports_object();
+		if (this.scope.get_user_type() === USER_CLASS.RECEPTIONNISTE) set_reports_object();
 		
 	    } else {
 		this.scope.login_alert = true;
