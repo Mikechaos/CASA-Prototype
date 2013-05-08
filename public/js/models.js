@@ -388,6 +388,7 @@ Delivery.createFromList = function (data_base_affectations) {
 	a.state = dba.state
 	a.user_id = dba.user_id;
 	a.affectation_type = dba.affectation_type;
+	a.report_sent = (dba.report_sent === 1) ? true : false;
 	dba.elements = eval(dba.elements);
 	var find_elem = function (e) {
 	    a.elems.push(App.elems.get(App.elems.search_index(e, function (elem, e) {return e.id === elem.id && e.strElem === elem.strElem})));
@@ -427,6 +428,7 @@ Affectation.createFromList = function (data_base_affectations) {
 	a.user_id = dba.user_id;
 	a.affectation_type = dba.affectation_type;
 	a.notes = dba.notes;
+	a.report_sent = (dba.report_sent === 1) ? true : false;
 	dba.elements = eval(dba.elements);
 	forEach(dba.elements, function (e) {
 	    a.elems.push(App.elems.get(App.elems.search_index(e, function (elem, e) {return e.id === elem.id && e.strElem === elem.strElem})));
@@ -465,7 +467,8 @@ function BasePostAffectation (a) {
     this.start_time = a.start_time.time;
     this.day = a.date.getTime();
     this.link_number = a.link_number;
-    this.state = 1;
+    this.report_sent = (a.report_sent) ? 1 : 0;
+    this.state = a.state;
     this.user_id = 0;
     
     this.elements = this.setElems(a);

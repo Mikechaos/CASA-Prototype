@@ -28,7 +28,8 @@ class MyApp < Sinatra::Application
                         :user_id => params[:user_id],
                         :state => params[:state],
                         :day => params[:day],
-                        :start_time => params[:start_time])
+                        :start_time => params[:start_time],
+                        :report_sent => 0)
     # # puts params
     # Delivery.create(Delivery.from_json(params))
     @delivery = Delivery.new
@@ -47,7 +48,8 @@ class MyApp < Sinatra::Application
                                       :user_id => params[:user_id],
                                       :state => params[:state],
                                       :day => params[:day],
-                                      :start_time => params[:start_time]}).to_json
+                                      :start_time => params[:start_time],
+                                      :report_sent => params[:report_sent]}).to_json
     # redirect "/deliveries"
   end
 

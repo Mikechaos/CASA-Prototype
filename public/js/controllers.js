@@ -150,7 +150,12 @@
 	    if ($scope.get_user_type() === USER_CLASS.RECEPTIONNISTE && report_sent === false) return 'background-color:red; color:white;';
 	    return '';
 	};
-		      
+	
+	$scope.send_report = function (affect) {
+	    affect.send_report();
+	    $scope.http_request('PUT', new Global[affect.post_fn](affect), affect.route + '/' + affect.id);
+	};
+	      
 	this.scope = $scope;
 	return (this);
     };

@@ -3,7 +3,7 @@
   <div class="row" ng-show="verify_type(USER_CLASS.RECEPTIONNISTE)">
     <div class="squaredFour span1" style="margin-bottom:8px;">
       <input type="checkbox" ng-checked="affect.report_sent" id="report_sent_checkbox_id_{{affect.id}}" 
-	     ng-model="affect.report_sent" ng-change="affect.send_report()" />
+	     ng-model="affect.report_sent" ng-change="send_report(affect)" />
       <label for="report_sent_checkbox_id_{{affect.id}}"></label>
     </div>
     <div class="span3 modal-label" style="margin-top:0px; margin-left:-40px;">Rapport journalier reçu</div>
