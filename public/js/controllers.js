@@ -48,7 +48,6 @@
 	fetch_all.then(function () {
 	    $scope.http_request('GET', {}, '/session', function (data) {
 		if (data.session_id != '') {
-		    console.log('connected');
 		    $scope.user_connected = true;
 		    $scope.user_id = parseInt(data.session_id);
 		    if ($scope.init_location === '/login') $scope.init_location = '/dispatch';
@@ -57,10 +56,8 @@
 		    // console.log('user_id', $scope.get_user($scope.user_id))
 		    
 		} else {
-		    console.log('not connected');
 		    $scope.user_connected = false;
 		    $scope.user_id = 0;
-		    console.log($location.path());
 		}
 	    }, function (data) {console.log('error', data);});
 	});
@@ -122,9 +119,9 @@
 	    $scope.$broadcast('set_time', time);
 	});
 
-	$scope.test = function () {
+	// Scan each day and add a red font if reports are left for that day
+	$scope.verify_month_reports = function () {
 	    if (App.get_user($scope.user_id).type == USER_CLASS.RECEPTIONNISTE) {
-		console.log('test!!');
 		var year = $(this).parent().attr('data-year');
 		var month = $(this).parent().attr('data-month');
 		$('.ui-datepicker-calendar td a.ui-state-default').each (function (e) {
@@ -133,7 +130,6 @@
 		    month = month || $(this).parent().attr('data-month');
 		    //console.log($(this).html());
 		    //console.log($(this).parent().attr('data-month'));
-		    console.log(verify_day_reports(year + '/' + month + '/' + $(this).html()));
 		    if (verify_day_reports(year + '/' + month + '/' + $(this).html())) {
 		    	$(this).removeClass('report-not-done');
 		    	$(this).addClass('report-done');
@@ -141,9 +137,14 @@
 		});
 	    }
 	};
+	
+	// Add a listener to prev and next button in datepicker to trigger function
+	$(document).on('click', '.ui-datepicker-prev, .ui-datepicker-next', function(event){
+	    $scope.verify_month_reports();
+	});
+	//$('.ui-datepicker-prev').click(function () {console.log('clicked on prev!!')});
 
 	$scope.get_background_color = function (report_sent) {
-	    console.log(report_sent);
 	    if ($scope.get_user_type() === USER_CLASS.RECEPTIONNISTE && report_sent === false) return 'background-color:red; color:white;';
 	    return '';
 	};

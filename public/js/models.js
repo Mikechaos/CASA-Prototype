@@ -37,7 +37,6 @@ function get_date_str (date) {
 }
 
 function verify_day_reports (date_str) {
-    console.log(date_str);
     var all_sent = true;
     for (id in sent_report_by_day[date_str]) {
 	all_sent = sent_report_by_day[date_str][id];
@@ -59,7 +58,6 @@ User.createFromList = function (userList) {
     forEach(userList, function (user) {
 	App.users.push(new User(user));
     });
-    console.log(userList);
     return App.users;
 };
 

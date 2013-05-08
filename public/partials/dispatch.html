@@ -17,7 +17,7 @@
 	</div>
 	<!-- <input type="text" class="datepicker " value="2013-02-28" style="padding-left:15px;"> -->
 	<div ng-show="!affectation" class="span3 input-append" style="margin-left:-10px; margin-top:0;">
-	  <input type="text"  ui-date="{ dateFormat: 'd MM, yy'}" ng-click="test()" 
+	  <input type="text"  ui-date="{ dateFormat: 'd MM, yy'}" ng-click="verify_month_reports()" 
 		 ng-model="date.fstDate" style="padding-left:15px; width:135px;">
 	  <a href="" ng-show="!affectation" ng-click="today();" class="btn-success btn">Aujourd'hui</a>
 	</div>
@@ -52,7 +52,8 @@
     <div class="span2">
       <button href="" ng-show="!affectation && required_type(USER_CLASS.DISPATCH)" 
 	      ng-click="set_mode(mode_enum.ADD);" class="btn btn-info" style="margin-top:10px;">Ajouter</button>
-      <button ng-show="affectation || !schedule_view" ng-click="set_mode(mode_enum.SCHEDULE);" class="btn btn-info" style="margin-top:8px;"> Afficher l'horaire</button>
+      <button ng-show="affectation || !schedule_view" ng-click="set_mode(mode_enum.SCHEDULE);" 
+	      class="btn btn-info" style="margin-top:8px;"> Afficher l'horaire</button>
       <button ng-show="affectation || schedule_view" ng-click="set_mode(mode_enum.INDIV);" class="btn btn-info" style="margin-top:8px;"> Rapport</button>
     </div>
     <div class="span2">
