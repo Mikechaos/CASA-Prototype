@@ -42,11 +42,12 @@
 	$scope.get_user = ng.bind(App, App.get_user);
 	$scope.required_type = function (min) {return $scope.get_user_type() <= min};
 	$scope.verify_type = function (type) {return $scope.get_user_type() === type};
-	$scope.get_user_type = function () {return $scope.get_user($scope.user_id).type};
+	$scope.get_user_type = function () {return ($scope.user_id > 0) ? $scope.get_user($scope.user_id).type : 10};
 	
 	// Get if user is connected
 	fetch_all.then(function () {
 	    $scope.http_request('GET', {}, '/session', function (data) {
+		// DRY break, code is repeated in LoginCtrl
 		if (data.session_id != '') {
 		    $scope.user_connected = true;
 		    $scope.user_id = parseInt(data.session_id);
@@ -887,6 +888,7 @@
 		this.scope.$parent.$parent.user_connected = true;
 		this.scope.$parent.$parent.user_id = this.scope.user.id;
 		this.scope.location.path('/dispatch');
+		if ($scope.get_user_type() === USER_CLASS.RECEPTIONNISTE) set_reports_object();
 		
 	    } else {
 		this.scope.login_alert = true;
