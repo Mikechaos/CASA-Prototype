@@ -299,3 +299,11 @@
   width: 16px;
   height: 16px;
 }
+
+.ui-datepicker-calendar td a.ui-state-default.report-not-done {
+    color: red;
+}
+
+.ui-datepicker-calendar td a.ui-state-default.report-done {
+    color: #555555;
+}

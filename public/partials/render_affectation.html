@@ -1,15 +1,25 @@
 <div class="clearfix" ng-show="$index % 2 == 0"></div>
-<div class="span6 affect_report" style="width:600px;">
-  <div class="span2 pull-left">
-    <button class="pull-left btn btn-info btn-large span2" ng-click="dispatch_action(affect, 'copy_affect')">Copier</button>
+<div class="span6 affect_report" style="width:600px; {{get_background_color(affect.report_sent)}};">
+  <div class="row" ng-show="verify_type(USER_CLASS.RECEPTIONNISTE)">
+    <div class="squaredFour span1" style="margin-bottom:8px;">
+      <input type="checkbox" ng-checked="affect.report_sent" id="report_sent_checkbox_id_{{affect.id}}" 
+	     ng-model="affect.report_sent" ng-change="affect.send_report()" />
+      <label for="report_sent_checkbox_id_{{affect.id}}"></label>
+    </div>
+    <div class="span3 modal-label" style="margin-top:0px; margin-left:-40px;">Rapport journalier reçu</div>
   </div>
-  <div class="span2 offset1"><button class="btn btn-info btn-large span2" style="margin: 0 auto;" 
-				     ng-click="dispatch_action(affect, 'modify_affect')">Modifier</button>
-  </div>
-  <div class="span2 pull-right">
-    <button class="pull-right btn btn-danger btn-large span2" ng-click="dispatch_action(affect, 'delete_affect')">
-      Effacer
-    </button>
+  <div ng-show="verify_user_type(USER.RECEPTIONNISTE)">
+    <div class="span2 pull-left">
+      <button class="pull-left btn btn-info btn-large span2" ng-click="dispatch_action(affect, 'copy_affect')">Copier</button>
+    </div>
+    <div class="span2 offset1"><button class="btn btn-info btn-large span2" style="margin: 0 auto;" 
+				       ng-click="dispatch_action(affect, 'modify_affect')">Modifier</button>
+    </div>
+    <div class="span2 pull-right">
+      <button class="pull-right btn btn-danger btn-large span2" ng-click="dispatch_action(affect, 'delete_affect')">
+	Effacer
+      </button>
+    </div>
   </div>
   <div ng-show="affect.strClass == 'Affectation'" >
     <legend></legend>
@@ -137,5 +147,4 @@
     <legend><h4>Notes</h4></legend>
     <p>{{affect.notes}}</p>
   </div>
-</div>
 </div>

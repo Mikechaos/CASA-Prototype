@@ -13,7 +13,7 @@
 	$scope.elements = App.elems;
 	this.scope = $scope;
 	
-	$scope.User_class = USER_CLASS
+	$scope.USER_CLASS = USER_CLASS
 
 	$scope.safeApply = function(fn) {
 	    var phase = this.$root.$$phase;
@@ -40,7 +40,9 @@
 	};
 
 	$scope.get_user = ng.bind(App, App.get_user);
-	$scope.required_type = function (min) {return $scope.get_user($scope.user_id).type < min};
+	$scope.required_type = function (min) {return $scope.get_user_type() <= min};
+	$scope.verify_type = function (type) {return $scope.get_user_type() === type};
+	$scope.get_user_type = function () {return $scope.get_user($scope.user_id).type};
 	
 	// Get if user is connected
 	fetch_all.then(function () {
@@ -51,6 +53,7 @@
 		    $scope.user_id = parseInt(data.session_id);
 		    if ($scope.init_location === '/login') $scope.init_location = '/dispatch';
 		    $location.path($scope.init_location);
+		    if ($scope.get_user_type() === USER_CLASS.RECEPTIONNISTE) set_reports_object();
 		    // console.log('user_id', $scope.get_user($scope.user_id))
 		    
 		} else {
@@ -118,6 +121,32 @@
 	$scope.$watch('newAffectation_time', function (time, before) {
 	    $scope.$broadcast('set_time', time);
 	});
+
+	$scope.test = function () {
+	    if (App.get_user($scope.user_id).type == USER_CLASS.RECEPTIONNISTE) {
+		console.log('test!!');
+		var year = $(this).parent().attr('data-year');
+		var month = $(this).parent().attr('data-month');
+		$('.ui-datepicker-calendar td a.ui-state-default').each (function (e) {
+		    $(this).addClass('report-not-done');
+		    year = year || $(this).parent().attr('data-year');
+		    month = month || $(this).parent().attr('data-month');
+		    //console.log($(this).html());
+		    //console.log($(this).parent().attr('data-month'));
+		    console.log(verify_day_reports(year + '/' + month + '/' + $(this).html()));
+		    if (verify_day_reports(year + '/' + month + '/' + $(this).html())) {
+		    	$(this).removeClass('report-not-done');
+		    	$(this).addClass('report-done');
+		    }
+		});
+	    }
+	};
+
+	$scope.get_background_color = function (report_sent) {
+	    console.log(report_sent);
+	    if ($scope.get_user_type() === USER_CLASS.RECEPTIONNISTE && report_sent === false) return 'background-color:red; color:white;';
+	    return '';
+	};
 		      
 	this.scope = $scope;
 	return (this);
@@ -861,13 +890,14 @@
     function RegisterCtrl ($scope) {
 
 	$scope.user = {
-	    name: 'Mike',
-	    password: 'Mike',
+	    name: 'Receptionniste',
+	    password: 'CASA',
+	    type: 6,
 	};
 
 	$scope.register_user = ng.bind(this, this.register_user);
 	this.scope = $scope;
-	// $scope.register_user();
+	//$scope.register_user();
     }
 
     RegisterCtrl.prototype = {

@@ -16,6 +16,7 @@ var USER_CLASS = {
     ADMIN: 1,
     DISPATCH: 2,
     SUPERVISOR: 4,
+    RECEPTIONNISTE: 6,
     BASIC_USER: 10
 };
 
@@ -27,6 +28,31 @@ function User(user) {
     this.type = user.type || 10;
     this.strElem = "User";
     this.route = "/users";
+};
+
+var sent_report_by_day = {};
+
+function get_date_str (date) {
+    return date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate();
+}
+
+function verify_day_reports (date_str) {
+    console.log(date_str);
+    var all_sent = true;
+    for (id in sent_report_by_day[date_str]) {
+	all_sent = sent_report_by_day[date_str][id];
+	if (!all_sent) break;
+    }
+    return all_sent;
+}
+
+function set_reports_object () {
+    sent_report_by_day = {};
+    App.affectations.forEach(function (a) {
+	var date_str = a.get_date_str();
+	if (sent_report_by_day[date_str] === undefined) sent_report_by_day[date_str] = {};
+	sent_report_by_day[date_str][a.id] = a.report_sent;
+    });
 };
 
 User.createFromList = function (userList) {
@@ -199,6 +225,7 @@ function BaseAffectation () {
     this.notes = "";
     this.height = Affectation.DEF_HEIGHT;
     this.state = STATE.ACTIVE;
+    this.report_sent = false;
 
 }
 
@@ -288,6 +315,14 @@ BaseAffectation.prototype = {
 	var supervisor = App.elems.get_by_id({id: this.supervisor_id, strElem: "Supervisor"})
 	if (supervisor === undefined) supervisor = {};
 	return supervisor;
+    },
+
+    get_date_str: function () {
+	return get_date_str(this.date);
+    },
+
+    send_report: function () {
+	sent_report_by_day[this.get_date_str()][this.id] = this.report_sent;
     },
 };
 
