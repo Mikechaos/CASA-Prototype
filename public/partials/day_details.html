@@ -1,5 +1,10 @@
-<div class="span12" style="border: 3px rgb(240, 240, 240) solid; border-radius:15px; margin-top:-50px; width:1856px" >
-  <div ng-repeat="affect in report_affectations">
-    <div class="span3 schedule_report" ng-model="affect" cs-render-schedule="true"></div>
+<div style="margin-top:-50px;">
+  <div class="row" style="margin-left:20px;">
+    <a class="btn btn-info" ng-show="verify_type(USER_CLASS.VENDEUR)" ng-click="logout()">Logout</a>
+  </div>
+  <div class="span12" style="border: 3px rgb(240, 240, 240) solid; border-radius:15px; width:1856px" >
+    <div ng-repeat="affect in report_affectations">
+      <div class="span3 schedule_report" ng-model="affect" cs-render-schedule="true"></div>
+    </div>
   </div>
 </div>

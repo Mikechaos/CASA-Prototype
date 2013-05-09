@@ -17,6 +17,8 @@ var USER_CLASS = {
     DISPATCH: 2,
     SUPERVISOR: 4,
     RECEPTIONNISTE: 6,
+    VENDEUR: 7,
+    EMPLOYE: 8,
     BASIC_USER: 10
 };
 

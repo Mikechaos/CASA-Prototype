@@ -8,7 +8,7 @@
     </div>
     <div class="span3 modal-label" style="margin-top:0px; margin-left:-40px;">Rapport journalier reçu</div>
   </div>
-  <div ng-show="required_type(USER_CLASS.DISPATCH)">
+  <div ng-show="required_type(USER_CLASS.DISPATCH) && affectation_to_old(affect.date)">
     <div class="span2 pull-left">
       <button class="pull-left btn btn-info btn-large span2" ng-click="dispatch_action(affect, 'copy_affect')">Copier</button>
     </div>

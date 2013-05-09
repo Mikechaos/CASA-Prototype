@@ -35,7 +35,8 @@
 	$scope.logout = function () {
 	    $scope.http_request('POST', {}, '/logout', function () {
 		$scope.user_connected = false; $scope.user_id = 0;
-		$location.path('/login');
+		$location.url('/login');
+		$scope.showingDayDetails = false;
 	    });
 	};
 
@@ -53,7 +54,7 @@
 		    $scope.user_id = parseInt(data.session_id);
 		    if ($scope.init_location === '/login') $scope.init_location = '/dispatch';
 		    $location.path($scope.init_location);
-		    if ($scope.get_user_type() === USER_CLASS.RECEPTIONNISTE) set_reports_object();
+		    $scope.user_management();
 		    // console.log('user_id', $scope.get_user($scope.user_id))
 		    
 		} else {
@@ -65,6 +66,8 @@
 	// this.scope.data_promise = fetch_all_data;
 	// console.log(this.scope.data_promise);
 	// fetch_all_data.then(function () { console.log("hmm"); affectation_data().success(function () {console.log('wooh!')})});
+	
+	$scope.user_management = ng.bind(this, this.user_management);
 
 	this.scope.report_date = new Date;
 	this.scope.fetch_all_promise = fetch_all;
@@ -80,6 +83,13 @@
 	    this.http({method: method,  url: route, params: params, headers: "application/x-www-form-urlencoded"})
 		.success(function (data, status) {callback_success(data, status)})
 		.error(function () {callback_error()});
+	},
+
+	user_management: function ($location) {
+	    console.log(this.scope.get_user_type() === USER_CLASS.VENDEUR);
+	    if (this.scope.get_user_type() === USER_CLASS.RECEPTIONNISTE) set_reports_object();
+	    //if (this.scope.get_user_type() === USER_CLASS.VENDEUR) this.scope.showingDayDetails = true;
+	    // this.scope.location.url('/day_details?date=' + new Date().getTime());
 	},
 	
     };
@@ -120,6 +130,9 @@
 	    $scope.$broadcast('set_time', time);
 	});
 
+
+	// ** HACK FOR RECEPTIONNISTE USER ** //
+	
 	// Scan each day and add a red font if reports are left for that day
 	$scope.verify_month_reports = function () {
 	    if (App.get_user($scope.user_id).type == USER_CLASS.RECEPTIONNISTE) {
@@ -156,7 +169,10 @@
 	    affect.send_report();
 	    $scope.http_request('PUT', new Global[affect.post_fn](affect), affect.route + '/' + affect.id);
 	};
-	      
+
+	// ** END RECEPTIONNISTE ** //
+
+
 	this.scope = $scope;
 	return (this);
     };
@@ -169,6 +185,23 @@
 
 	request_delete_elem: function (elem) {
 	    this.request_affectation();
+	},
+
+	// If user is dispatch, can only modifiy affect less than three days old
+	affectation_to_old: function (date) {
+	    var ret = false;
+	    if ($scope.get_user_type() === USER_CLASS.DISPATCH) {
+		var new_date = new Date;
+		var today_midnight = new Date(new_date.getFullYear(), new_date.getMonth(), new_date.getDate());
+		
+		// So we can compare directly the number of milliseconds since this date and know if it's more than 3 days
+		var affect_timestamp_at_midnight = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+		
+		// Number of milliseconds between the two date divided by number of milliseconds per day
+		ret = Math.floor((today_midnight - affect_timestamp_at_midnight) / 86400 / 1000) < 3 ? true : false;
+	    }
+
+	    return ret;
 	},
     };
 
@@ -888,7 +921,7 @@
 		this.scope.$parent.$parent.user_connected = true;
 		this.scope.$parent.$parent.user_id = this.scope.user.id;
 		this.scope.location.path('/dispatch');
-		if (this.scope.get_user_type() === USER_CLASS.RECEPTIONNISTE) set_reports_object();
+		this.scope.$parent.$parent.user_management();
 		
 	    } else {
 		this.scope.login_alert = true;
@@ -900,14 +933,14 @@
     function RegisterCtrl ($scope) {
 
 	$scope.user = {
-	    name: 'Receptionniste',
+	    name: 'Vendeur',
 	    password: 'CASA',
-	    type: 6,
+	    type: 7,
 	};
 
 	$scope.register_user = ng.bind(this, this.register_user);
 	this.scope = $scope;
-	//$scope.register_user();
+	// $scope.register_user();
     }
 
     RegisterCtrl.prototype = {
