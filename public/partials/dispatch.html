@@ -4,13 +4,13 @@
   <button class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" ng-show="attribute_elem_screen" 
 	  ng-click="attribute_elem_screen=false">Dispatch</button>
   <a class="btn btn-warning btn-large" style="margin-left:4%; margin-bottom:-1%;" href="#/day_details?date={{date.fstDate.getTime()}}" 
-     ng-click="safeApply()" target="blank" style="font-size:16px" ng-show="required_type(USER_CLASS.RECEPTIONNISTE)">Horaire Imprimable</a>
-  <button class="btn btn-success" ng-show="verify_type(USER_CLASS.VENDEUR) && mode != 'INDIV'" ng-click="mode='INDIV'" style="margin-left:10%; margin-bottom:-1%">
+     ng-click="safeApply()" target="blank" style="font-size:16px" ng-show="required_type(USER_CLASS.BASIC_USER)">Horaire Imprimable</a>
+  <button class="btn btn-success" ng-show="verify_type(USER_CLASS.VENDEUR) && mode != 'INDIV'" ng-click="mode='INDIV'" style="margin-left:4%; margin-bottom:-1%">
     Consulter les clients
   </button>
 
   <button class="btn btn-success" ng-show="verify_type(USER_CLASS.VENDEUR) && mode != 'SCHEDULE'" ng-click="mode='SCHEDULE'" 
-	  style="margin-left:10%; margin-bottom:-1%">
+	  style="margin-left:4%; margin-bottom:-1%">
     Revenir à l'horaire
   </button>
 </legend>
