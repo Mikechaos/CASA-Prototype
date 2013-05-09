@@ -86,10 +86,11 @@
 	},
 
 	user_management: function ($location) {
-	    console.log(this.scope.get_user_type() === USER_CLASS.VENDEUR);
 	    if (this.scope.get_user_type() === USER_CLASS.RECEPTIONNISTE) set_reports_object();
-	    //if (this.scope.get_user_type() === USER_CLASS.VENDEUR) this.scope.showingDayDetails = true;
-	    // this.scope.location.url('/day_details?date=' + new Date().getTime());
+	    // if (this.scope.get_user_type() === USER_CLASS.EMPLOYE) {
+	    // 	this.scope.$broadcast('set_automatic_date', null);
+	    // 	// this.scope.location.url('/day_details?date=' + new Date().getTime());
+	    // }
 	},
 	
     };
@@ -104,6 +105,14 @@
 	    // sndDate: 0,
 	    sndDate: new Date(),
 	}
+	
+	// IF USER_CLASS is EMPLOYEE, schedule switch automatically at noon for next day
+	$scope.$watch('$parent.user_id', function (newval) {
+	    if ($scope.get_user_type() === USER_CLASS.EMPLOYE) {
+		if (new Date().getHours() >= 12) $scope.date.fstDate.setDate($scope.date.fstDate.getDate() + 1);
+	    }
+	});
+
 	// $scope.date.sndDate = new Date($scope.date.today.getFullYear(), $scope.date.today.getMonth(), $scope.date.today.getDate() + 7),
 
 	$scope.affected_elems = App.affected_today;
@@ -171,8 +180,8 @@
 	};
 
 	// ** END RECEPTIONNISTE ** //
-
-
+	$scope.affectation_to_old = ng.bind(this, this.affectation_to_old);
+	
 	this.scope = $scope;
 	return (this);
     };
@@ -190,7 +199,7 @@
 	// If user is dispatch, can only modifiy affect less than three days old
 	affectation_to_old: function (date) {
 	    var ret = false;
-	    if ($scope.get_user_type() === USER_CLASS.DISPATCH) {
+	    if (this.scope.get_user_type() === USER_CLASS.DISPATCH) {
 		var new_date = new Date;
 		var today_midnight = new Date(new_date.getFullYear(), new_date.getMonth(), new_date.getDate());
 		
@@ -198,7 +207,7 @@
 		var affect_timestamp_at_midnight = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 		
 		// Number of milliseconds between the two date divided by number of milliseconds per day
-		ret = Math.floor((today_midnight - affect_timestamp_at_midnight) / 86400 / 1000) < 3 ? true : false;
+		ret = Math.floor((today_midnight - affect_timestamp_at_midnight) / 86400 / 1000) > 3 ? true : false;
 	    }
 
 	    return ret;
@@ -933,9 +942,9 @@
     function RegisterCtrl ($scope) {
 
 	$scope.user = {
-	    name: 'Vendeur',
+	    name: 'Dispatch',
 	    password: 'CASA',
-	    type: 7,
+	    type: 8,
 	};
 
 	$scope.register_user = ng.bind(this, this.register_user);

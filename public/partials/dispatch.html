@@ -5,19 +5,20 @@
 	  ng-click="attribute_elem_screen=false">Dispatch</button>
   <a class="btn btn-warning btn-large" style="margin-left:4%; margin-bottom:-1%;" href="#/day_details?date={{date.fstDate.getTime()}}" 
      ng-click="safeApply()" target="blank" style="font-size:16px" ng-show="required_type(USER_CLASS.BASIC_USER)">Horaire Imprimable</a>
-  <button class="btn btn-success" ng-show="verify_type(USER_CLASS.VENDEUR) && mode != 'INDIV'" ng-click="mode='INDIV'" style="margin-left:4%; margin-bottom:-1%">
+  <button class="btn btn-large btn-success" ng-show="verify_type(USER_CLASS.EMPLOYE) && mode != 'INDIV'" 
+	  ng-click="mode='INDIV'" style="margin-left:4%; margin-bottom:-1%">
     Consulter les clients
   </button>
 
-  <button class="btn btn-success" ng-show="verify_type(USER_CLASS.VENDEUR) && mode != 'SCHEDULE'" ng-click="mode='SCHEDULE'" 
-	  style="margin-left:4%; margin-bottom:-1%">
+  <button class="btn btn-large btn-success" ng-show="verify_type(USER_CLASS.EMPLOYE) && mode != 'SCHEDULE'" ng-click="mode='SCHEDULE'"
+  	  style="margin-left:4%; margin-bottom:-1%">
     Revenir à l'horaire
   </button>
 </legend>
 
 <!-- *** Dispatch screen *** -->
 <div class="Dispatch" ng-show="!attribute_elem_screen">
-  <div class="row date_selecter" ng-controller="DateSelecterCtrl" style="margin-left:5%;" ng-show="required_type(USER_CLASS.RECEPTIONNISTE)">
+  <div class="row date_selecter" ng-controller="DateSelecterCtrl" style="margin-left:5%;" ng-show="required_type(USER_CLASS.VENDEUR)">
     <div class="span9 date_selection date-control well well-large" style="padding-top:15px; height:{{pane_height}}px;">
       <div class="span12" style="margin:0;">
 	<div class="span2" style="width:80px; margin-left:10px;">
@@ -61,8 +62,8 @@
       <button href="" ng-show="!affectation && required_type(USER_CLASS.DISPATCH)" 
 	      ng-click="set_mode(mode_enum.ADD);" class="btn btn-info" style="margin-top:10px;">Ajouter</button>
       <button ng-show="affectation || !schedule_view" ng-click="set_mode(mode_enum.SCHEDULE);" 
-	      class="btn btn-info" style="margin-top:8px;"> Afficher l'horaire</button>
-      <button ng-show="affectation || schedule_view" ng-click="set_mode(mode_enum.INDIV);" class="btn btn-info" style="margin-top:8px;"> Rapport</button>
+	      class="btn btn-info" style="margin-top:8px;">Afficher l'horaire</button>
+      <button ng-show="affectation || schedule_view" ng-click="set_mode(mode_enum.INDIV);" class="btn btn-info" style="margin-top:8px;">Rapport</button>
     </div>
     <div class="span2">
 
