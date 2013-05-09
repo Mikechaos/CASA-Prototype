@@ -21,14 +21,14 @@
       <tr>
 	<!-- <th ng-show="required_type(USER_CLASS.ADMIN)">&nbsp;</th> -->
 	<th>Utilisateur</th>
-	<th>Type</th>
+	<!-- <th>Type</th> -->
 	<th ng-show="required_type(USER_CLASS.DISPATCH)">Modifier</th>
       </tr>
 
       <tr ng-repeat="elem in users">
 	<!-- <td ng-show="required_type(USER_CLASS.ADMIN)"><button class="close" ng-click="delete_elem(elem)">&times;</button></td> -->
 	<td>{{elem.name}}</td>
-	<td>{{user_type[elem.type]}}</td>
+	<!-- <td>{{user_type[elem.type]}}</td> -->
 	<td ng-show="required_type(USER_CLASS.DISPATCH)"><button ng-click="modify_elem(elem)" class="btn btn-small btn-info">Modifier</button></td>
     </table>
   </div>

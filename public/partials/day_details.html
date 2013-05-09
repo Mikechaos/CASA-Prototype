@@ -4,7 +4,7 @@
   <!-- </div> -->
   <div class="span12" style="border: 3px rgb(240, 240, 240) solid; border-radius:15px; width:1856px" >
     <div ng-repeat="affect in report_affectations">
-      <div class="span3 schedule_report" ng-model="affect" cs-render-schedule="true"></div>
+      <div style="{{margin_page_break(affect.height, $index)}}" class="span3 schedule_report" ng-model="affect" cs-render-schedule="true"></div>
     </div>
   </div>
 </div>

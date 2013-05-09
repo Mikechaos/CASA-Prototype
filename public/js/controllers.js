@@ -886,7 +886,17 @@
 	    });
 	});
 
+	var total_height = 0;
+	$scope.page_break = function (height, index) {
+	    if (index === 0) total_height = 0;
+	    return ((total_height+= height) % (Affectation.DEF_HEIGHT * 16)) === 0;
+	};
+	
+	$scope.margin_page_break = function (height, index) {
+	    return ($scope.page_break(height, index) && index !== 0) ? 'margin-top:35px;' : '';
+	};
     };
+
 
     function SessionCtrl ($scope, $http) {
 	this.http = $http;
