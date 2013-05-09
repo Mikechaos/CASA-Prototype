@@ -1,25 +1,35 @@
-<!-- REGISTRATION -->
-<div ng-controller="RegisterCtrl">
-<!--   <form> -->
-<!--     <label>Nom</label> -->
-<!--     <input type="text" ng-model="user.name"> -->
-<!--     <label>Mot de passe</label> -->
-<!--     <input type="text" ng-model="user.password" -->
-<!--     <button class="btn btn-success" ng-click="register_user()">Enregistrer</button> -->
-<!--   </form> -->
-
-</div>
-
-<!-- LOGIN -->
-<div class="span4" ng-controller="LoginCtrl">
-  <div class="alert" ng-show="login_alert" bs-alert="login_error"></div>
-  <div class="forms">
+<div ng-controller="UsersCtrl">
+  <legend><h2>Utilisateurs</h2></legend>
+  <div class="alert fade " bs-alert="alert" ng-repeat="alert in alerts"></div>
+  <div class="span6 forms" ng-show="modifying && required_type(USER_CLASS.DISPATCH)">
+    <legend> Ajouter un nouveau coffre</legend>
     <form>
-      <label>Utilisateur</label>
-      <select ng-model="user.id" ng-options="user.id as user.name for user in users"></select>
-      <label>Mot de passe</label>
-      <input type="password" ng-model="user.password">
-      <button class="btn btn-success" ng-click="login();">Se connecter</button>
+      <label>Nom :</label>
+      <input type="text" ng-model="newElem.name">
+      <label>Nouveau mot de passe :</label>
+      <input type="password" ng-model="newElem.password" rows="3" cols="8"></textarea>
+      <label></label>
+      <!-- <button class="btn btn-success" disabled>En construction</button> -->
+      <button ng-show="!modifying" class="btn btn-success" ng-click="submit()">Ajouter</button>
+      <button ng-show="modifying" class="btn btn-success" ng-click="submit_modification()">Confirmer</button>
+      <button ng-show="modifying" class="btn btn-danger" ng-click="modifying = false">Annuler</button>
     </form>
+  </div>
+
+  <div class="span6" ng-show="users.length > 0">
+    <table class="table table-striped table-bordered">
+      <tr>
+	<!-- <th ng-show="required_type(USER_CLASS.ADMIN)">&nbsp;</th> -->
+	<th>Utilisateur</th>
+	<th>Type</th>
+	<th ng-show="required_type(USER_CLASS.DISPATCH)">Modifier</th>
+      </tr>
+
+      <tr ng-repeat="elem in users">
+	<!-- <td ng-show="required_type(USER_CLASS.ADMIN)"><button class="close" ng-click="delete_elem(elem)">&times;</button></td> -->
+	<td>{{elem.name}}</td>
+	<td>{{user_type[elem.type]}}</td>
+	<td ng-show="required_type(USER_CLASS.DISPATCH)"><button ng-click="modify_elem(elem)" class="btn btn-small btn-info">Modifier</button></td>
+    </table>
   </div>
 </div>

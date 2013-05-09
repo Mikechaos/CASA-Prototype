@@ -12,9 +12,9 @@ var casaApp = angular.module('casaApp', ['casaApp.filters', 'casaApp.services', 
 	    .when('/employees', {templateUrl: 'partials/employees.html', controller: 'AddElems'})
 	    .when('/trucks', {templateUrl: 'partials/trucks.html', controller: 'AddElems'})
 	    .when('/boxes', {templateUrl: 'partials/boxes.html', controller: 'AddElems'})
-	    .when('/utilisateurs', {templateUrl: 'partials/user.html', controller: 'AddElems'})
+	    .when('/utilisateurs', {templateUrl: 'partials/users.html', controller: 'AddElems'})
 	    .when('/day_details', {templateUrl: 'partials/day_details.html', controller: 'DayDetailsCtrl'})
-	    .when('/login', {templateUrl: 'partials/users.html?page=login', controller: 'SessionCtrl'})
+	    .when('/login', {templateUrl: 'partials/login.html', controller: 'SessionCtrl'})
 	    // .when('/logout', {templateUrl: 'partials/users.html?page=logout', controller: 'SessionCtrl'})
 	    .otherwise({redirectTo: '/dispatch'});
 

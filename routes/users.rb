@@ -44,18 +44,13 @@ class MyApp < Sinatra::Application
   end
   
   put "/users/:id" do |id|
-
-    User.find(:id => id).update({:supervisor_id => params[:supervisor_id], 
-                                         :link_number => params[:link_number],
-                                         :client_id => params[:client_id],
-                                         :elements => params[:elements],
-                                         :user_type => params[:user_type],
-                                         :user_id => params[:user_id],
-                                         :notes => params[:notes],
-                                         :state => params[:state],
-                                         :day => params[:day],
-                                         :start_time => params[:start_time],
-                                         :end_time => params[:end_time]}).to_json
+    password_salt = BCrypt::Engine.generate_salt
+    
+    password_hash = BCrypt::Engine.hash_secret(params[:password], password_salt)
+    User.find(:id => id).update({:name => params[:name],
+                                  :email => params[:email],
+                                  :password => password_hash,
+                                  :salt => password_salt}).to_json
     # redirect "/users"
   end
 

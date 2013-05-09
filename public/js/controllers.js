@@ -11,6 +11,8 @@
 	$scope.init_location = $location.path();
 	$location.path("/login");
 	$scope.elements = App.elems;
+	$scope.users = App.users;
+	$scope.user_type = user_type;
 	this.scope = $scope;
 	
 	$scope.USER_CLASS = USER_CLASS

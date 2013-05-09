@@ -1,0 +1,25 @@
+<!-- REGISTRATION -->
+<div ng-controller="RegisterCtrl">
+<!--   <form> -->
+<!--     <label>Nom</label> -->
+<!--     <input type="text" ng-model="user.name"> -->
+<!--     <label>Mot de passe</label> -->
+<!--     <input type="text" ng-model="user.password" -->
+<!--     <button class="btn btn-success" ng-click="register_user()">Enregistrer</button> -->
+<!--   </form> -->
+
+</div>
+
+<!-- LOGIN -->
+<div class="span4" ng-controller="LoginCtrl">
+  <div class="alert" ng-show="login_alert" bs-alert="login_error"></div>
+  <div class="forms">
+    <form>
+      <label>Utilisateur</label>
+      <select ng-model="user.id" ng-options="user.id as user.name for user in users"></select>
+      <label>Mot de passe</label>
+      <input type="password" ng-model="user.password">
+      <button class="btn btn-success" ng-click="login();">Se connecter</button>
+    </form>
+  </div>
+</div>

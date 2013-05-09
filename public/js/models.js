@@ -22,6 +22,14 @@ var USER_CLASS = {
     BASIC_USER: 10
 };
 
+var user_type = {
+    1: 'Admin',
+    2: 'Dispatch',
+    6: 'Réceptionniste',
+    7: 'Vendeur',
+    8: 'Employé',
+}
+
 function User(user) {
     user = user || {};
     this.id = user.id || 0;
