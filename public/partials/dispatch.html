@@ -111,7 +111,7 @@
   <div class="row span12" style="margin-left:5%;" ng-controller="BaseAffectationCtrl">
     <div class="affectation tabbable" ng-show="$parent.affectation">
       <ul>
-	<ul class="nav nav-tabs">
+	<ul class="nav nav-tabs" ng-show="mode != 'MODIFY'">
 	  <li class="{{active_screen.Affectation}}"><a ng-click="newAffect('Affectation')" href="#affectation_tab" data-toggle="tab">Affectation</a></li>
 	  <li class="{{active_screen.Delivery}}"><a ng-click="newAffect('Delivery')" href="#delivery_tab" data-toggle="tab">Livraison</a></li>
 	</ul>

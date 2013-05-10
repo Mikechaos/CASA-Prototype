@@ -35,7 +35,9 @@ angular.module('casaApp.services', [])
 	    fetch({route: '/affectations', strElem: 'Affectation'}),
 	    fetch({route: '/deliveries', strElem: 'Affectation'}),
 	    fetch(new User),
+	    fetch({route: '/settings', strElem: 'null'}),
 	]).then(function (array) {
+	    App.settings = new Settings(array.pop().fetched[0]);
 	    User.createFromList(array.pop().fetched);
 	    forEach(array, function (obj) {
 		if (obj.strElem !== "Affectation")

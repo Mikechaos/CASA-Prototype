@@ -64,6 +64,7 @@
 		    $scope.user_id = 0;
 		}
 	    }, function (data) {console.log('error', data);});
+	    $scope.settings = App.settings;
 	});
 	// this.scope.data_promise = fetch_all_data;
 	// console.log(this.scope.data_promise);
@@ -300,6 +301,15 @@
 	    $scope.$watch('$location.$$url', function (n, o) {
 		$scope.clear_all();
 	    });
+
+	    // function check_employee_availability(newval, old) {
+	    // 	if ($scope.mode === 'MODIFY' && $scope.modifying === false) {
+	    // 	    console.log(newval, old);
+	    // 	    console.log('changed!!!', $scope.mode, $scope.modifying, $scope.newAffectation.strClass, $scope.before_modif_affect.strClass);
+	    // 	}
+	    // };
+	    // $scope.$watch('newAffectation.date', check_employee_availability);
+	    // $scope.$watch('days', check_employee_availability);
 
 	    // Report hack
 	    $scope.$on('report_action', this.dispatch_action.bind(this));
@@ -954,7 +964,7 @@
     function RegisterCtrl ($scope) {
 
 	$scope.user = {
-	    name: 'Dispatch',
+	    name: 'Employé',
 	    password: 'CASA',
 	    type: 8,
 	};
@@ -972,7 +982,23 @@
 	}
     };
 
-    
+    function SettingsCtrl ($scope) {
+
+	$scope.$watch('$parent.settings', this.set_default_time.bind(this), true);
+
+	this.scope = $scope;
+    }
+
+    SettingsCtrl.prototype = {
+	set_default_time: function () {
+	    App.settings = this.scope.$parent.settings;
+	    this.scope.http_request('POST', App.settings, App.settings.route, 
+				    function () {console.log('success')}, 
+				    function () {console.log('error')});
+	},
+    };
+
+
     ng.module('casaApp.controllers', [])
 	.controller('CasaCtrl', CasaCtrl)
 	.controller('DispatchCtrl', DispatchCtrl)
@@ -994,6 +1020,7 @@
 	.controller('SessionCtrl', SessionCtrl)
 	.controller('RegisterCtrl', RegisterCtrl)
 	.controller('LoginCtrl', LoginCtrl)
+	.controller('SettingsCtrl', SettingsCtrl)
     
 }(angular, casaApp));
 

@@ -16,6 +16,7 @@
           <li ng-show="user_connected && required_type(USER_CLASS.RECEPTIONNISTE)" class="active"><a href="{{root}}trucks">Camions</a></li>
           <li ng-show="user_connected && required_type(USER_CLASS.RECEPTIONNISTE)" class="active"><a href="{{root}}boxes">Coffres</a></li>
           <li ng-show="user_connected && required_type(USER_CLASS.ADMIN)" class="active"><a href="{{root}}utilisateurs">Utilisateurs</a></li>
+          <li ng-show="user_connected && required_type(USER_CLASS.ADMIN)" class="active"><a href="{{root}}settings">Paramètre</a></li>
           <li ng-show="!user_connected" class="active"><a href="{{root}}login">Login</a></li>
           <li ng-show="user_connected"><a href="#" ng-click="logout()">Logout</a></li>
         </ul>

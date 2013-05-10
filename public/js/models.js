@@ -12,6 +12,13 @@ var STATE = {
 }
 
 
+function Settings (settings) {
+    settings = settings || {};
+    this.default_time = settings.default_time;
+
+    this.route = '/settings';
+}
+
 var USER_CLASS = {
     ADMIN: 1,
     DISPATCH: 2,
@@ -225,7 +232,7 @@ function Client (client) {
 function BaseAffectation () {
     this.date = new Date();
     this.date_format = this.format_date(this.date);
-    this.start_time = { time : "06:00AM"};    
+    this.start_time = { time : App.settings.default_time};    
     this.supervisor_id = App.get_first_not_affected('Supervisor').id;
     this.client_id = App.get_first('Client').id;
     this.link_number = "";
@@ -806,6 +813,7 @@ var App = {
     attributed: new AffectedList,
 
     users: new Array,
+    settings: {},
 
     get_first: function (strElem) {
 	var elem = false;
