@@ -72,8 +72,14 @@
 	
 	$scope.user_management = ng.bind(this, this.user_management);
 
+	// broadcast refresh event to AttributedElementsCtrl
+	$scope.refresh_attributed = function () {
+	    $scope.$broadcast('refresh_attributed');
+	};
+
 	this.scope.report_date = new Date;
 	this.scope.fetch_all_promise = fetch_all;
+	this.scope.fetch_all = fetch_all;
 	this.http = $http;
 	return (this);
     }
@@ -736,6 +742,33 @@
 
     };
 
+    function AttributedElementsCtrl ($scope) {
+	
+	$scope.$on('refresh_attributed', function () {
+	    if ($scope.affectation) {
+		$scope.date_attributed = $scope.$parent.newAffectation_date;
+
+		// $scope.date = 
+	    } else {
+		$scope.date_attributed = $scope.date.fstDate;
+	    }
+	    $scope.attributed_elements = App.verify_day_hack($scope.date_attributed);
+	});
+
+	// $scope.attributed_elements = {};
+	// $scope.fetch_all.then( function () {
+	//     $scope.date_attributed = new Date;
+	//     $scope.attributed_elements = App.verify_day_hack($scope.date_attributed);
+	// });
+
+	$scope.get_affect = function (index) {
+	    var affect = $scope.attributed_elements.list[index].affect;
+	    return App.affectations.get_by_id({id: affect.id, strClass:affect.strClass})
+	};
+
+	this.scope = $scope;
+    }
+
     function RenderCtrl($scope) {
 	$scope.affectations = App.affectations;
 	
@@ -891,7 +924,14 @@
 	$scope.report_affectations = [];
 	$scope.fetched_all.then(function () {
 	    $scope.safeApply(function () {
-		var date = parseInt(window.location.hash.substr(window.location.hash.search(/\?date=/)+ new String('?date=').length));
+		if ($scope.get_user_type() === USER_CLASS.EMPLOYE) {
+		    var date = new Date;
+		    if (date.getHours() >= 12) {
+			date = date.setDate(date.getDate() + 1);
+		    }
+		} else {
+		    var date = parseInt(window.location.hash.substr(window.location.hash.search(/\?date=/)+ new String('?date=').length));
+		}
 		$scope.report_affectations = App.affectations.filter_affectations(new Date(date));
 	    });
 	});
@@ -1007,6 +1047,7 @@
 	.controller('DeliveryCtrl', DeliveryCtrl)
 	.controller('ElementsSelectionCtrl', ElementsSelectionCtrl)
 	.controller('DateSelecterCtrl', DateSelecterCtrl)
+	.controller('AttributedElementsCtrl', AttributedElementsCtrl)
 	.controller('RenderCtrl', RenderCtrl)
 	.controller('AddElems', AddElems)
 	.controller('ClientsCtrl', ClientsCtrl)

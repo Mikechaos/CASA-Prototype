@@ -1,0 +1,22 @@
+<div class="AttributedElement span8" ng-show="attribute_elem_screen">
+  <table class="table">
+    <tr>
+      <th class="span1">&nbsp;</th>
+      <th class="span3">Employés</th>
+      <th class="span3">Bon de service de la job</th>
+    </tr>
+    <tr ng-repeat="attr in attributed_elements.list">
+      <td>
+	<div class="squaredFour span1" style="margin-bottom:8px;">
+	  <input type="checkbox" ng-checked="attr.affected" id="elem_affected_{{$index}}" ng-model="attr.affected" ng-change="" />
+	  <label for="elem_affected_{{$index}}_test"></label>
+	</div>
+      </td>
+      <td>{{attr.elem.name}}</td>
+      <td>{{get_affect($index).link_number}}</td>
+    </tr>
+  </table>
+  <button style="position:fixed; top: 175px; left:700px;" class="btn btn-success">Confirmer</button>
+</div>
+
+

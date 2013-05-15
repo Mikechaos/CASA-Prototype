@@ -1,9 +1,9 @@
 <legend class="row"><h2 style="float:left;">DISPATCH</h2>
-  <button ng-show="false" class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" ng-show="!attribute_elem_screen" 
-	  ng-click="attribute_elem_screen=true">Éléments Attribués</button>
-  <button class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" ng-show="attribute_elem_screen" 
+  <button ng-show="!attribute_elem_screen && required_type(USER_CLASS.DISPATCH)" class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" 
+	  ng-click="attribute_elem_screen=true; refresh_attributed()">Éléments Attribués</button>
+  <button class="btn btn-warning btn-large" style="margin-left:10%; margin-bottom:-1%;" ng-show="attribute_elem_screen && required_type(USER_CLASS.DISPATCH)" 
 	  ng-click="attribute_elem_screen=false">Dispatch</button>
-  <a class="btn btn-warning btn-large" style="margin-left:4%; margin-bottom:-1%;" href="#/day_details?date={{date.fstDate.getTime()}}" 
+  <a class="btn btn-warning btn-large" style="margin-left:2%; margin-bottom:-1%;" href="#/day_details?date={{date.fstDate.getTime()}}" 
      ng-click="safeApply()" target="blank" style="font-size:16px" ng-show="required_type(USER_CLASS.BASIC_USER)">Horaire Imprimable</a>
   <button class="btn btn-large btn-success" ng-show="verify_type(USER_CLASS.EMPLOYE) && mode != 'INDIV'" 
 	  ng-click="mode='INDIV'" style="margin-left:4%; margin-bottom:-1%">
@@ -128,14 +128,4 @@
 </div>  
 
 <!-- ATTRIBUTED ELEMENT SCREEN -->
-<div class="AttributedElement" ng-show="attribute_elem_screen">
-  <div ng-repeat="class in elements_class">
-    <div class="row" style="margin-bottom: 20px;" ng-show="(affected_elems | elems:elements_class[$index].name).length > 0">
-      <legend class="span12">{{class.screen}}</legend>
-      <div class="span12">
-  	<li ng-repeat="elem in affected_elems | elems:elements_class[$index].name"
-  	    class="span5"><strong>{{elem.elem.name}}</strong> => <em>{{elem.affect_name}}</em></li>
-      </div>
-    </div>
-  </div>
-</div>
+<div ng-include src="'partials/attributed_elements.html'" ng-controller="AttributedElementsCtrl" class=""></div>

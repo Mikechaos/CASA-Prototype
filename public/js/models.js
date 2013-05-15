@@ -705,12 +705,16 @@ AffectedList.prototype = {
     verify_affect: function (a) {
 	var self = this;
 	a.elems.forEach(function (e) {
-	    self.push(new ElemAffected(e, a.job))
+	    self.push(new ElemAffected(e, a))
 	});
     },
 
     filter_predicate: function (affected, strClass) {
 	return affected.elem.strElem === strClass;
+    },
+    
+    sort_predicate: function (to_insert, in_place) {
+	return to_insert.elem.name > in_place.elem.name; // && to_insert.strElem === in_place.strElem;
     },
 };
 
@@ -775,8 +779,13 @@ AffectationList.prototype =  {
 };
 
 function ElemAffected(elem, a) {
-    this.elem = elem || {};
-    this.affect_name = "";
+    this.elem = elem || {}; 
+    a = a || {};
+    this.affect = {
+	id: a.id,
+	strClass: a.strClass,
+    };
+    this.affected = true;
 };
 
 
@@ -856,10 +865,22 @@ var App = {
     add_affected: function (affected, a) {
  	// console.log(arguments);
 	a.elems.forEach(function (e) {
-	    affected.push(new ElemAffected(e, a.name));
+	    affected.insertion_sort(new ElemAffected(e, a));
 	});
-	affected.push(new ElemAffected(a.get_supervisor(), a.name));
+	//affected.push(new ElemAffected(a.get_supervisor(), a.name));
 	// console.log(affected);
+    },
+
+
+    // returns the list of affected element
+    verify_day_hack: function (day) {
+	this.attributed.clear();
+	var attributed = new AffectedList; // = this.attributed;
+	forEach(this.affectations.filter_affectations(day), this.add_affected.bind(this, attributed));
+	if (day.getDate() === new Date().getDate() 
+	    && day.getMonth() === new Date().getMonth() 
+	    && day.getFullYear() === new Date().getFullYear()) this.affected_today = attributed;
+	return attributed;
     },
 
     // returns the list of affected element
