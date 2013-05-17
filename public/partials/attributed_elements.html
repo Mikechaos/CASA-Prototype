@@ -3,20 +3,28 @@
     <tr>
       <th class="span1">&nbsp;</th>
       <th class="span3">Employés</th>
+      <th class="span3">Client</th>
       <th class="span3">Bon de service de la job</th>
+      <th>Modifier l'affectation</th>
     </tr>
-    <tr ng-repeat="attr in attributed_elements.list">
-      <td>
-	<div class="squaredFour span1" style="margin-bottom:8px;">
-	  <input type="checkbox" ng-checked="attr.affected" id="elem_affected_{{$index}}" ng-model="attr.affected" ng-change="" />
-	  <label for="elem_affected_{{$index}}_test"></label>
+    <tr ng-repeat="attr in attributed_elements.list" style="{{attributed_more_than_once($index)}}">
+      <td style="{{attributed_more_than_once($index)}}">
+	<div ng-show="!attr.is_supervisor" class="squaredFour span1" style="margin-bottom:8px;">
+	  <input type="checkbox" ng-checked="attr.affected" id="elem_affected_{{$index}}" ng-model="attr.affected" />
+	  <label for="elem_affected_{{$index}}"></label>
 	</div>
+      <span ng-show="attr.is_supervisor">(S)</span>
       </td>
       <td>{{attr.elem.name}}</td>
+      <td ng-show="attr.affect.strClass == 'Affectation'">{{get_affect($index).get_client().name}}</td>
+      <td ng-show="attr.affect.strClass == 'Delivery'">(L) {{get_affect($index).get_client(0).name}}</td>
       <td>{{get_affect($index).link_number}}</td>
+      <td><button class="btn btn-info btn-large span2" style="margin: 0 auto;" 
+		  ng-click="switch_attribute_elem_screen(false); dispatch_action(get_affect($index), 'modify_affect');">Modifier</button>
+      </td>
     </tr>
   </table>
-  <button style="position:fixed; top: 175px; left:700px;" class="btn btn-success">Confirmer</button>
+  <button style="position:fixed; top: 175px; left:700px;" class="btn btn-success btn-large" ng-click="unaffect_elements()">Confirmer</button>
 </div>
 
 

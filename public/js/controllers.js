@@ -190,7 +190,9 @@
 
 	// ** END RECEPTIONNISTE ** //
 	$scope.affectation_to_old = ng.bind(this, this.affectation_to_old);
-	
+
+	$scope.switch_attribute_elem_screen = function (val) { $scope.attribute_elem_screen = val;};
+
 	this.scope = $scope;
 	return (this);
     };
@@ -743,8 +745,9 @@
     };
 
     function AttributedElementsCtrl ($scope) {
-	
+	$scope.attributed_elements = new AffectedList;
 	$scope.$on('refresh_attributed', function () {
+	    $scope.attributed_elements.clear();
 	    if ($scope.affectation) {
 		$scope.date_attributed = $scope.$parent.newAffectation_date;
 
@@ -755,6 +758,24 @@
 	    $scope.attributed_elements = App.verify_day_hack($scope.date_attributed);
 	});
 
+	$scope.attributed_more_than_once = function ($index) {
+	    if ($index < ($scope.attributed_elements.list.length - 2)
+		&& $scope.attributed_elements.list[$index].compare_elem($scope.attributed_elements.list[$index+1])) return 'background:red; color:white;';
+	    if ($index > 0 
+		&& $scope.attributed_elements.list[$index-1].compare_elem($scope.attributed_elements.list[$index])) return 'background:red; color:white;';
+	};
+
+	$scope.unaffect_elements = function () {
+	    $scope.attributed_elements.forEach(function (affect_elem, i) {
+		if (!affect_elem.affected) {
+		    var affect = $scope.get_affect(i);
+		    var splice_index = affect.elems.search_index(affect_elem.elem);
+		    affect.elems.list.splice(splice_index, 1);
+		    $scope.http_request('PUT', new Global[affect.post_fn](affect), affect.route + '/' + affect.id);
+		}
+		$scope.switch_attribute_elem_screen(false);
+	    });
+	};
 	// $scope.attributed_elements = {};
 	// $scope.fetch_all.then( function () {
 	//     $scope.date_attributed = new Date;

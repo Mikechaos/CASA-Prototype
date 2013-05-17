@@ -778,7 +778,7 @@ AffectationList.prototype =  {
 
 };
 
-function ElemAffected(elem, a) {
+function ElemAffected(elem, a, is_supervisor) {
     this.elem = elem || {}; 
     a = a || {};
     this.affect = {
@@ -786,8 +786,14 @@ function ElemAffected(elem, a) {
 	strClass: a.strClass,
     };
     this.affected = true;
+    this.is_supervisor = is_supervisor || false;
 };
 
+ElemAffected.prototype = {
+    compare_elem: function (elem_affected) {
+	return this.elem.id === elem_affected.elem.id && this.elem.strElem === elem_affected.elem.strElem;
+    },
+};
 
 // Inheritance
 // Needs to be at the end because of how I declare my prototypes.
@@ -867,19 +873,19 @@ var App = {
 	a.elems.forEach(function (e) {
 	    affected.insertion_sort(new ElemAffected(e, a));
 	});
-	//affected.push(new ElemAffected(a.get_supervisor(), a.name));
+	affected.insertion_sort(new ElemAffected(a.get_supervisor(), a, true));
 	// console.log(affected);
     },
 
 
     // returns the list of affected element
     verify_day_hack: function (day) {
-	this.attributed.clear();
+	// this.attributed.clear();
 	var attributed = new AffectedList; // = this.attributed;
 	forEach(this.affectations.filter_affectations(day), this.add_affected.bind(this, attributed));
-	if (day.getDate() === new Date().getDate() 
-	    && day.getMonth() === new Date().getMonth() 
-	    && day.getFullYear() === new Date().getFullYear()) this.affected_today = attributed;
+	// if (day.getDate() === new Date().getDate() 
+	//     && day.getMonth() === new Date().getMonth() 
+	//     && day.getFullYear() === new Date().getFullYear()) this.affected_today = attributed;
 	return attributed;
     },
 
