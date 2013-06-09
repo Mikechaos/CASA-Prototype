@@ -1,6 +1,13 @@
 # encoding: utf-8
 require 'bcrypt'
-set :sessions => true
+require 'uri'
+
+# set :sessions => true
+use Rack::Session::Cookie, 
+:key => 'rack.session',
+:path => '/',
+:expire_after => 60*60*24*365, # In seconds
+:secret => "casa15CASA"
 
 class MyApp < Sinatra::Application
   get "/users" do
@@ -10,7 +17,17 @@ class MyApp < Sinatra::Application
     users.to_json
     
   end
-  
+
+  helpers do
+    def base_url
+      @base_url ||= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
+    end
+    
+    def domain_name
+      URI.parse(base_url).host
+    end
+  end  
+
   get "/users/:name" do |name|
     user = User.find(:name => name)
     
