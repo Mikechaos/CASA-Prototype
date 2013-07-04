@@ -1,0 +1,32 @@
+<div class="AttributedElement span10">
+  <table class="table table-striped">
+    <tr>
+      <th class="span3">Employés</th>
+      <th class="span3">Date de Début</th>
+      <th class="span3">Date de Fin</th>
+      <th>Modifier les dates</th>
+      <th>Remettre en service</th>
+    </tr>
+    <tr ng-repeat="elem in vacation_list">
+      <td>{{elem.name}}</td>
+      <td ng-show="!modifying_list[$index]">{{elem.vacationStart_format}}</td>
+      <td ng-show="!modifying_list[$index]">{{elem.vacationEnd_format}}</td>
+      <td ng-show="modifying_list[$index]">
+	<input type="text"  ui-date="{ dateFormat: 'd MM, yy'}" ng-model="vacations[$index].start_day" style="padding-left:15px; width:135px;">
+      </td>
+      <td ng-show="modifying_list[$index]">
+	<input type="text"  ui-date="{ dateFormat: 'd MM, yy'}" ng-model="vacations[$index].end_day" style="padding-left:15px; width:135px;">
+      </td>
+      <td ng-show="!modifying_list[$index]">
+	<button class="btn btn-info btn-large span2" style="margin: 0 auto;" ng-click="modifying_list[$index] = true;">Modifier</button>
+      </td>
+      <td ng-show="modifying_list[$index]">
+	<button class="btn btn-success btn-large span2" style="margin: 0 auto;" ng-click="save_vacation($index)">Confirmer</button>
+      </td>
+      <td><button class="btn btn-info btn-large span2" style="margin: 0 auto;" ng-click="put_back_to_work($index)" disabled>Remettre</button></td>
+    </tr>
+  </table>
+  <!-- <button style="position:fixed; top: 175px; left:700px;" class="btn btn-success btn-large" ng-click="unaffect_elements()">Confirmer</button> -->
+</div>
+
+

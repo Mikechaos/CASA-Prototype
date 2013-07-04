@@ -17,6 +17,23 @@
 	    <select ng-model="newElem.employees_type_id" ng-options="type.id as type.type for type in elements | elems:'EmployeesType'"></select>
 	    <label>Peut être chef d'équipe</label>
 	    <select ng-model="newElem.supervisor" ng-options="can_be.value as can_be.text for can_be in can_be_supervisor"></select>
+	    <div ng-show="modifying">
+	      <label>État</label>
+	      <select ng-model="newElem.state">
+		<option value="1">Actif</option>
+		<option value="2">En vacance</option>
+		<option value="3">Indisponible</option>
+		<option value="3">En maladie</option>
+	      </select>
+	      <div ng-show="newElem.state == 2">
+		<label>Du</label>
+		<input type="text"  ui-date="{ dateFormat: 'd MM, yy'}"
+		       ng-model="newElem.vacationStart" style="padding-left:15px; width:135px;">
+		<label>Au</label>
+		<input type="text"  ui-date="{ dateFormat: 'd MM, yy'}"
+		       ng-model="newElem.vacationEnd" style="padding-left:15px; width:135px;">
+	      </div>
+	    </div>
 	    <label>Notes :</label>
 	    <textarea ng-model="newElem.notes" rows="3" cols="8"></textarea>
 	    <label></label>

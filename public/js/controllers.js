@@ -9,10 +9,11 @@
     function CasaCtrl($scope, $http, $route, $location, fetch_all)
     {
 	$scope.init_location = $location.path();
-	$location.path("/login");
+	if ($location.path() != '/day_details') $location.path("/login");
 	$scope.elements = App.elems;
 	$scope.users = App.users;
 	$scope.user_type = user_type;
+	$scope.user_connected = false;
 	this.scope = $scope;
 	
 	$scope.USER_CLASS = USER_CLASS
@@ -56,7 +57,7 @@
 		    $scope.user_id = parseInt(data.session_id);
 		    if ($scope.init_location === '/login') $scope.init_location = '/dispatch';
 		    $location.path($scope.init_location);
-		    $scope.user_management();
+		    $scope.user_management($location);
 		    // console.log('user_id', $scope.get_user($scope.user_id))
 		    
 		} else {
@@ -66,6 +67,15 @@
 	    }, function (data) {console.log('error', data);});
 	    $scope.settings = App.settings;
 	});
+
+	// Set vacations for elements concerned
+	fetch_all.then(function () {
+	    App.vacations.forEach(function (vac) {
+		var index = App.elems.search_index({id: vac.element_id, strElem: vac.element_class})
+		App.elems.list[index].set_vacation(vac);
+	    });
+	});
+
 	// this.scope.data_promise = fetch_all_data;
 	// console.log(this.scope.data_promise);
 	// fetch_all_data.then(function () { console.log("hmm"); affectation_data().success(function () {console.log('wooh!')})});
@@ -81,6 +91,7 @@
 	this.scope.fetch_all_promise = fetch_all;
 	this.scope.fetch_all = fetch_all;
 	this.http = $http;
+	this.scope.http_request = ng.bind(this, this.http_request);
 	return (this);
     }
     
@@ -96,6 +107,7 @@
 
 	user_management: function ($location) {
 	    if (this.scope.get_user_type() === USER_CLASS.RECEPTIONNISTE) set_reports_object();
+	    if (this.scope.get_user_type() === USER_CLASS.EMPLOYE) {console.log('employeeeee'); $location.path('/interface_employe');}
 	    // if (this.scope.get_user_type() === USER_CLASS.EMPLOYE) {
 	    // 	this.scope.$broadcast('set_automatic_date', null);
 	    // 	// this.scope.location.url('/day_details?date=' + new Date().getTime());
@@ -836,6 +848,8 @@
 	submit_modification: function () {
 	    var $scope = this.scope;
 	    var self = this;
+	    console.log('testestestest', this.scope.newElem);
+	    if (this.scope.newElem.state == 2) this.verify_vacation();
 	    this.request_elem('PUT', this.scope.newElem, this.scope.newElem.route + '/' + this.scope.newElem.id, function () {
 
 		// Swap strElem if can_be_supervisor changed. Not the right place for this. Will use dynamic dispatch
@@ -845,6 +859,24 @@
 		$scope.newElem = new Global[$scope.newElem.strElem];
 		$scope.modifying = false;
 	    });
+	},
+
+	verify_vacation: function () {
+	    if (this.scope.newElem.vacationStart > new Date) {
+		this.scope.newElem.state = 1;
+	    }
+	    var $scope = this.scope;
+	    var vacation = {
+		element_id: $scope.newElem.id,
+		element_class: $scope.newElem.strElem,
+		start_day: $scope.newElem.vacationStart.getTime(),
+		end_day: $scope.newElem.vacationEnd.getTime(),
+		reason: 'Vacance',
+	    }
+	    this.scope.newElem.vacationStart_format = DateFormat.format_date(this.scope.newElem.vacationStart);
+	    this.scope.newElem.vacationEnd_format = DateFormat.format_date(this.scope.newElem.vacationEnd);
+	    
+	    this.request_elem('POST', vacation, '/vacation', function () { });
 	},
 
 	modify_elem: function (elem) {
@@ -943,13 +975,12 @@
     function DayDetailsCtrl ($scope) {
 	$scope.$parent.showingDayDetails = true;
 	$scope.report_affectations = [];
+	
+	var setProperDate = this.setProperDate.bind(this);
 	$scope.fetched_all.then(function () {
 	    $scope.safeApply(function () {
-		if ($scope.get_user_type() === USER_CLASS.EMPLOYE) {
-		    var date = new Date;
-		    if (date.getHours() >= 12) {
-			date = date.setDate(date.getDate() + 1);
-		    }
+		if (window.location.hash.search(/\?date=/) < 0 || $scope.user_connected !== true || $scope.get_user_type() === USER_CLASS.EMPLOYE) {
+		    var date = setProperDate();
 		} else {
 		    var date = parseInt(window.location.hash.substr(window.location.hash.search(/\?date=/)+ new String('?date=').length));
 		}
@@ -967,7 +998,16 @@
 	    return ($scope.page_break(height, index) && index !== 0) ? 'margin-top:35px;' : '';
 	};
     };
-
+	
+    DayDetailsCtrl.prototype = {
+	setProperDate: function() {
+	    var date = new Date;
+	    if (date.getHours() >= 12) {
+		date = date.setDate(date.getDate() + 1);
+	    }
+	    return date;
+	},
+    };
 
     function SessionCtrl ($scope, $http) {
 	this.http = $http;
@@ -1058,6 +1098,37 @@
 				    function () {console.log('error')});
 	},
     };
+    
+    function VacationCtrl ($scope) {
+	$scope.fetch_all.then(function () {
+	    $scope.vacations = App.vacations.list;
+	    $scope.vacation_list = [];
+	    $scope.modifying_list = [];
+	    App.vacations.forEach(function (vac) {
+		var index = App.elems.search_index({id: vac.element_id, strElem: vac.element_class})
+		$scope.vacation_list.push(App.elems.list[index]);
+		$scope.modifying_list.push(false);
+	    });
+	});
+
+	$scope.save_vacation = function (index) {
+	    $scope.vacation_list[index].set_vacation($scope.vacations[index]);
+
+	    $scope.http_request('POST', $scope.vacations[index].post_to_db(), '/vacation', function () { });
+	    $scope.modifying_list[index] = false;
+	};
+
+	$scope.put_back_to_work = function (index) {
+	    $scope.vacations[index].end_day = new Date;
+	    $scope.vacations[index].end_day_format = DateFormat.format_date(new Date);
+	    $scope.http_request('POST', $scope.vacations[index].post_to_db(), '/vacation', function () {
+		App.vacation_list.splice(index, 1);
+	    });
+	    $scope.vacation_list[index].state = 1;
+	    $scope.vacation_list[index].set_vacation($scope.vacations[index]);
+	};
+    }
+
 
 
     ng.module('casaApp.controllers', [])
@@ -1083,6 +1154,7 @@
 	.controller('RegisterCtrl', RegisterCtrl)
 	.controller('LoginCtrl', LoginCtrl)
 	.controller('SettingsCtrl', SettingsCtrl)
+	.controller('VacationCtrl', VacationCtrl)
     
 }(angular, casaApp));
 

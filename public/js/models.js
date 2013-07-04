@@ -81,6 +81,49 @@ User.createFromList = function (userList) {
 User.prototype = {
 };
 
+function Vacation (vac) {
+    this.id = vac.id;
+    this.element_id = vac.element_id;
+    this.element_class = vac.element_class;
+    this.start_day = new Date(vac.start_day);
+    this.end_day = new Date(vac.end_day);
+    this.start_day_format = DateFormat.format_date(this.start_day);
+    this.end_day_format = DateFormat.format_date(this.end_day);
+    this.reason = vac.reason
+}
+
+Vacation.createFromList = function (vacList) {
+    forEach(vacList, function (vac) {
+	App.vacations.push(new Vacation(vac));
+    });
+    return App.vacations;
+};
+
+Vacation.prototype = {
+    post_to_db: function() {
+	var self = this;
+	return {
+	    element_id: self.element_id,
+	    element_class: self.element_class,
+	    start_day: self.start_day.getTime(),
+	    end_day: self.end_day.getTime(),
+	    reason: self.reason,
+	};
+    },    
+};
+
+var DateFormat = {
+    week_day: function (date) {return Date.days[date.getDay()];},
+    month: function (date) {return Date.month[date.getMonth()];},
+    
+    format_date: function (date) {
+	var day = date.getDate();
+	if (day === 1) day = "1er";
+	
+	return this.week_day(date) + ", le " + day + " " + this.month(date);
+    },
+};
+
 // Abstract interface for underlying elements
 function Element (elem) {
     this.strElem = this.constructor.name;
@@ -114,6 +157,13 @@ Element.prototype = {
 
     eql: function (elem) {
 	return this.id === elem.id && this.strElem === elem.strElem;
+    },
+
+    set_vacation: function (vac) {
+	this.vacationStart = vac.start_day;
+	this.vacationEnd = vac.end_day;
+	this.vacationStart_format = DateFormat.format_date(vac.start_day);
+	this.vacationEnd_format = DateFormat.format_date(vac.end_day);
     },
 };
 
@@ -778,6 +828,17 @@ AffectationList.prototype =  {
 
 };
 
+function VacationList (list) {
+    ListClass.call(this);
+    this.list = list || [];
+}
+
+VacationList.prototype = {
+    eql_predicate: function (current, searched) {
+	return searched.element_id === current.element_id && searched.element_class === current.element_class;
+    },
+};
+
 function ElemAffected(elem, a, is_supervisor) {
     this.elem = elem || {}; 
     a = a || {};
@@ -810,7 +871,7 @@ ElemAffected.prototype = {
 // ** Confirmation, it is fix **
 
 Inherits.extend_multiple([["Employee"], ["Truck"], ["Box"], ["Job"], ["Client"], ["Supervisor", "Employee"], ["EmployeesType"]], "Element");
-Inherits.extend_multiple([["AffectationList"], ["ElementList"], ["AffectedList", "ElementList"]], "ListClass");
+Inherits.extend_multiple([["AffectationList"], ["ElementList"], ["VacationList"], ["AffectedList", "ElementList"]], "ListClass");
 Inherits.extend_multiple([["Affectation"], ["Delivery"]], "BaseAffectation");
 Inherits.extend_multiple([["PostAffectation"], ["PostDelivery"]], "BasePostAffectation");
 
@@ -823,6 +884,7 @@ var App = {
     affectations: new AffectationList,
     
     elems: new ElementList,
+    vacations: new VacationList,
 
     affected_today: new AffectedList,
     attributed: new AffectedList,
