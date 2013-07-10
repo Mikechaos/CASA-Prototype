@@ -34,19 +34,18 @@ angular.module('casaApp.services', [])
 	    fetch(new Box),
 	    fetch({route: '/affectations', strElem: 'Affectation'}),
 	    fetch({route: '/deliveries', strElem: 'Affectation'}),
-	    fetch({route: '/vacation', strelem: 'null'}),
+	    fetch({route: '/vacation', strElem: 'null'}),
 	    fetch(new User),
 	    fetch({route: '/settings', strElem: 'null'}),
 	]).then(function (array) {
 	    App.settings = new Settings(array.pop().fetched[0]);
 	    
 	    User.createFromList(array.pop().fetched);
-	    Vacation.createFromList(array.pop().fetched);
 
 	    forEach(array, function (obj) {
-		if (obj.strElem !== "Affectation")
-		    Element.createFromList(obj.strElem, obj.fetched);
+		if (obj.strElem !== "Affectation" && obj.strElem !== 'null') Element.createFromList(obj.strElem, obj.fetched);
 	    });
+	    Vacation.createFromList(array.pop().fetched);
 
 	    Delivery.createFromList(array.pop().fetched);
 	    Affectation.createFromList(array.pop().fetched);

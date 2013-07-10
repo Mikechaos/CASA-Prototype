@@ -32,27 +32,6 @@ class MyApp < Sinatra::Application
     emp.to_json
     # haml :reglages
   end
-
-  post "/vacation" do
-    puts '----- FIND ----- '
-    
-    vac = Vacation.find_or_create(:element_id => params[:element_id], :element_class => params[:element_class]) {|vac|
-      puts params[:start_day]
-      vac.element_id = params[:element_id]
-      vac.element_class = params[:element_class]
-      vac.start_day = params[:start_day]
-      vac.end_day = params[:end_day]
-      vac.reason = params[:reason]
-    }.update(:start_day => params[:start_day],
-             :end_day => params[:end_day],
-             :reason => params[:reason]).to_json
-      #else
-      #  Vacation.find
-  end
-
-  get  "/vacation" do
-    Vacation.order(:id).to_json
-  end
   
   put "/employees/:id" do |id|
     Employee.find(:id => id).update(:name => params[:name], 
@@ -66,4 +45,36 @@ class MyApp < Sinatra::Application
     employee = Employee.find(:id => id).update(:state => 4)
     employee.to_json
   end
+
+  post "/vacation" do
+    vac = Vacation.find_or_create(:element_id => params[:element_id], :element_class => params[:element_class]) {|vac|
+      vac.element_id = params[:element_id]
+      vac.element_class = params[:element_class]
+      vac.start_day = params[:start_day]
+      vac.end_day = params[:end_day]
+      vac.reason = params[:reason]
+    }.update(:start_day => params[:start_day],
+             :end_day => params[:end_day],
+             :reason => params[:reason]).to_json
+    #else
+    #  Vacation.find
+  end
+
+  get  "/vacation" do
+    Vacation.order(:id).to_json
+  end
+
+  delete "/vacation/:id" do |id|
+    Vacation.find(:id => id).delete.to_json
+  end
+
+  post "/vacation_archive" do
+    vac = Vacations_Archive.create(:element_id => params[:element_id],
+                                   :element_class => params[:element_class],
+                                   :start_day => params[:start_day],
+                                   :end_day => params[:end_day],
+                                   :reason => params[:reason]
+                                   ).to_json
+  end
+  
 end

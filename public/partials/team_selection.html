@@ -25,9 +25,10 @@
 
 	  <div ng-repeat="class in elements_class" class="tab-pane {{hack[$index].active}}" id="tab{{$index + 1}}">
 	    <div class="row modal-checkboxes" 
-		 ng-repeat="elem in elements | elems:elements_class[$index].name | already_attr_elems:days:newAffectation.date:use_already_affected | remove_supervisor:newAffectation.supervisor_id">
+		 ng-repeat="elem in elements | elems:elements_class[$index].name | already_attr_elems:days:newAffectation.date:use_already_affected | remove_supervisor:newAffectation.supervisor_id | active_element:newAffectation.date:days">
 	      <div class="squaredFour span1" style="margin-bottom:8px;">
-		<input type="checkbox" ng-checked="elem.selected" id="modal_{{elements_class[$parent.$index].name}}{{elem.id}}" ng-model="elem.selected" ng-change="change(elem);" />
+		<input type="checkbox" ng-checked="elem.selected" id="modal_{{elements_class[$parent.$index].name}}{{elem.id}}"
+		       ng-model="elem.selected" ng-change="change(elem);" />
 		<label for="modal_{{elements_class[$parent.$index].name}}{{elem.id}}"></label>
 	      </div>
 	      <div class="span3 modal-label" style="margin-top:0px; margin-left:-40px;">{{elem.name}} </div>

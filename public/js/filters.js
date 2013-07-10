@@ -57,7 +57,7 @@ angular.module('casaApp.filters', []).
 	};
 
     }).
-    filter('already_attr_elems', function () { // this will most definitly needs some refactoring
+    filter('already_attr_elems', function () {
 	    return function (elems, days, date, use_already_affected, supervisor) {
 		if (use_already_affected) return elems;
 		var ret = App.test(elems, days, date, supervisor);
@@ -146,4 +146,39 @@ angular.module('casaApp.filters', []).
 	return function (element) {
 	    
 	};
-    });
+    })
+    .filter('active_element', function () {
+	return function (elems, affect_date, days) {
+	    // console.log('FILTER', elems, affect_date, days);
+	    var diff_array = create_diff_array(affect_date);
+	    forEach(elems, function (e) {
+		
+	    });
+	    elems = elems || [];
+	    return elems.filter(function (e) {
+		var vacation_active = false;
+		forEach(Date.days, function (d, i) {
+		    if (days[d] === true) {
+			var date = new Date(affect_date.getFullYear(), affect_date.getMonth(), affect_date.getDate() + diff_array[i]);
+			vacation_active = are_vacation_active({start_day: e.vacationStart, end_day: e.vacationEnd}, date);
+			return !vacation_active; // so it breaks if vacation_active is true
+		    }
+		});
+		return !vacation_active;
+	    });
+	};
+    })
+    .filter('active_vacation', function () {
+	return function (vac) {
+	    vac = vac || [];
+	    return vac.filter(function (v) {return are_vacation_active({start_day: v.vacationStart, end_day: v.vacationEnd})});
+	};
+    })
+    .filter('upcoming_vacation', function () {
+	return function (vac) {
+	    vac = vac || [];
+	    console.log(vac);
+	    return vac.filter(function (v) {return !are_vacation_active({start_day: v.vacationStart, end_day: v.vacationEnd})});
+	};
+    })
+;

@@ -67,12 +67,21 @@
 	    }, function (data) {console.log('error', data);});
 	    $scope.settings = App.settings;
 	});
-
+	
 	// Set vacations for elements concerned
 	fetch_all.then(function () {
-	    App.vacations.forEach(function (vac) {
+	    App.vacations.forEach(function (vac, i) {
 		var index = App.elems.search_index({id: vac.element_id, strElem: vac.element_class})
 		App.elems.list[index].set_vacation(vac);
+		$scope.http_request('PUT', App.elems.get(index), App.elems.get(index).route + '/' + App.elems.get(index).id);
+		if (are_vacation_done(vac)) {
+		    $scope.http_request('DELETE', vac, '/vacation/' + vac.id, function () {
+			$scope.http_request('POST', vac.post_to_db(), '/vacation_archive', function () {
+			    App.vacations.list.splice(i, 1);
+			    $scope.$broadcast('refresh_vacation_list');
+			});
+		    });
+		}
 	    });
 	});
 
@@ -322,6 +331,8 @@
 		$scope.clear_all();
 	    });
 
+	    var self = this;
+
 	    // function check_employee_availability(newval, old) {
 	    // 	if ($scope.mode === 'MODIFY' && $scope.modifying === false) {
 	    // 	    console.log(newval, old);
@@ -381,11 +392,13 @@
 	save_affectation: function (clearing_callback) {
 	    // Copy affectation over other date selected
 	    //this.scope.days[this.scope.newAffectation.week_day()] = false;
-	    var diff = -(Date.days.indexOf(this.scope.newAffectation.week_day()));
-	    var diff_array = [];
-	    for (var i = 0; i < 7; ++i) {
-		diff_array[i] = diff + i;
-	    }
+	    // var diff = -(Date.days.indexOf(this.scope.newAffectation.week_day()));
+	    // var diff_array = [];
+	    // for (var i = 0; i < 7; ++i) {
+	    // 	diff_array[i] = diff + i;
+	    // }
+
+	    var diff_array = create_diff_array(this.scope.newAffectation.date);
 	    var $scope = this.scope
 	    var self = this;
 	    forEach (Date.days, function (d, i) {
@@ -463,7 +476,10 @@
 	},
 
 	select_elem: function () {
-	    this.scope.newAffectation.elems.forEach(function (e) {e.selected = true });
+	    this.scope.newAffectation.elems.forEach(function (e) {
+		var elem_index = App.elems.search_index(e);
+		App.elems.get(elem_index).selected = true;
+	    });
 	},
 
 	// Cleans all selected elements
@@ -862,9 +878,10 @@
 	},
 
 	verify_vacation: function () {
-	    if (this.scope.newElem.vacationStart > new Date) {
-		this.scope.newElem.state = 1;
-	    }
+	    // if (this.scope.newElem.vacationStart > new Date) {
+	    // 	this.scope.newElem.state = 1; // So employee is kept active till beginning of vacation
+	    // }
+
 	    var $scope = this.scope;
 	    var vacation = {
 		element_id: $scope.newElem.id,
@@ -873,10 +890,13 @@
 		end_day: $scope.newElem.vacationEnd.getTime(),
 		reason: 'Vacance',
 	    }
-	    this.scope.newElem.vacationStart_format = DateFormat.format_date(this.scope.newElem.vacationStart);
-	    this.scope.newElem.vacationEnd_format = DateFormat.format_date(this.scope.newElem.vacationEnd);
+	    // this.scope.newElem.vacationStart_format = DateFormat.format_date(this.scope.newElem.vacationStart);
+	    // this.scope.newElem.vacationEnd_format = DateFormat.format_date(this.scope.newElem.vacationEnd);
 	    
-	    this.request_elem('POST', vacation, '/vacation', function () { });
+	    this.request_elem('POST', vacation, '/vacation', function () { 
+		if (App.vacations.search_index(vacation) === false) App.vacations.insertion_sort(new Vacation(vacation));
+		$scope.newElem.set_vacation(App.vacations.get(App.vacations.search_index(vacation)));
+	    });
 	},
 
 	modify_elem: function (elem) {
@@ -1102,31 +1122,54 @@
     function VacationCtrl ($scope) {
 	$scope.fetch_all.then(function () {
 	    $scope.vacations = App.vacations.list;
-	    $scope.vacation_list = [];
 	    $scope.modifying_list = [];
+	    $scope.$watch('App.vacations.list', function () {
+		$scope.vacation_list = [];
+		App.vacations.forEach(function (vac) {
+		    var index = App.elems.search_index({id: vac.element_id, strElem: vac.element_class})
+		    $scope.vacation_list.push(App.elems.list[index]);
+		    $scope.modifying_list.push(false);
+		});
+	    });
+	});
+
+	$scope.$on('refresh_vacation_list', function () {
+	    $scope.vacation_list = [];
 	    App.vacations.forEach(function (vac) {
 		var index = App.elems.search_index({id: vac.element_id, strElem: vac.element_class})
 		$scope.vacation_list.push(App.elems.list[index]);
 		$scope.modifying_list.push(false);
 	    });
 	});
-
 	$scope.save_vacation = function (index) {
 	    $scope.vacation_list[index].set_vacation($scope.vacations[index]);
 
-	    $scope.http_request('POST', $scope.vacations[index].post_to_db(), '/vacation', function () { });
+	    $scope.http_request('POST', $scope.vacations[index].post_to_db(), '/vacation', function () {
+		if ($scope.vacations[index].start_day > new Date) $scope.vacation_list[index].state = 1;
+		else $scope.vacation_list[index].state = 2;
+	    });
 	    $scope.modifying_list[index] = false;
 	};
 
 	$scope.put_back_to_work = function (index) {
-	    $scope.vacations[index].end_day = new Date;
-	    $scope.vacations[index].end_day_format = DateFormat.format_date(new Date);
-	    $scope.http_request('POST', $scope.vacations[index].post_to_db(), '/vacation', function () {
-		App.vacation_list.splice(index, 1);
+	    var date = new Date;
+	    var end_date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
+	    $scope.vacations[index].end_day = (end_date);
+	    $scope.vacations[index].end_day_format = DateFormat.format_date(end_date);
+	    // $scope.http_request('POST', $scope.vacations[index].post_to_db(), '/vacation', function () {
+	    // 	$scope.vacation_list.splice(index, 1);
+	    // });
+	    $scope.http_request('DELETE', $scope.vacations[index].post_to_db(), '/vacation/' + $scope.vacations[index].id, function () {
+		$scope.http_request('POST', $scope.vacations[index].post_to_db(), '/vacation_archive', function () {
+		    $scope.vacation_list[index].set_vacation($scope.vacations[index]);
+		    $scope.vacation_list.splice(index, 1);
+		    $scope.vacations.splice(index, 1);
+		});
 	    });
-	    $scope.vacation_list[index].state = 1;
-	    $scope.vacation_list[index].set_vacation($scope.vacations[index]);
 	};
+	
+	$scope.DateFormat = DateFormat; // so its usable in vacation.html
+	$scope.are_vacation_active = are_vacation_active;
     }
 
 

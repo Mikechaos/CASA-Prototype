@@ -94,7 +94,7 @@ function Vacation (vac) {
 
 Vacation.createFromList = function (vacList) {
     forEach(vacList, function (vac) {
-	App.vacations.push(new Vacation(vac));
+	App.vacations.insertion_sort(new Vacation(vac));
     });
     return App.vacations;
 };
@@ -112,6 +112,18 @@ Vacation.prototype = {
     },    
 };
 
+// Function and not method so it works with plain object
+function are_vacation_active(vac, date) {
+    date = date || new Date;
+    return (vac.start_day <= date && !are_vacation_done(vac, date));
+}
+
+function are_vacation_done(vac, date) {
+    date = date || new Date;
+    var end_date = new Date(vac.end_day.getFullYear(), vac.end_day.getMonth(), vac.end_day.getDate() + 1);
+    return end_date <= date;
+}
+
 var DateFormat = {
     week_day: function (date) {return Date.days[date.getDay()];},
     month: function (date) {return Date.month[date.getMonth()];},
@@ -123,6 +135,16 @@ var DateFormat = {
 	return this.week_day(date) + ", le " + day + " " + this.month(date);
     },
 };
+
+function create_diff_array(date) {
+    date = date || new Date;
+    var diff = -(date.getDay());
+    var diff_array = [];
+    for (var i = 0; i < 7; ++i) {
+	diff_array[i] = diff + i;
+    }
+    return diff_array;
+}
 
 // Abstract interface for underlying elements
 function Element (elem) {
@@ -164,6 +186,8 @@ Element.prototype = {
 	this.vacationEnd = vac.end_day;
 	this.vacationStart_format = DateFormat.format_date(vac.start_day);
 	this.vacationEnd_format = DateFormat.format_date(vac.end_day);
+	if (are_vacation_active(vac)) this.state = 2;
+	else this.state = 1;
     },
 };
 
@@ -745,7 +769,7 @@ function AffectedList() {
 
 AffectedList.prototype = {
     is_affected: function (elem) {
-	return this.is_include(elem);
+	return this.is_include(elem) || elem.state != 1;
     },
     
     eql_predicate: function (current, searched) {
@@ -836,6 +860,13 @@ function VacationList (list) {
 VacationList.prototype = {
     eql_predicate: function (current, searched) {
 	return searched.element_id === current.element_id && searched.element_class === current.element_class;
+    },
+
+    sort_predicate: function (to_insert, in_place) {
+	// is a_to_insert smaller to a_inplace
+	var in_place_index = App.elems.search_index({strElem: in_place.element_class, id: in_place.element_id});
+	var to_insert_index = App.elems.search_index({strElem: to_insert.element_class, id: to_insert.element_id});
+	return (App.elems.get(to_insert_index).name > App.elems.get(in_place_index).name) ? true : false;
     },
 };
 

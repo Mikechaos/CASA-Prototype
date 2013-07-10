@@ -5,7 +5,7 @@
     <div class="span3">
       <label>Chef de chantier : </label>
       <select ng-model="newAffectation.supervisor_id" 
-	      ng-options="sup.id as sup.name for sup in elements | elems:'Supervisor' | already_attr_elems:days:newAffectation.date:use_already_affected:newAffectation.supervisor_id | remove_affected:newAffectation.elems"></select>
+	      ng-options="sup.id as sup.name for sup in elements | elems:'Supervisor' | active_element:newAffectation.date:days | already_attr_elems:days:newAffectation.date:use_already_affected:newAffectation.supervisor_id | remove_affected:newAffectation.elems"></select>
     </div>
     <div class="span12" style="margin-left:0px;">
       <!-- <div class="span3"> -->

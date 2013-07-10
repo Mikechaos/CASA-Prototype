@@ -33,4 +33,5 @@ require_relative 'affectation'
 require_relative 'delivery'
 require_relative 'settings'
 require_relative 'vacation'
+require_relative 'vacation_archive'
 
