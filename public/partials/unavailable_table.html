@@ -1,0 +1,14 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th class="span3">{{screen_strElem}}</th>
+      <th>Remettre en service</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-show="elem.strElem == strElem" ng-repeat="elem in unavailable_list">
+      <td>{{elem.name}}</td>
+      <td><button class="btn btn-info btn-large span2" style="margin: 0 auto;" ng-click="put_back_to_work($index)">Remettre</button></td>
+    </tr>
+  </tbody>
+</table>

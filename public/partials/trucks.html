@@ -8,6 +8,11 @@
       <input type="text" ng-model="newElem.name">
       <label>Notes :</label>
       <textarea ng-model="newElem.notes" rows="3" cols="8"></textarea>
+      <label>État</label>
+      <select ng-model="newElem.state">
+	<option value="1">Actif</option>
+	<option value="3">Indisponible</option>
+      </select>
       <label></label>
       <!-- <button class="btn btn-success" disabled>En construction</button> -->
       <button ng-show="!modifying" class="btn btn-success" ng-click="submit()">Ajouter</button>

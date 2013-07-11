@@ -99,6 +99,17 @@ angular.module('casaApp.directives', []).
             });
 	};
     })
+    .directive('csUnavailableList', function() {
+	return {
+	    scope: true,
+	    templateUrl: 'partials/unavailable_table.html',
+	        link: function(scope, element, attrs, controller) {
+		    console.log(attrs);
+		    scope.strElem = attrs.strElem;
+		    scope.screen_strElem = attrs.screenStrElem;
+		},
+	};
+    })
 
 // .directive('paneElem' function factory() {
 

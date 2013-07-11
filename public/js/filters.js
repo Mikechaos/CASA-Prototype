@@ -157,6 +157,7 @@ angular.module('casaApp.filters', []).
 	    elems = elems || [];
 	    return elems.filter(function (e) {
 		var vacation_active = false;
+		if (e.state > 2) return !(vacation_active = true); // State greater than 2 => element isn't available at all
 		forEach(Date.days, function (d, i) {
 		    if (days[d] === true) {
 			var date = new Date(affect_date.getFullYear(), affect_date.getMonth(), affect_date.getDate() + diff_array[i]);

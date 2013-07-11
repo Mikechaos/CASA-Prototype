@@ -1,6 +1,6 @@
 <div class="AttributedElement span10">
   <legend> Employés </legend>
-  <table class="table table-striped">
+  <table ng-show="count_active() > 0" class="table table-striped">
     <thead>
     <tr><td colspan="5"><h4>Actuellement en vacance</h4></td></tr>
     <tr>
@@ -31,6 +31,8 @@
       <td><button class="btn btn-info btn-large span2" style="margin: 0 auto;" ng-click="put_back_to_work($index)">Remettre</button></td>
     </tr>
     </tbody>
+  </table>
+  <table ng-show="count_upcoming() > 0" class="table table-striped">
     <thead>
       <tr><th colspan="5"><h4>Vacances à venir</h4></th></tr>
       <tr>
@@ -62,6 +64,31 @@
     </tr>
     </tbody>
   </table>
+
+  <div ng-show="unavailable_list.length > 0" ng-controller="UnavailableCtrl">
+    <legend>Éléments indisponibles</legend>
+    <div ng-show="strElem_present('Supervisor')" cs-unavailable-list="true" screen-str-elem="Superviseurs" str-elem="Supervisor"></div>
+    <div ng-show="strElem_present('Employee')" cs-unavailable-list="true" screen-str-elem="Employés" str-elem="Employee"></div>
+    <div ng-show="strElem_present('Truck')" cs-unavailable-list="true" screen-str-elem="Camions" str-elem="Truck"></div>
+    <div ng-show="strElem_present('Box')" cs-unavailable-list="true" screen-str-elem="Coffres" str-elem="Box"></div>
+
+    <!-- <\!-- SUPERVISOR -\-> -->
+    <!-- <table class="table table-striped"> -->
+    <!--   <thead> -->
+    <!-- 	<tr> -->
+    <!-- 	  <th class="span3">Superviseurs</th> -->
+    <!-- 	  <th>Remettre en service</th> -->
+    <!-- 	</tr> -->
+    <!--   </thead> -->
+    <!--   <tbody> -->
+    <!-- 	<tr ng-show="elem.strElem == 'Supervisor'" ng-repeat="elem in unavailable_list"> -->
+    <!-- 	  <td>{{elem.name}}</td> -->
+    <!-- 	  <td><button class="btn btn-info btn-large span2" style="margin: 0 auto;" ng-click="put_back_to_work($index)">Remettre</button></td> -->
+    <!-- 	</tr> -->
+    <!--   </tbody> -->
+    <!-- </table> -->
+
+  </div>
   <!-- <button style="position:fixed; top: 175px; left:700px;" class="btn btn-success btn-large" ng-click="unaffect_elements()">Confirmer</button> -->
 </div>
 

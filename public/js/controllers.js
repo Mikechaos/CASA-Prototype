@@ -1167,11 +1167,58 @@
 		});
 	    });
 	};
+
+	$scope.count_upcoming = function () {
+	    var count = 0;
+	    forEach($scope.vacations, function (vac) {
+		if (!are_vacation_active(vac)) ++count;
+	    });
+	    return count;
+	};
+
+	$scope.count_active = function () {
+	    var count = 0;
+	    forEach($scope.vacations, function (vac) {
+		if (are_vacation_active(vac)) ++count;
+	    });
+	    return count;
+	};
 	
 	$scope.DateFormat = DateFormat; // so its usable in vacation.html
 	$scope.are_vacation_active = are_vacation_active;
     }
+    
+    function UnavailableCtrl ($scope) {
+	$scope.fetch_all.then(function () {
+	    $scope.unavailable_list = [];
+	    $scope.modifying_list = [];
+	    App.elems.forEach(function (e) {
+		if (e.state > 2) {
+		    $scope.unavailable_list.push(e);
+		    $scope.modifying_list.push(false);
+		}
+	    });
+	    console.log($scope.strElem_present('Supervisor'));
+	    console.log($scope.strElem_present('Employee'));
+	});
 
+	$scope.strElem_present = function (strElem) {
+	    var found = false;
+	    forEach($scope.unavailable_list, function (elem) {
+		if (elem.strElem === strElem) found = true;
+		return !found;
+	    });
+	    return found;
+	};
+
+	$scope.put_back_to_work = function (index) {
+	    var elem = App.elems.get(App.elems.search_index($scope.unavailable_list[index]));
+	    elem.state = 1;
+	    $scope.http_request('PUT', elem, elem.route + '/' + elem.id, function () {
+		$scope.unavailable_list.splice(index, 1);
+	    });
+	}
+    }
 
 
     ng.module('casaApp.controllers', [])
@@ -1198,6 +1245,7 @@
 	.controller('LoginCtrl', LoginCtrl)
 	.controller('SettingsCtrl', SettingsCtrl)
 	.controller('VacationCtrl', VacationCtrl)
+	.controller('UnavailableCtrl', UnavailableCtrl)
     
 }(angular, casaApp));
 
