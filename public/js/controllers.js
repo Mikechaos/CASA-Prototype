@@ -6,7 +6,7 @@
 (function (ng, app, $http, $route, fetch_all) {
 
     // CASA CONTROLLER
-    function CasaCtrl($scope, $http, $route, $location, fetch_all)
+    function CasaCtrl($scope, $http, $route, $location, fetch_all, $q)
     {
 	$scope.init_location = $location.path();
 	if ($location.path() != '/day_details') $location.path("/login");
@@ -14,6 +14,7 @@
 	$scope.users = App.users;
 	$scope.user_type = user_type;
 	$scope.user_connected = false;
+	$scope.user_login_promise = $q.defer();
 	this.scope = $scope;
 	
 	$scope.USER_CLASS = USER_CLASS
@@ -64,6 +65,7 @@
 		    $scope.user_connected = false;
 		    $scope.user_id = 0;
 		}
+		$scope.user_login_promise.resolve();
 	    }, function (data) {console.log('error', data);});
 	    $scope.settings = App.settings;
 	});
@@ -995,9 +997,8 @@
     function DayDetailsCtrl ($scope) {
 	$scope.$parent.showingDayDetails = true;
 	$scope.report_affectations = [];
-	
 	var setProperDate = this.setProperDate.bind(this);
-	$scope.fetched_all.then(function () {
+	$scope.user_login_promise.promise.then(function () {
 	    $scope.safeApply(function () {
 		if (window.location.hash.search(/\?date=/) < 0 || $scope.user_connected !== true || $scope.get_user_type() === USER_CLASS.EMPLOYE) {
 		    var date = setProperDate();
