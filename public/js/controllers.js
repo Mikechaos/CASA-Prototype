@@ -57,7 +57,7 @@
 		    $scope.user_connected = true;
 		    $scope.user_id = parseInt(data.session_id);
 		    if ($scope.init_location === '/login') $scope.init_location = '/dispatch';
-		    $location.path($scope.init_location);
+		    if ($location.path() != '/day_details') $location.path($scope.init_location);
 		    $scope.user_management($location);
 		    // console.log('user_id', $scope.get_user($scope.user_id))
 		    
@@ -110,12 +110,23 @@
 	
 	http_request: function(method, params, route, callback_success, callback_error) {
 	    callback_success = callback_success || function () {};
-	    callback_error = callback_error || function () {};
-	    this.http({method: method,  url: route, params: params, headers: "application/x-www-form-urlencoded"})
+	    callback_error = callback_error || this.http_request_callback_error.bind(this);
+	    var request = {method: method,  url: route, params: params, headers: "application/x-www-form-urlencoded"};
+	    this.http(request)
 		.success(function (data, status) {callback_success(data, status)})
-		.error(function () {callback_error()});
+		.error(function () {callback_error(request, callback_success, callback_error, 0)});
 	},
 
+	http_request_callback_error: function (request, callback_success, callback_error, count) {
+	    if (count > 5) alert('FATAL ERROR');
+	    else {
+		console.log('Error http_request test', request);
+		this.http(request)
+		    .success(function (data, status) {callback_success(data, status)})
+		    .error(function () {callback_error(request, callback_success, callback_error, ++count)});
+	    }
+	},
+	
 	user_management: function ($location) {
 	    if (this.scope.get_user_type() === USER_CLASS.RECEPTIONNISTE) set_reports_object();
 	    if (this.scope.get_user_type() === USER_CLASS.EMPLOYE) {console.log('employeeeee'); $location.path('/interface_employe');}
@@ -844,7 +855,7 @@
 		// var save = this.save.bind(this);
 		var self = this;
 
-		this.request_elem('POST', $scope.newElem, $scope.newElem.route, function (data) {
+		this.http_request('POST', $scope.newElem, $scope.newElem.route, function (data) {
 		    self.save(data);
 		}, function (data, status, headers, config) {
 		    $scope.alert.push({
@@ -858,7 +869,7 @@
 
 	delete_elem: function (elem) {
 	    if (!elem.get_deletion_confirmation()) return ;
-	    this.request_elem('DELETE', this.scope.newElem, this.scope.newElem.route + '/' + elem.id, function (data) {
+	    this.http_request('DELETE', this.scope.newElem, this.scope.newElem.route + '/' + elem.id, function (data) {
 		App.elems.find_and_delete(elem);
 	    });
 	},
@@ -868,7 +879,7 @@
 	    var self = this;
 	    console.log('testestestest', this.scope.newElem);
 	    if (this.scope.newElem.state == 2) this.verify_vacation();
-	    this.request_elem('PUT', this.scope.newElem, this.scope.newElem.route + '/' + this.scope.newElem.id, function () {
+	    this.http_request('PUT', this.scope.newElem, this.scope.newElem.route + '/' + this.scope.newElem.id, function () {
 
 		// Swap strElem if can_be_supervisor changed. Not the right place for this. Will use dynamic dispatch
 		if ($scope.newElem.supervisor === true) $scope.newElem.strElem = "Supervisor";
@@ -895,7 +906,7 @@
 	    // this.scope.newElem.vacationStart_format = DateFormat.format_date(this.scope.newElem.vacationStart);
 	    // this.scope.newElem.vacationEnd_format = DateFormat.format_date(this.scope.newElem.vacationEnd);
 	    
-	    this.request_elem('POST', vacation, '/vacation', function () { 
+	    this.http_request('POST', vacation, '/vacation', function () { 
 		if (App.vacations.search_index(vacation) === false) App.vacations.insertion_sort(new Vacation(vacation));
 		$scope.newElem.set_vacation(App.vacations.get(App.vacations.search_index(vacation)));
 	    });
@@ -910,14 +921,6 @@
 	save: function (elem) {
 	    Element.createFromList(this.scope.newElem.strElem, [elem]);
 	    this.scope.newElem = new Global[this.scope.newElem.strElem];
-	},
-
-	request_elem: function(method, params, route, callback_success, callback_error) {
-	    callback_success = callback_success || function () {};
-	    callback_error = callback_error || function () {};
-	    this.http({method: method,  url: route, params: params, headers: "application/x-www-form-urlencoded"})
-		.success(function (data, status) {callback_success(data, status)})
-		.error(function () {callback_error()});
 	},
 
     };
@@ -1065,8 +1068,7 @@
 
     LoginCtrl.prototype = {
 	login: function () {
-	    this.scope.http_request('GET', this.scope.user, '/users/' + App.get_user(this.scope.user.id).name, this.connect.bind(this), 
-				    function (data) {console.log('error', data)});
+	    this.scope.http_request('GET', this.scope.user, '/users/' + App.get_user(this.scope.user.id).name, this.connect.bind(this));
 	},
 
 	connect: function (data) {
@@ -1099,8 +1101,7 @@
     RegisterCtrl.prototype = {
 	register_user: function () {
 	    this.scope.http_request('POST', this.scope.user, '/users', 
-				    function (data) {console.log(data)}, 
-				    function (data) {console.log('error', data)});
+				    function (data) {console.log(data)});
 	}
     };
 
@@ -1115,8 +1116,7 @@
 	set_default_time: function () {
 	    App.settings = this.scope.$parent.settings;
 	    this.scope.http_request('POST', App.settings, App.settings.route, 
-				    function () {console.log('success')}, 
-				    function () {console.log('error')});
+				    function () {console.log('success')});
 	},
     };
     
