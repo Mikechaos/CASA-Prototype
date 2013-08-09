@@ -34,7 +34,7 @@
 	this.scope.showingDayDetails = false;
 	this.scope.location = $location;
 
-	$scope.http_request = ng.bind(this, this.scope.http_request);
+	$scope.http_request = ng.bind(this, this.http_request);
 
 	$scope.logout = function () {
 	    $scope.http_request('POST', {}, '/logout', function () {
@@ -110,23 +110,12 @@
 	
 	http_request: function(method, params, route, callback_success, callback_error) {
 	    callback_success = callback_success || function () {};
-	    callback_error = callback_error || this.http_request_callback_error.bind(this);
-	    var request = {method: method,  url: route, params: params, headers: "application/x-www-form-urlencoded"};
-	    this.http(request)
+	    callback_error = callback_error || function () {};
+	    this.http({method: method,  url: route, params: params, headers: "application/x-www-form-urlencoded"})
 		.success(function (data, status) {callback_success(data, status)})
-		.error(function () {callback_error(request, callback_success, callback_error, 0)});
+		.error(function () {callback_error()});
 	},
 
-	http_request_callback_error: function (request, callback_success, callback_error, count) {
-	    if (count > 5) alert('FATAL ERROR');
-	    else {
-		console.log('Error http_request test', request);
-		this.http(request)
-		    .success(function (data, status) {callback_success(data, status)})
-		    .error(function () {callback_error(request, callback_success, callback_error, ++count)});
-	    }
-	},
-	
 	user_management: function ($location) {
 	    if (this.scope.get_user_type() === USER_CLASS.RECEPTIONNISTE) set_reports_object();
 	    if (this.scope.get_user_type() === USER_CLASS.EMPLOYE) {console.log('employeeeee'); $location.path('/interface_employe');}
@@ -264,7 +253,7 @@
 
 	// Used to display selected element
 	$scope.elements_class = [{name: "Supervisor", screen: "Superviseurs"},
-				 {name: "Employee", screen: "Employés"},
+				 {name: "Employee", screen: "EmployÃ©s"},
 				 {name: "Truck", screen: "Camions"},
 				 {name: "Box", screen: "Coffres"}];
 
@@ -542,7 +531,7 @@
 	},
 
 	delete_affect: function (affect) {
-	    if (confirm('Êtes-vous certain de vouloir supprimer cette job?')) {
+	    if (confirm('ÃŠtes-vous certain de vouloir supprimer cette job?')) {
 	    	App.affectations.find_and_delete(affect);
 	    	this.request_delete_affectation(affect.route + '/' + affect.id);
 	    }
@@ -613,8 +602,8 @@
 	// $scope.post_affectation = ng.bind(this, this.post_affectation);
 	$scope.alert_not_functional = {
 	    "type": "error",
-	    "title": "Pas encore prêt!<br>",
-	    "content": "Seule l'interface est actuellement fonctionnelle. Cela vous permet de voir ce que ça aura l'air et de me partager si ça vous convient!",
+	    "title": "Pas encore prÃªt!<br>",
+	    "content": "Seule l'interface est actuellement fonctionnelle. Cela vous permet de voir ce que Ã§a aura l'air et de me partager si Ã§a vous convient!",
 	};
 
 	$scope.add_client = ng.bind(this, this.add_client);
@@ -855,7 +844,7 @@
 		// var save = this.save.bind(this);
 		var self = this;
 
-		this.scope.http_request('POST', $scope.newElem, $scope.newElem.route, function (data) {
+		this.request_elem('POST', $scope.newElem, $scope.newElem.route, function (data) {
 		    self.save(data);
 		}, function (data, status, headers, config) {
 		    $scope.alert.push({
@@ -869,7 +858,7 @@
 
 	delete_elem: function (elem) {
 	    if (!elem.get_deletion_confirmation()) return ;
-	    this.scope.http_request('DELETE', this.scope.newElem, this.scope.newElem.route + '/' + elem.id, function (data) {
+	    this.request_elem('DELETE', this.scope.newElem, this.scope.newElem.route + '/' + elem.id, function (data) {
 		App.elems.find_and_delete(elem);
 	    });
 	},
@@ -879,7 +868,7 @@
 	    var self = this;
 	    console.log('testestestest', this.scope.newElem);
 	    if (this.scope.newElem.state == 2) this.verify_vacation();
-	    this.scope.http_request('PUT', this.scope.newElem, this.scope.newElem.route + '/' + this.scope.newElem.id, function () {
+	    this.request_elem('PUT', this.scope.newElem, this.scope.newElem.route + '/' + this.scope.newElem.id, function () {
 
 		// Swap strElem if can_be_supervisor changed. Not the right place for this. Will use dynamic dispatch
 		if ($scope.newElem.supervisor === true) $scope.newElem.strElem = "Supervisor";
@@ -906,7 +895,7 @@
 	    // this.scope.newElem.vacationStart_format = DateFormat.format_date(this.scope.newElem.vacationStart);
 	    // this.scope.newElem.vacationEnd_format = DateFormat.format_date(this.scope.newElem.vacationEnd);
 	    
-	    this.scope.http_request('POST', vacation, '/vacation', function () { 
+	    this.request_elem('POST', vacation, '/vacation', function () { 
 		if (App.vacations.search_index(vacation) === false) App.vacations.insertion_sort(new Vacation(vacation));
 		$scope.newElem.set_vacation(App.vacations.get(App.vacations.search_index(vacation)));
 	    });
@@ -921,6 +910,14 @@
 	save: function (elem) {
 	    Element.createFromList(this.scope.newElem.strElem, [elem]);
 	    this.scope.newElem = new Global[this.scope.newElem.strElem];
+	},
+
+	request_elem: function(method, params, route, callback_success, callback_error) {
+	    callback_success = callback_success || function () {};
+	    callback_error = callback_error || function () {};
+	    this.http({method: method,  url: route, params: params, headers: "application/x-www-form-urlencoded"})
+		.success(function (data, status) {callback_success(data, status)})
+		.error(function () {callback_error()});
 	},
 
     };
@@ -1068,7 +1065,8 @@
 
     LoginCtrl.prototype = {
 	login: function () {
-	    this.scope.http_request('GET', this.scope.user, '/users/' + App.get_user(this.scope.user.id).name, this.connect.bind(this));
+	    this.scope.http_request('GET', this.scope.user, '/users/' + App.get_user(this.scope.user.id).name, this.connect.bind(this), 
+				    function (data) {console.log('error', data)});
 	},
 
 	connect: function (data) {
@@ -1088,7 +1086,7 @@
     function RegisterCtrl ($scope) {
 
 	$scope.user = {
-	    name: 'Employé',
+	    name: 'EmployÃ©',
 	    password: 'CASA',
 	    type: 8,
 	};
@@ -1101,7 +1099,8 @@
     RegisterCtrl.prototype = {
 	register_user: function () {
 	    this.scope.http_request('POST', this.scope.user, '/users', 
-				    function (data) {console.log(data)});
+				    function (data) {console.log(data)}, 
+				    function (data) {console.log('error', data)});
 	}
     };
 
@@ -1116,7 +1115,8 @@
 	set_default_time: function () {
 	    App.settings = this.scope.$parent.settings;
 	    this.scope.http_request('POST', App.settings, App.settings.route, 
-				    function () {console.log('success')});
+				    function () {console.log('success')}, 
+				    function () {console.log('error')});
 	},
     };
     
@@ -1249,4 +1249,3 @@
 	.controller('UnavailableCtrl', UnavailableCtrl)
     
 }(angular, casaApp));
-
