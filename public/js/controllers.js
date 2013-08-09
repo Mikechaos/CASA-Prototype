@@ -34,7 +34,7 @@
 	this.scope.showingDayDetails = false;
 	this.scope.location = $location;
 
-	$scope.http_request = ng.bind(this, this.http_request);
+	$scope.http_request = ng.bind(this, this.scope.http_request);
 
 	$scope.logout = function () {
 	    $scope.http_request('POST', {}, '/logout', function () {
@@ -855,7 +855,7 @@
 		// var save = this.save.bind(this);
 		var self = this;
 
-		this.http_request('POST', $scope.newElem, $scope.newElem.route, function (data) {
+		this.scope.http_request('POST', $scope.newElem, $scope.newElem.route, function (data) {
 		    self.save(data);
 		}, function (data, status, headers, config) {
 		    $scope.alert.push({
@@ -869,7 +869,7 @@
 
 	delete_elem: function (elem) {
 	    if (!elem.get_deletion_confirmation()) return ;
-	    this.http_request('DELETE', this.scope.newElem, this.scope.newElem.route + '/' + elem.id, function (data) {
+	    this.scope.http_request('DELETE', this.scope.newElem, this.scope.newElem.route + '/' + elem.id, function (data) {
 		App.elems.find_and_delete(elem);
 	    });
 	},
@@ -879,7 +879,7 @@
 	    var self = this;
 	    console.log('testestestest', this.scope.newElem);
 	    if (this.scope.newElem.state == 2) this.verify_vacation();
-	    this.http_request('PUT', this.scope.newElem, this.scope.newElem.route + '/' + this.scope.newElem.id, function () {
+	    this.scope.http_request('PUT', this.scope.newElem, this.scope.newElem.route + '/' + this.scope.newElem.id, function () {
 
 		// Swap strElem if can_be_supervisor changed. Not the right place for this. Will use dynamic dispatch
 		if ($scope.newElem.supervisor === true) $scope.newElem.strElem = "Supervisor";
@@ -906,7 +906,7 @@
 	    // this.scope.newElem.vacationStart_format = DateFormat.format_date(this.scope.newElem.vacationStart);
 	    // this.scope.newElem.vacationEnd_format = DateFormat.format_date(this.scope.newElem.vacationEnd);
 	    
-	    this.http_request('POST', vacation, '/vacation', function () { 
+	    this.scope.http_request('POST', vacation, '/vacation', function () { 
 		if (App.vacations.search_index(vacation) === false) App.vacations.insertion_sort(new Vacation(vacation));
 		$scope.newElem.set_vacation(App.vacations.get(App.vacations.search_index(vacation)));
 	    });
